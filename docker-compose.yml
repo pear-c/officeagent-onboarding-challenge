@@ -1,0 +1,49 @@
+services:
+  app:
+    build:
+      context: .
+      target: dev
+    ports:
+      - "8000:8000"
+    depends_on:
+      chroma:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - ./app:/app/app
+      - ./eval:/app/eval
+      - ./sample-docs:/app/sample-docs
+    env_file: .env
+    environment:
+      - CHROMA_HOST=chroma
+      - CHROMA_PORT=8000  # 컨테이너 내부 포트 (호스트에서는 8100으로 매핑)
+      - REDIS_HOST=redis
+
+  chroma:
+    image: chromadb/chroma:latest
+    ports:
+      - "8100:8000"  # 호스트:8100 → 컨테이너:8000
+    volumes:
+      - chroma_data:/chroma/chroma
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/heartbeat"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  chroma_data:
+  redis_data:

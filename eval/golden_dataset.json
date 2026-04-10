@@ -1,0 +1,182 @@
+[
+  {
+    "id": "Q01",
+    "question": "교육비 지원 한도는 얼마인가요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "교육비 지원",
+    "expected_keywords": ["200만원", "연간"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q02",
+    "question": "재택근무는 주 몇 회까지 가능한가요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "재택근무",
+    "expected_keywords": ["2회"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q03",
+    "question": "입사 1년 미만 직원의 연차는 어떻게 발생하나요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "연차 휴가",
+    "expected_keywords": ["매월", "1일"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q04",
+    "question": "입사 3년차 직원의 연차는 며칠인가요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "연차 휴가",
+    "expected_keywords": ["16일"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q05",
+    "question": "건강검진 당일은 어떻게 처리되나요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "건강검진",
+    "expected_keywords": ["유급 휴가"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q06",
+    "question": "배우자 건강검진비 지원 비율은?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "건강검진",
+    "expected_keywords": ["50%"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q07",
+    "question": "결혼 시 특별휴가는 며칠인가요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "경조사 지원",
+    "expected_keywords": ["5일"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q08",
+    "question": "PR 리뷰어는 첫 리뷰를 언제까지 완료해야 하나요?",
+    "expected_source": "development-guide.md",
+    "expected_section": "코드 리뷰 정책",
+    "expected_keywords": ["24시간"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q09",
+    "question": "브랜치 전략에서 긴급 버그 수정은 어떤 브랜치를 사용하나요?",
+    "expected_source": "development-guide.md",
+    "expected_section": "브랜치 전략",
+    "expected_keywords": ["hotfix"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q10",
+    "question": "프로덕션 배포 후 모니터링은 최소 얼마나 해야 하나요?",
+    "expected_source": "development-guide.md",
+    "expected_section": "배포 프로세스",
+    "expected_keywords": ["1시간"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q11",
+    "question": "P1 장애의 대응 시간은?",
+    "expected_source": "development-guide.md",
+    "expected_section": "장애 대응",
+    "expected_keywords": ["즉시", "30분"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q12",
+    "question": "교육비 신청 마감일은 언제인가요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "교육비 지원",
+    "expected_keywords": ["15일"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q13",
+    "question": "회사의 화성 지사 주소는 어디인가요?",
+    "expected_source": null,
+    "expected_section": null,
+    "expected_keywords": [],
+    "answerable": false,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q14",
+    "question": "사내 식당 메뉴는 어떻게 확인하나요?",
+    "expected_source": null,
+    "expected_section": null,
+    "expected_keywords": [],
+    "answerable": false,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q15",
+    "question": "회사의 연봉 테이블을 알려주세요.",
+    "expected_source": null,
+    "expected_section": null,
+    "expected_keywords": [],
+    "answerable": false,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q16",
+    "question": "우리 회사 CEO는 누구인가요?",
+    "expected_source": null,
+    "expected_section": null,
+    "expected_keywords": [],
+    "answerable": false,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q17",
+    "question": "다른 회사의 재택근무 정책은 어떤가요?",
+    "expected_source": null,
+    "expected_section": null,
+    "expected_keywords": [],
+    "answerable": false,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q18",
+    "question": "재택근무가 가능한가요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "재택근무",
+    "expected_keywords": ["2회", "팀장 승인", "고객 미팅"],
+    "answerable": true,
+    "difficulty": "edge"
+  },
+  {
+    "id": "Q19",
+    "question": "미사용 연차는 이월되나요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "연차 휴가",
+    "expected_keywords": ["이월되지 않습니다"],
+    "answerable": true,
+    "difficulty": "edge"
+  },
+  {
+    "id": "Q20",
+    "question": "코드 리뷰에서 꼭 확인해야 하는 항목은?",
+    "expected_source": "development-guide.md",
+    "expected_section": "코드 리뷰 정책",
+    "expected_keywords": ["요구사항", "테스트", "보안", "스타일"],
+    "answerable": true,
+    "difficulty": "edge"
+  }
+]
