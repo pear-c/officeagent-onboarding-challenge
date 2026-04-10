@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Q&A</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        header {
+            text-align: center;
+            padding: 32px 0 24px;
+        }
+
+        header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+        }
+
+        header p {
+            font-size: 14px;
+            color: #888;
+            margin-top: 6px;
+        }
+
+        .panels {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .panel {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .panel h2 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: #555;
+        }
+
+        /* 드래그 앤 드롭 영역 */
+        .drop-zone {
+            border: 2px dashed #ccc;
+            border-radius: 10px;
+            padding: 36px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #999;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .drop-zone:hover, .drop-zone.dragover {
+            border-color: #4f8cff;
+            background: #f0f6ff;
+            color: #4f8cff;
+        }
+
+        .drop-zone input[type="file"] {
+            display: none;
+        }
+
+        .upload-status {
+            margin-top: 12px;
+            font-size: 13px;
+            min-height: 20px;
+        }
+
+        .upload-status.success { color: #2d9a3f; }
+        .upload-status.error { color: #d63031; }
+        .upload-status.loading { color: #4f8cff; }
+
+        /* 문서 목록 */
+        .doc-list {
+            list-style: none;
+            max-height: 240px;
+            overflow-y: auto;
+        }
+
+        .doc-list li {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .doc-list li:last-child { border-bottom: none; }
+
+        .doc-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .doc-meta {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .doc-empty {
+            text-align: center;
+            color: #bbb;
+            padding: 32px 0;
+            font-size: 13px;
+        }
+
+        /* 질의응답 영역 */
+        .qa-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .qa-section h2 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: #555;
+        }
+
+        .qa-input-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .qa-input-row input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        .qa-input-row input:focus {
+            border-color: #4f8cff;
+        }
+
+        .qa-input-row button {
+            padding: 10px 20px;
+            background: #4f8cff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+
+        .qa-input-row button:hover { background: #3a7ae6; }
+        .qa-input-row button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .answer-box {
+            margin-top: 16px;
+            padding: 16px;
+            background: #fafafa;
+            border-radius: 8px;
+            font-size: 14px;
+            line-height: 1.7;
+            min-height: 60px;
+            white-space: pre-wrap;
+            display: none;
+        }
+
+        .answer-box.visible { display: block; }
+
+        .answer-box .answer-text { color: #333; }
+
+        .answer-box .sources {
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .answer-box .sources span {
+            display: inline-block;
+            background: #eef3ff;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin: 2px 4px 2px 0;
+            color: #4f8cff;
+        }
+
+        .notice {
+            text-align: center;
+            color: #bbb;
+            font-size: 13px;
+            padding: 20px 0;
+        }
+
+        /* 지원 포맷 */
+        .formats {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+
+        .formats span {
+            font-size: 11px;
+            background: #f0f0f0;
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: #777;
+        }
+
+        @media (max-width: 700px) {
+            .panels { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Document Q&A</h1>
+            <p>문서를 업로드하고 질문하세요. 문서 근거 기반으로 답변합니다.</p>
+        </header>
+
+        <div class="panels">
+            <!-- 문서 업로드 -->
+            <div class="panel">
+                <h2>문서 업로드</h2>
+                <div class="drop-zone" id="dropZone">
+                    <div>파일을 여기에 드래그하거나<br>클릭하여 선택</div>
+                    <div class="formats">
+                        <span>.txt</span>
+                        <span>.md</span>
+                        <span>.pdf</span>
+                    </div>
+                    <input type="file" id="fileInput" accept=".txt,.md,.pdf">
+                </div>
+                <div class="upload-status" id="uploadStatus"></div>
+            </div>
+
+            <!-- 문서 목록 -->
+            <div class="panel">
+                <h2>저장된 문서</h2>
+                <div id="docListContainer">
+                    <div class="doc-empty">업로드된 문서가 없습니다.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 질의응답 -->
+        <div class="qa-section">
+            <h2>질문하기</h2>
+            <div class="qa-input-row">
+                <input type="text" id="questionInput" placeholder="문서에 대해 질문하세요..." disabled>
+                <button id="askBtn" disabled>질문</button>
+            </div>
+            <div class="answer-box" id="answerBox">
+                <div class="answer-text" id="answerText"></div>
+                <div class="sources" id="answerSources"></div>
+            </div>
+            <div class="notice" id="qaNotice">문서를 먼저 업로드해주세요.</div>
+        </div>
+    </div>
+
+    <script>
+        const API = '';
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const docListContainer = document.getElementById('docListContainer');
+        const questionInput = document.getElementById('questionInput');
+        const askBtn = document.getElementById('askBtn');
+        const answerBox = document.getElementById('answerBox');
+        const answerText = document.getElementById('answerText');
+        const answerSources = document.getElementById('answerSources');
+        const qaNotice = document.getElementById('qaNotice');
+
+        let hasDocuments = false;
+
+        // ── 드래그 앤 드롭 ──
+
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) uploadFile(files[0]);
+        });
+
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) uploadFile(fileInput.files[0]);
+        });
+
+        // ── 파일 업로드 ──
+
+        async function uploadFile(file) {
+            setStatus('loading', `업로드 중: ${file.name}...`);
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const res = await fetch(`${API}/api/v1/documents`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const json = await res.json();
+
+                if (!res.ok) {
+                    const msg = json.error?.message || json.detail || '업로드 실패';
+                    setStatus('error', msg);
+                    return;
+                }
+
+                const d = json.data;
+                setStatus('success', `${d.filename} 업로드 완료 (${d.chunk_count}개 청크)`);
+                loadDocuments();
+            } catch (err) {
+                setStatus('error', `오류: ${err.message}`);
+            }
+
+            fileInput.value = '';
+        }
+
+        function setStatus(type, msg) {
+            uploadStatus.className = `upload-status ${type}`;
+            uploadStatus.textContent = msg;
+        }
+
+        // ── 문서 목록 ──
+
+        async function loadDocuments() {
+            try {
+                const res = await fetch(`${API}/api/v1/documents`);
+                const json = await res.json();
+                const docs = json.data || [];
+
+                if (docs.length === 0) {
+                    docListContainer.innerHTML = '<div class="doc-empty">업로드된 문서가 없습니다.</div>';
+                    setQAEnabled(false);
+                    return;
+                }
+
+                const ul = document.createElement('ul');
+                ul.className = 'doc-list';
+
+                docs.forEach(d => {
+                    const li = document.createElement('li');
+                    const sizeStr = d.file_size < 1024
+                        ? `${d.file_size}B`
+                        : `${(d.file_size / 1024).toFixed(1)}KB`;
+                    li.innerHTML = `
+                        <span class="doc-name">${escapeHtml(d.filename)}</span>
+                        <span class="doc-meta">${d.chunk_count}개 청크 / ${sizeStr}</span>
+                    `;
+                    ul.appendChild(li);
+                });
+
+                docListContainer.innerHTML = '';
+                docListContainer.appendChild(ul);
+                setQAEnabled(true);
+            } catch (err) {
+                docListContainer.innerHTML = '<div class="doc-empty">목록을 불러올 수 없습니다.</div>';
+            }
+        }
+
+        // ── 질의응답 ──
+
+        function setQAEnabled(enabled) {
+            hasDocuments = enabled;
+            questionInput.disabled = !enabled;
+            askBtn.disabled = !enabled;
+            qaNotice.textContent = enabled
+                ? ''
+                : '문서를 먼저 업로드해주세요.';
+            qaNotice.style.display = enabled ? 'none' : 'block';
+        }
+
+        askBtn.addEventListener('click', askQuestion);
+        questionInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !askBtn.disabled) askQuestion();
+        });
+
+        async function askQuestion() {
+            const question = questionInput.value.trim();
+            if (!question) return;
+
+            askBtn.disabled = true;
+            answerText.textContent = '답변 생성 중...';
+            answerSources.innerHTML = '';
+            answerBox.classList.add('visible');
+
+            try {
+                // SSE 스트리밍 시도 → 실패 시 JSON fallback
+                const res = await fetch(`${API}/api/v1/query/stream`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question }),
+                });
+
+                if (res.status === 501 || res.status === 500) {
+                    // 03-query 미구현 상태
+                    answerText.textContent = '질의응답 기능이 아직 준비 중입니다. (03-query 단계에서 구현 예정)';
+                    askBtn.disabled = false;
+                    return;
+                }
+
+                if (!res.ok) {
+                    const json = await res.json();
+                    answerText.textContent = json.error?.message || '오류가 발생했습니다.';
+                    askBtn.disabled = false;
+                    return;
+                }
+
+                // SSE 스트리밍 파싱
+                answerText.textContent = '';
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder();
+                let fullAnswer = '';
+                let sources = [];
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    const lines = chunk.split('\n');
+
+                    for (const line of lines) {
+                        if (line.startsWith('data: ')) {
+                            const data = line.slice(6);
+                            if (data === '[DONE]') continue;
+
+                            try {
+                                const parsed = JSON.parse(data);
+                                if (parsed.token) {
+                                    fullAnswer += parsed.token;
+                                    answerText.textContent = fullAnswer;
+                                }
+                                if (parsed.sources) {
+                                    sources = parsed.sources;
+                                }
+                            } catch {
+                                fullAnswer += data;
+                                answerText.textContent = fullAnswer;
+                            }
+                        }
+                    }
+                }
+
+                // 출처 표시
+                if (sources.length > 0) {
+                    answerSources.innerHTML = '출처: ' + sources
+                        .map(s => `<span>${escapeHtml(s.file)}</span>`)
+                        .join('');
+                }
+            } catch (err) {
+                answerText.textContent = '질의응답 기능이 아직 준비 중입니다. (03-query 단계에서 구현 예정)';
+            }
+
+            askBtn.disabled = false;
+        }
+
+        // ── 유틸 ──
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // ── 초기 로드 ──
+        loadDocuments();
+    </script>
+</body>
+</html>

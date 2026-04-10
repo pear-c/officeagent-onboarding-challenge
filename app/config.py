@@ -35,6 +35,10 @@ class Settings(BaseSettings):
     llm_auxiliary_provider: str = "codex"  # claude | codex
     llm_max_tokens: int = 1024
 
+    # 파일 업로드
+    max_file_size: int = 10 * 1024 * 1024  # 10MB
+    max_filename_length: int = 255
+
     # 검색
     search_top_k: int = 5
     cache_similarity_threshold: float = 0.95

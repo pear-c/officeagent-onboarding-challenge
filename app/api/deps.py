@@ -1,9 +1,15 @@
 """FastAPI Depends 팩토리 — 서비스 의존성 주입."""
 
+from fastapi import Request
+
+from app.cache.redis_cache import RedisCache
 from app.config import settings
+from app.embedding.embedder import Embedder
 from app.llm.claude_provider import ClaudeProvider
 from app.llm.codex_provider import CodexProvider
 from app.llm.provider import LLMProvider
+from app.services.ingest_service import IngestService
+from app.vectorstore.chroma_store import ChromaStore
 
 
 def get_answer_llm() -> LLMProvider:
@@ -20,9 +26,21 @@ def get_auxiliary_llm() -> LLMProvider:
     return ClaudeProvider()
 
 
-# TODO: 02-ingestion, 03-query 단계에서 추가
-# def get_embedder() -> Embedder
-# def get_chroma_store() -> ChromaStore
-# def get_redis_cache() -> RedisCache
-# def get_ingest_service() -> IngestService
-# def get_rag_service() -> RAGService
+def get_embedder(request: Request) -> Embedder:
+    """앱 시작 시 로딩된 임베딩 모델."""
+    return request.app.state.embedder
+
+
+def get_chroma_store(request: Request) -> ChromaStore:
+    """Chroma 벡터 DB 클라이언트."""
+    return request.app.state.chroma
+
+
+def get_redis_cache(request: Request) -> RedisCache:
+    """Redis 캐시 클라이언트."""
+    return request.app.state.redis
+
+
+def get_ingest_service(request: Request) -> IngestService:
+    """앱 시작 시 생성된 IngestService."""
+    return request.app.state.ingest_service
