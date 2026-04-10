@@ -53,11 +53,11 @@ npm install -g @anthropic-ai/claude-code
 claude --version
 
 # Python SDK
-pip install claude-code-sdk
+pip install claude-agent-sdk
 ```
 
 - [ ] [USER] `claude` CLI 설치 + 첫 실행 시 Claude Max 계정으로 로그인
-- [ ] [USER] `pip install claude-code-sdk` (혹은 venv 안에서)
+- [ ] [USER] `pip install claude-agent-sdk` (혹은 venv 안에서)
 
 ### 1-F. Codex CLI 설치
 
@@ -124,7 +124,7 @@ npm install -g @openai/codex
 codex --version
 # 첫 실행 시 ChatGPT Pro 로그인
 
-pip install claude-code-sdk
+pip install claude-agent-sdk
 ```
 
 - [ ] [USER] 위 명령 실행
@@ -151,12 +151,12 @@ python3.11 -m venv .venv && source .venv/bin/activate
 ```python
 # 임시 파일: tmp/hello_claude.py
 import asyncio
-from claude_code_sdk import query, ClaudeCodeOptions
+from claude_agent_sdk import query, ClaudeAgentOptions
 
 async def main():
     async for msg in query(
         prompt="안녕하세요. 간단히 한국어로 인사 한 줄만 해주세요.",
-        options=ClaudeCodeOptions(max_turns=1),
+        options=ClaudeAgentOptions(max_turns=1),
     ):
         print(msg)
 

@@ -10,7 +10,7 @@
 | # | 기준 | 가중치 | 이유 |
 |---|---|---|---|
 | K1 | RAG 라이브러리 생태계 | 매우 높음 | 임베딩, 벡터 DB, PDF 추출 등이 풍부해야 8일 안에 동작 가능 |
-| K2 | LLM SDK 통합 용이성 | 높음 | claude-code-sdk와 codex CLI를 자연스럽게 부를 수 있어야 |
+| K2 | LLM SDK 통합 용이성 | 높음 | claude-agent-sdk와 codex CLI를 자연스럽게 부를 수 있어야 |
 | K3 | 비동기 I/O 지원 | 높음 | LLM 호출은 느림 → 한 요청이 다른 요청 막으면 안 됨 |
 | K4 | 채점자 친숙도 | 중간 | PRD가 "FastAPI 서버 설계"를 명시. 채점자 Python 친화적 가능성 |
 | K5 | 사용자 친숙도 | 중간 | 사용자는 Java 메인이지만 Python 가능 |
@@ -35,7 +35,7 @@
 
 #### 장점
 - **K1 생태계 압도적**: `sentence-transformers`, `chromadb`, `qdrant-client`, `redis-py`, `pypdf`, `pdfplumber`, `langchain`, `llama-index` 등 핵심 라이브러리가 모두 Python 1순위 지원
-- **K2 LLM SDK**: `claude-code-sdk`는 **공식 Python SDK**가 있음 (네이티브 async). Codex CLI는 subprocess로 부르면 됨
+- **K2 LLM SDK**: `claude-agent-sdk`는 **공식 Python SDK**가 있음 (네이티브 async). Codex CLI는 subprocess로 부르면 됨
 - **K3 async**: FastAPI는 ASGI 기반, `async def` 네이티브. LLM 호출 동안 다른 요청 처리 가능
 - **K4 채점자**: PRD가 "FastAPI 서버 설계, 레이어 분리, 비동기 처리"를 콕 집어 언급 → Python 친화적 채점 가능성 매우 높음
 - **K7 멀티 OS**: Python + Docker 조합은 Win/Mac/Linux 모두 동일 동작
@@ -92,7 +92,7 @@ async def query(
   - PDF 추출: Apache PDFBox 가능하지만 한국어 처리 약함
   - 벡터 DB 클라이언트: Chroma는 공식 Java 클라이언트 없음, REST 직접 호출
   - LangChain4j 존재하지만 Python 대비 미성숙
-- **K2 LLM SDK**: claude-code-sdk는 Python 패키지. Java에서 부르려면 ProcessBuilder로 `claude` CLI 직접 spawn → 결과 파싱 직접 구현 필요. Codex도 동일
+- **K2 LLM SDK**: claude-agent-sdk는 Python 패키지. Java에서 부르려면 ProcessBuilder로 `claude` CLI 직접 spawn → 결과 파싱 직접 구현 필요. Codex도 동일
 - **K6 학습**: 사용자에게는 익숙하지만 RAG 라이브러리 부재 보충에 시간 듦 → 결과적으로 학습 비용 큼
 - **K8 차별화**: 채점자가 Spring을 모르거나 평가에 시간 더 걸림
 
@@ -112,7 +112,7 @@ async def query(
   - 임베딩: `transformers.js`, `xenova` 등 있으나 Python 대비 모델 선택지 좁음, 한국어 모델 부족
   - 벡터 DB 클라이언트: Chroma JS 클라이언트 있으나 Python 대비 문서 빈약
   - PDF 추출: pdf.js, pdf-parse 있으나 한국어/표 처리 약함
-- **K2**: claude-code-sdk는 Python 전용. Node에서 쓰려면 subprocess
+- **K2**: claude-agent-sdk는 Python 전용. Node에서 쓰려면 subprocess
 - **K6**: 사용자가 Node 메인이 아님
 
 #### 결론
@@ -186,7 +186,7 @@ ASGI 서버:   uvicorn
 | 웹 프레임워크 | `fastapi` | — |
 | ASGI 서버 | `uvicorn[standard]` | — |
 | 입력 검증 | `pydantic` v2 | — |
-| LLM (메인) | `claude-code-sdk` | — |
+| LLM (메인) | `claude-agent-sdk` | — |
 | LLM (보조) | `subprocess` (codex CLI) | — |
 | 임베딩 | `sentence-transformers` | `transformers`, `fastembed` |
 | 벡터 DB | `chromadb` | `qdrant-client`, `pgvector` |

@@ -53,7 +53,7 @@
 | 임베딩 모델 | BAAI/bge-m3 (sentence-transformers) | - |
 | 벡터 DB | Chroma | - |
 | 캐시 DB | Redis | 7 |
-| LLM (답변) | Claude Sonnet 4.6 (claude-code-sdk) | - |
+| LLM (답변) | Claude Sonnet 4.6 (claude-agent-sdk) | - |
 | LLM (보조) | Codex GPT-5 mini (@openai/codex) | - |
 | 컨테이너 | Docker Compose | - |
 

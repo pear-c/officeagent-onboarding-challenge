@@ -20,7 +20,7 @@ RAG Q&A API의 **전체 아키텍처를 확정**하고, 프로젝트 스켈레�
 | 벡터 DB | **Chroma** (Docker 서버 모드) | 이 규모에서 성능 차이 무의미. 셋업/코드 단순성 압도 |
 | 캐시 DB | **Redis** | 캐시 표준. 유사 질문 매칭 + 문서 해시 기반 무효화 |
 | 청킹 전략 | **하이브리드** (재귀 분할 + 마크다운 인식) | .txt/.pdf는 재귀, .md는 헤더 분할 → 재귀 fallback |
-| LLM (답변) | **Claude Sonnet 4.6** (claude-code-sdk) | 정확도 최고 투자 영역. 환각 억제 + 출처 인용 |
+| LLM (답변) | **Claude Sonnet 4.6** (claude-agent-sdk) | 정확도 최고 투자 영역. 환각 억제 + 출처 인용 |
 | LLM (보조) | **Codex GPT-5 mini** (codex CLI) | 시간 절감 영역. 쿼리 재작성, 정규화 |
 | ↳ 역할 확정 | **4단계 평가 하네스로 측정 후 확정** | 잠정 가설. 데이터로 결정 |
 | 프레임워크 | **FastAPI + uvicorn** | 비동기 + Pydantic + OpenAPI |

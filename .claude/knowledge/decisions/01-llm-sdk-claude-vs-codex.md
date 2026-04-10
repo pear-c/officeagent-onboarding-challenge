@@ -9,7 +9,7 @@ PRD가 허용한 LLM 옵션은 둘 뿐:
 
 | SDK | 패키지 | 모델 제공처 | 구독 |
 |---|---|---|---|
-| **Claude Code SDK** | `pip install claude-code-sdk` (Python) | Anthropic Claude | Claude Pro/Max |
+| **Claude Code SDK** | `pip install claude-agent-sdk` (Python) | Anthropic Claude | Claude Pro/Max |
 | **Codex CLI** | `npm install -g @openai/codex` (Node) | OpenAI GPT | ChatGPT Pro |
 
 **중요한 공통 특성**:
@@ -47,13 +47,13 @@ PRD가 허용한 LLM 옵션은 둘 뿐:
 
 ```python
 import asyncio
-from claude_code_sdk import query, ClaudeCodeOptions
+from claude_agent_sdk import query, ClaudeAgentOptions
 
 async def ask_claude(prompt: str) -> str:
     chunks = []
     async for msg in query(
         prompt=prompt,
-        options=ClaudeCodeOptions(max_turns=1, model="claude-sonnet-4-6"),
+        options=ClaudeAgentOptions(max_turns=1, model="claude-sonnet-4-6"),
     ):
         chunks.append(msg)
     return chunks[-1].text  # 단순화
@@ -65,7 +65,7 @@ asyncio.run(ask_claude("연차는 며칠?"))
 - 네이티브 Python async 지원
 - `claude` CLI를 백그라운드에서 띄우고 stdin/stdout으로 통신
 - streaming 지원 (`async for`)
-- `ClaudeCodeOptions`로 모델, max_turns, allowedTools 등 조절
+- `ClaudeAgentOptions`로 모델, max_turns, allowedTools 등 조절
 
 ### 3-B. Codex CLI (Node 기반)
 
@@ -174,7 +174,7 @@ class LLMProvider(ABC):
 # app/llm/claude_provider.py
 class ClaudeProvider(LLMProvider):
     async def generate(self, system, user, max_tokens=1024, json_mode=False):
-        # claude_code_sdk.query(...) 호출
+        # claude_agent_sdk.query(...) 호출
         ...
 
 # app/llm/codex_provider.py

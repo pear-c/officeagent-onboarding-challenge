@@ -47,7 +47,7 @@
   - 집: **macOS 네이티브** (Apple Silicon M2, Homebrew 사용)
 - **이유**:
   - Ubuntu 20.04는 표준 지원 종료(2025-04), 기본 Python 3.8 → RAG 라이브러리 비호환
-  - macOS는 Unix 계열 → claude-code-sdk / codex CLI가 1순위 지원
+  - macOS는 Unix 계열 → claude-agent-sdk / codex CLI가 1순위 지원
   - Python 3.11+ + FastAPI는 두 환경에서 코드 변경 없이 동일하게 동작
 - **공통 원칙**:
   - 모든 경로는 **상대경로**만 사용 (절대경로 금지)
@@ -58,7 +58,7 @@
 
 - **결정**: 임베딩은 SDK가 아닌 별도 라이브러리. 기본 후보 `sentence-transformers`의 한국어 지원 모델
 - **이유**:
-  - claude-code-sdk와 codex CLI 모두 **임베딩 엔드포인트를 제공하지 않음** (텍스트→텍스트만 지원)
+  - claude-agent-sdk와 codex CLI 모두 **임베딩 엔드포인트를 제공하지 않음** (텍스트→텍스트만 지원)
   - PRD가 "오픈소스 임베딩 모델 자유 활용" 명시
   - 로컬 모델은 API 키 불요, 오프라인 동작
   - Mac M2 (Apple Silicon)에서는 Metal 가속도 가능
