@@ -1,8 +1,11 @@
 """Ingestion 비즈니스 로직 — 텍스트 추출 → 청킹 → 임베딩 → 저장."""
 
+from __future__ import annotations
+
 import hashlib
 import logging
 import time
+from typing import TYPE_CHECKING
 
 from app.cache.redis_cache import RedisCache
 from app.chunking.recursive import Chunk
@@ -12,6 +15,9 @@ from app.embedding.embedder import Embedder
 from app.extraction.text_extractor import get_extractor
 from app.schemas import DocumentInfo
 from app.vectorstore.chroma_store import ChromaStore
+
+if TYPE_CHECKING:
+    from app.services.cache_service import CacheService
 
 logger = logging.getLogger(__name__)
 
@@ -24,10 +30,12 @@ class IngestService:
         embedder: Embedder,
         chroma: ChromaStore,
         redis: RedisCache,
+        cache_service: CacheService | None = None,
     ):
         self._embedder = embedder
         self._chroma = chroma
         self._redis = redis
+        self._cache_service = cache_service
 
     async def ingest(self, filename: str, content: bytes) -> DocumentInfo:
         """문서 수집 파이프라인 실행.
@@ -76,6 +84,9 @@ class IngestService:
         # ⑤ Chroma 저장 (기존 벡터 삭제 → 새 벡터 저장)
         step_start = time.time()
         if existing_hash is not None:
+            # 문서 변경 감지 → 관련 캐시 무효화 (D26)
+            if self._cache_service is not None:
+                await self._cache_service.invalidate_by_document(filename)
             self._chroma.delete_by_document(filename)
 
         ids = [f"{filename}::{c.chunk_id}" for c in chunks]

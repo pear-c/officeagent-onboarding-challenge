@@ -70,6 +70,18 @@
 - **이유**: 리뷰 피드백 — 동일 텍스트가 문서 내 반복될 때 항상 첫 번째 위치를 반환하는 버그
 - **영향**: start_char/end_char 정확도 향상. 03-query에서 출처 표시에 활용 가능
 
+### D20. 마크다운 짧은 섹션 양방향 병합 (2026-04-10)
+
+- **결정**: `_merge_short_sections()`에 앞→뒤 + 뒤→앞 2패스 병합 추가
+- **이유**: 테스트 중 발견 — 01-rag-overview.md에서 28개 청크 생성(기대 ~12개). 23자, 32자짜리 청크가 검색 정확도 저하 유발
+- **결과**: 28개→21개, 평균 156자→208자, 100자 미만 10개→2개
+- **상세**: `knowledge/decisions/08-chunking-size-tradeoff.md`
+
+### D21. Chroma healthcheck v2 (2026-04-10)
+
+- **결정**: docker-compose.yml healthcheck를 `/api/v2/heartbeat`로 변경
+- **이유**: Chroma 최신 버전이 v1 API deprecated. curl도 컨테이너에 없어서 python3 urllib 사용
+
 ## 참고 스킬
 
 | 스킬 | 적용 부분 |

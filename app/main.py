@@ -48,13 +48,41 @@ async def lifespan(app: FastAPI):
         db=settings.redis_db,
     )
 
-    # 4) IngestService (Embedder + Chroma + Redis 조합)
+    # 4) Chroma 캐시 collection (유사 질문 캐시용)
+    app.state.chroma_cache = ChromaStore(
+        host=settings.chroma_host,
+        port=settings.chroma_port,
+        collection_name=settings.chroma_cache_collection,
+    )
+
+    # 5) CacheService (Redis + Chroma cache + Embedder)
+    from app.services.cache_service import CacheService
+
+    app.state.cache_service = CacheService(
+        redis=app.state.redis,
+        chroma_cache=app.state.chroma_cache,
+        embedder=app.state.embedder,
+    )
+
+    # 6) IngestService (Embedder + Chroma + Redis + CacheService)
     from app.services.ingest_service import IngestService
 
     app.state.ingest_service = IngestService(
         embedder=app.state.embedder,
         chroma=app.state.chroma,
         redis=app.state.redis,
+        cache_service=app.state.cache_service,
+    )
+
+    # 7) RAGService (CacheService + Chroma + Embedder + LLM)
+    from app.api.deps import get_answer_llm
+    from app.services.rag_service import RAGService
+
+    app.state.rag_service = RAGService(
+        cache_service=app.state.cache_service,
+        chroma=app.state.chroma,
+        embedder=app.state.embedder,
+        answer_llm=get_answer_llm(),
     )
 
     logger.info("=== 리소스 초기화 완료 ===")

@@ -64,7 +64,19 @@
 - [ ] `tests/unit/test_extraction.py` — PdfExtractor.extract() 테스트 (PDF 샘플 필요)
 - [ ] `chroma_store.py:list_documents()` — 대량 데이터 시 페이지네이션 (현재 불필요)
 
-## 11. 커밋 + push
+## 11. 청킹 개선 (테스트 중 발견)
 
-- [ ] [AI] feature/02-ingestion 커밋
-- [ ] [AI] push
+- [x] [AI] 마크다운 짧은 섹션 양방향 병합 로직 추가
+- [x] [AI] Chroma healthcheck v1 → v2 수정
+- [x] [AI] docs/TROUBLESHOOTING.md 생성
+- [x] [AI] knowledge/decisions/08-chunking-size-tradeoff.md 추가
+
+## 12. 테스트
+
+- [x] [USER] 단위 테스트 27 passed
+- [x] [USER] 전체 파이프라인 (TXT/MD/PDF 업로드 + 중복 감지 + 문서 목록 + UI)
+
+## 13. 커밋 + push
+
+- [x] [AI] feature/02-ingestion 1차 커밋 + push
+- [x] [AI] 청킹 개선 2차 커밋 + push

@@ -17,6 +17,12 @@ class LLMResponse:
 class LLMProvider(ABC):
     """LLM 호출 추상화. ClaudeProvider와 CodexProvider가 구현."""
 
+    @property
+    @abstractmethod
+    def model_name(self) -> str:
+        """모델 식별자."""
+        ...
+
     @abstractmethod
     async def generate(
         self,
