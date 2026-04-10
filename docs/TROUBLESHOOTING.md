@@ -68,3 +68,26 @@ include = ["app*"]
 ```bash
 PYTHONPATH=. pytest tests/unit/ -v
 ```
+
+---
+
+## TS-004. SSE 스트리밍에서 원시 JSON이 UI에 표시됨
+
+**단계**: 03-query 테스트  
+**증상**: 최초 질문 시 UI에 답변 대신 원시 JSON이 그대로 표시됨. 캐시 히트 시에는 정상.
+
+```json
+{"answer": "제공된 문서에서 해당 내용을 찾을 수 없습니다.", "sources": [], "answerable": false}
+```
+
+**원인**: `SYSTEM_PROMPT`가 JSON 형식 출력을 지시하는데, `answer_stream()`에서도 동일한 프롬프트를 사용. LLM이 JSON 토큰을 그대로 스트리밍하여 UI에 원시 JSON 표시. 캐시 히트 시에는 파싱된 `answer` 텍스트만 저장되어 있어 정상 동작.
+
+**해결**: 스트리밍 전용 시스템 프롬프트(`SYSTEM_PROMPT_STREAM`) 추가. JSON 대신 자연어 한국어 텍스트만 출력하도록 지시. sources는 벡터 검색에서 이미 확보했으므로 LLM이 중복 출력할 필요 없음.
+
+```python
+# templates.py
+SYSTEM_PROMPT        # JSON 응답용 (POST /api/v1/query)
+SYSTEM_PROMPT_STREAM # 자연어 텍스트용 (POST /api/v1/query/stream)
+```
+
+**교훈**: 스트리밍과 비스트리밍은 출력 포맷 요구사항이 다르므로 프롬프트를 분리해야 함.

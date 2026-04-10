@@ -8,7 +8,7 @@ from typing import AsyncIterator
 from app.config import settings
 from app.embedding.embedder import Embedder
 from app.llm.provider import LLMProvider
-from app.prompts.templates import SYSTEM_PROMPT, build_user_prompt
+from app.prompts.templates import SYSTEM_PROMPT, SYSTEM_PROMPT_STREAM, build_user_prompt
 from app.schemas import QueryAnswer, SourceInfo
 from app.services.cache_service import CachedAnswer, CacheService
 from app.vectorstore.chroma_store import ChromaStore, SearchResult
@@ -122,7 +122,7 @@ class RAGService:
         try:
             user_prompt = build_user_prompt(question, chunks)
             async for token in self._answer_llm.stream(
-                system=SYSTEM_PROMPT, user=user_prompt,
+                system=SYSTEM_PROMPT_STREAM, user=user_prompt,
             ):
                 accumulated_text += token
                 yield self._sse_event("token", {"content": token})
@@ -173,22 +173,14 @@ class RAGService:
         question_embedding: list[float], accumulated_text: str,
         chunks: list[dict], source_files: list[str],
     ) -> None:
-        """스트리밍 완료 후 캐시 저장."""
-        try:
-            answer_data = self._parse_llm_response(accumulated_text)
-            answer_json = json.dumps({
-                "answer": answer_data.get("answer", accumulated_text),
-                "sources": [{"file": c["file"], "chunk_id": c["chunk_id"]} for c in chunks],
-                "answerable": answer_data.get("answerable", True),
-                "model": self._answer_llm.model_name,
-            }, ensure_ascii=False)
-        except Exception:
-            answer_json = json.dumps({
-                "answer": accumulated_text,
-                "sources": [{"file": c["file"], "chunk_id": c["chunk_id"]} for c in chunks],
-                "answerable": True,
-                "model": self._answer_llm.model_name,
-            }, ensure_ascii=False)
+        """스트리밍 완료 후 캐시 저장 (자연어 텍스트 → answer 필드에 직접 저장)."""
+        is_unanswerable = "찾을 수 없습니다" in accumulated_text
+        answer_json = json.dumps({
+            "answer": accumulated_text,
+            "sources": [{"file": c["file"], "chunk_id": c["chunk_id"]} for c in chunks],
+            "answerable": not is_unanswerable,
+            "model": self._answer_llm.model_name,
+        }, ensure_ascii=False)
 
         await self._cache.save(
             question=question, question_hash=question_hash,
