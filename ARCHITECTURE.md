@@ -23,8 +23,8 @@
 │    → LLM 호출 → 캐시 저장 → 응답 (JSON/SSE)    │
 │                                                 │
 │  LLMProvider (추상화)                           │
-│    ├─ ClaudeProvider (답변 생성)                │
-│    └─ CodexProvider (보조 작업)                 │
+│    ├─ CodexProvider (기본 답변 — 측정 결과)     │
+│    └─ ClaudeProvider (fallback)                │
 └──────────┬──────────────┬───────────────────────┘
            │              │
      [Chroma DB]    [Redis 7]
@@ -37,10 +37,10 @@
 
 | 원칙 | 적용 |
 |------|------|
-| 정확도 우선 투자 | 임베딩(bge-m3)·답변 LLM(Claude Sonnet)에 최고 품질 모델 |
+| 정확도 우선 투자 | 임베딩(bge-m3) 최고 품질 모델, LLM은 데이터로 선택 |
 | 캐시로 시간 절감 | 동일/유사 질문 → LLM 호출 자체를 건너뜀 (3~15초 → 5ms) |
 | 스트리밍으로 체감 대기 절감 | SSE 엔드포인트로 토큰 단위 실시간 전송 |
-| 보조 작업은 빠른 모델 | 쿼리 재작성·정규화는 경량 모델 사용 |
+| 데이터 기반 결정 | LLM 역할 분할을 50케이스 평가 하네스로 측정 후 확정 |
 
 ---
 
@@ -53,8 +53,8 @@
 | 임베딩 모델 | BAAI/bge-m3 (sentence-transformers) | - |
 | 벡터 DB | Chroma | - |
 | 캐시 DB | Redis | 7 |
-| LLM (답변) | Claude Sonnet 4.6 (claude-agent-sdk) | - |
-| LLM (보조) | Codex GPT-5 mini (@openai/codex) | - |
+| LLM (기본 답변) | Codex (@openai/codex) | - |
+| LLM (fallback) | Claude Sonnet 4.6 (claude-agent-sdk) | - |
 | 컨테이너 | Docker Compose | - |
 
 ---
@@ -159,23 +159,30 @@
 
 **선택 이유**: 두 SDK를 모두 활용하되, 역할에 따라 최적 모델을 배치.
 
+**초기 가설**: Claude=답변(정확도), Codex=보조(속도). → **측정 결과 가설 뒤집힘.**
+
 | 역할 | 모델 | 이유 |
 |------|------|------|
-| 답변 생성 (정확도 최우선) | Claude Sonnet 4.6 | 설계 원칙 "정확도 우선 투자" |
-| 보조 작업 (속도 우선) | Codex GPT-5 mini | 쿼리 재작성, 정규화 등 경량 작업 |
+| **기본 답변** | **Codex** | 거절 정확도 100%, 속도 2.4배, 키워드 정확도 동률 |
+| fallback | Claude Sonnet 4.6 | Retrieval/Citation +2.27%p 우위 |
 
 **`LLMProvider` 추상화**: 인터페이스 1개 + 어댑터 2개로 1줄 수정으로 모델 swap 가능.
 
-**모델 역할 분할 검증** (평가 하네스 실행 후 채우기):
+**모델 비교 측정 결과** (50케이스, 문서 5개):
 
-| 메트릭 | Claude Sonnet | Codex GPT-5 mini |
-|--------|--------------|------------------|
-| Citation Accuracy | <!-- 📊 [측정 필요] --> | <!-- 📊 [측정 필요] --> |
-| Refusal Accuracy | <!-- 📊 [측정 필요] --> | <!-- 📊 [측정 필요] --> |
-| JSON Parse Rate | <!-- 📊 [측정 필요] --> | <!-- 📊 [측정 필요] --> |
-| Latency p50 | <!-- 📊 [측정 필요] --> | <!-- 📊 [측정 필요] --> |
+| 메트릭 | Claude Sonnet 4.6 | Codex | 승자 |
+|--------|-------------------|-------|------|
+| Retrieval Hit Rate | **93.18%** | 90.91% | Claude |
+| Citation Accuracy | **93.18%** | 90.91% | Claude |
+| Refusal Accuracy | 83.33% | **100.00%** | **Codex** |
+| Keyword Hit Rate | 90.91% | 90.91% | 동률 |
+| JSON Parse Rate | 100.00% | 100.00% | 동률 |
+| Latency p50 | 10,773ms | **4,516ms** | **Codex (2.4x)** |
+| Latency p95 | 16,892ms | **10,557ms** | **Codex (1.6x)** |
 
-> 위 측정 결과로 최종 역할 분할을 확정. 자세한 결과는 [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 참조.
+**핵심 발견**: Claude의 "도움이 되려는" 성향이 RAG 거절 시나리오에서 환각 위험. Codex의 지시 추종이 이 사용 사례에 적합.
+
+> 자세한 분석은 [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 참조.
 
 ---
 
@@ -337,7 +344,7 @@ officeagent-onboarding-challenge/
 │   └── prompts/
 │       └── templates.py        # 프롬프트 템플릿
 ├── eval/
-│   ├── golden_dataset.json     # 골든 데이터셋 (20케이스)
+│   ├── golden_dataset.json     # 골든 데이터셋 (50케이스)
 │   ├── run.py                  # 평가 실행 스크립트
 │   └── metrics.py              # 메트릭 계산
 ├── tests/
@@ -381,10 +388,11 @@ uvicorn app.main:app --reload --port 8000
 
 ### 8.2 골든 데이터셋
 
-sample-docs 2개 파일에서 추출한 20개 케이스:
-- answerable: 12개 (정답이 문서에 있는 질문)
-- unanswerable: 5개 (문서에 답이 없는 질문 — 거절 테스트)
-- edge case: 3개 (부분 정보, 모호한 질문)
+sample-docs 5개 파일에서 추출한 50개 케이스:
+- easy: 16개, medium: 11개, computation: 4개 (수치 계산)
+- multi-hop: 2개 (정보 조합), edge/함정: 6개, long-answer: 1개
+- unanswerable: 6개 (문서에 답이 없는 질문 — 거절 테스트)
+- 초기 20케이스(simple docs)에서 모델 차이 미발견 → 50케이스로 고도화
 
 ### 8.3 메트릭
 
@@ -393,25 +401,25 @@ sample-docs 2개 파일에서 추출한 20개 케이스:
 | Retrieval Hit Rate | 검색된 top-K 청크에 정답 출처 포함? | ≥ 0.85 |
 | Citation Accuracy | 답변이 인용한 출처가 정확? | ≥ 0.80 |
 | Refusal Accuracy | 답 없는 질문에 "모름" 응답? | ≥ 0.90 |
+| Keyword Hit Rate | 답변에 기대 키워드 전부 포함? | ≥ 0.80 |
 | JSON Parse Rate | 구조화 출력 파싱 성공률 | ≥ 0.95 |
 | Latency p50 | 응답 시간 중앙값 | < 10초 |
 | Latency p95 | 응답 시간 95퍼센타일 | < 20초 |
 
 ### 8.4 측정 결과
 
-<!-- 📊 [측정 필요] 4단계(RAG 구현) 이후 평가 하네스 실행 결과로 채우기 -->
+| 메트릭 | Claude Sonnet 4.6 | Codex | 목표 | 달성 |
+|--------|-------------------|-------|------|------|
+| Retrieval Hit Rate | **93.18%** | 90.91% | ≥ 85% | **달성** |
+| Citation Accuracy | **93.18%** | 90.91% | ≥ 80% | **달성** |
+| Refusal Accuracy | 83.33% | **100.00%** | ≥ 90% | Codex만 달성 |
+| Keyword Hit Rate | 90.91% | 90.91% | ≥ 80% | **달성** |
+| JSON Parse Rate | 100.00% | 100.00% | ≥ 95% | **달성** |
+| Latency p50 | 10,773ms | **4,516ms** | < 10초 | Codex만 달성 |
+| Latency p95 | 16,892ms | **10,557ms** | < 20초 | **달성** |
 
-| 메트릭 | Claude Sonnet | Codex GPT-5 mini | 목표 | 달성 |
-|--------|--------------|------------------|------|------|
-| Retrieval Hit Rate | - | - | ≥ 0.85 | - |
-| Citation Accuracy | - | - | ≥ 0.80 | - |
-| Refusal Accuracy | - | - | ≥ 0.90 | - |
-| JSON Parse Rate | - | - | ≥ 0.95 | - |
-| Latency p50 | - | - | < 10초 | - |
-| Latency p95 | - | - | < 20초 | - |
-
-> 측정 조건: golden_dataset 20케이스, 각 모델 1회 실행.
-> 상세 결과: `eval/results/` 참조.
+> 측정 조건: golden_dataset 50케이스, 문서 5개, 각 모델 1회 실행.
+> 상세 결과: `eval/results/` 및 [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 참조.
 
 ---
 
