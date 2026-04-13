@@ -80,10 +80,11 @@ class ClaudeProvider(LLMProvider):
                         result_text = msg.result
 
                     # max_turns 도달은 정상 동작 (의도적으로 1턴만 요청)
-                    is_max_turns = msg.stop_reason and "max" in msg.stop_reason.lower()
-                    if msg.is_error and not is_max_turns and not result_text:
+                    if msg.is_error and not result_text:
                         errors = msg.errors or []
-                        raise RuntimeError(f"Claude 응답 오류: {'; '.join(errors)}")
+                        is_max_turns = any("maximum number of turns" in e.lower() for e in errors)
+                        if not is_max_turns:
+                            raise RuntimeError(f"Claude 응답 오류: {'; '.join(errors)}")
 
             latency_ms = int((time.time() - start) * 1000)
             logger.info("Claude generate 완료: %d자, %dms", len(result_text), latency_ms)
@@ -118,10 +119,11 @@ class ClaudeProvider(LLMProvider):
                         yield text
                 elif isinstance(msg, ResultMessage):
                     # max_turns 도달은 정상 동작
-                    is_max_turns = msg.stop_reason and "max" in msg.stop_reason.lower()
-                    if msg.is_error and not is_max_turns:
+                    if msg.is_error:
                         errors = msg.errors or []
-                        raise RuntimeError(f"Claude 스트리밍 오류: {'; '.join(errors)}")
+                        is_max_turns = any("maximum number of turns" in e.lower() for e in errors)
+                        if not is_max_turns:
+                            raise RuntimeError(f"Claude 스트리밍 오류: {'; '.join(errors)}")
 
         except CLINotFoundError:
             raise RuntimeError(
@@ -140,7 +142,7 @@ class ClaudeProvider(LLMProvider):
         return ClaudeAgentOptions(
             system_prompt=system,
             model=self._model,
-            max_turns=1,
+            max_turns=2,
             allowed_tools=[],
             output_format=output_format,
             permission_mode="auto",
