@@ -29,10 +29,11 @@ services:
     volumes:
       - chroma_data:/chroma/chroma
     healthcheck:
-      test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/v2/heartbeat')"]
+      test: ["CMD-SHELL", "cat < /dev/tcp/localhost/8000 || exit 1"]
       interval: 10s
-      timeout: 5s
-      retries: 5
+      timeout: 10s
+      retries: 10
+      start_period: 30s
 
   redis:
     image: redis:7-alpine
