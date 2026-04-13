@@ -14,7 +14,9 @@ services:
       - ./app:/app/app
       - ./eval:/app/eval
       - ./sample-docs:/app/sample-docs
-    env_file: .env
+    env_file:
+      - path: .env
+        required: false
     environment:
       - CHROMA_HOST=chroma
       - CHROMA_PORT=8000  # 컨테이너 내부 포트 (호스트에서는 8100으로 매핑)
