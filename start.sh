@@ -17,7 +17,7 @@ if [ ! -d ".venv" ]; then
     python3 -m venv .venv
 fi
 source .venv/bin/activate
-pip install -e . --quiet 2>/dev/null
+pip install -e .
 
 # 3. .env 복사 (없으면)
 if [ ! -f ".env" ]; then
