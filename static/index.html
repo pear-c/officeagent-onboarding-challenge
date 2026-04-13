@@ -58,7 +58,6 @@
             color: #555;
         }
 
-        /* 드래그 앤 드롭 영역 */
         .drop-zone {
             border: 2px dashed #ccc;
             border-radius: 10px;
@@ -77,9 +76,7 @@
             color: #4f8cff;
         }
 
-        .drop-zone input[type="file"] {
-            display: none;
-        }
+        .drop-zone input[type="file"] { display: none; }
 
         .upload-status {
             margin-top: 12px;
@@ -91,7 +88,6 @@
         .upload-status.error { color: #d63031; }
         .upload-status.loading { color: #4f8cff; }
 
-        /* 문서 목록 */
         .doc-list {
             list-style: none;
             max-height: 240px;
@@ -108,16 +104,8 @@
         }
 
         .doc-list li:last-child { border-bottom: none; }
-
-        .doc-name {
-            font-weight: 500;
-            color: #333;
-        }
-
-        .doc-meta {
-            color: #999;
-            font-size: 12px;
-        }
+        .doc-name { font-weight: 500; color: #333; }
+        .doc-meta { color: #999; font-size: 12px; }
 
         .doc-empty {
             text-align: center;
@@ -126,7 +114,6 @@
             font-size: 13px;
         }
 
-        /* 질의응답 영역 */
         .qa-section {
             background: #fff;
             border-radius: 12px;
@@ -156,9 +143,7 @@
             transition: border 0.2s;
         }
 
-        .qa-input-row input:focus {
-            border-color: #4f8cff;
-        }
+        .qa-input-row input:focus { border-color: #4f8cff; }
 
         .qa-input-row button {
             padding: 10px 20px;
@@ -174,11 +159,9 @@
         }
 
         .qa-input-row button:hover { background: #3a7ae6; }
-        .qa-input-row button:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
+        .qa-input-row button:disabled { background: #ccc; cursor: not-allowed; }
 
+        /* 답변 영역 */
         .answer-box {
             margin-top: 16px;
             padding: 16px;
@@ -193,9 +176,74 @@
 
         .answer-box.visible { display: block; }
 
-        .answer-box .answer-text { color: #333; }
+        /* 스트리밍 단계 표시 */
+        .stream-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #888;
+            min-height: 22px;
+        }
 
-        .answer-box .sources {
+        .stream-status.hidden { display: none; }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid #e0e0e0;
+            border-top-color: #4f8cff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .stream-steps {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+
+        .stream-steps.hidden { display: none; }
+
+        .step-badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: #f0f0f0;
+            color: #aaa;
+            transition: all 0.3s;
+        }
+
+        .step-badge.active {
+            background: #e8f0fe;
+            color: #4f8cff;
+            font-weight: 600;
+        }
+
+        .step-badge.done {
+            background: #e8f5e9;
+            color: #2d9a3f;
+        }
+
+        /* 커서 깜빡임 */
+        .answer-text .cursor {
+            display: inline-block;
+            width: 2px;
+            height: 1em;
+            background: #4f8cff;
+            margin-left: 2px;
+            vertical-align: text-bottom;
+            animation: blink 0.7s step-end infinite;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .answer-text { color: #333; }
+
+        .answer-meta {
             margin-top: 12px;
             padding-top: 10px;
             border-top: 1px solid #eee;
@@ -203,13 +251,20 @@
             color: #888;
         }
 
-        .answer-box .sources span {
+        .answer-meta .source-tag {
             display: inline-block;
             background: #eef3ff;
             padding: 2px 8px;
             border-radius: 4px;
             margin: 2px 4px 2px 0;
             color: #4f8cff;
+        }
+
+        .answer-meta .info {
+            display: block;
+            margin-top: 6px;
+            color: #aaa;
+            font-size: 11px;
         }
 
         .notice {
@@ -219,7 +274,6 @@
             padding: 20px 0;
         }
 
-        /* 지원 포맷 */
         .formats {
             display: flex;
             gap: 6px;
@@ -248,7 +302,6 @@
         </header>
 
         <div class="panels">
-            <!-- 문서 업로드 -->
             <div class="panel">
                 <h2>문서 업로드</h2>
                 <div class="drop-zone" id="dropZone">
@@ -263,7 +316,6 @@
                 <div class="upload-status" id="uploadStatus"></div>
             </div>
 
-            <!-- 문서 목록 -->
             <div class="panel">
                 <h2>저장된 문서</h2>
                 <div id="docListContainer">
@@ -272,7 +324,6 @@
             </div>
         </div>
 
-        <!-- 질의응답 -->
         <div class="qa-section">
             <h2>질문하기</h2>
             <div class="qa-input-row">
@@ -280,8 +331,22 @@
                 <button id="askBtn" disabled>질문</button>
             </div>
             <div class="answer-box" id="answerBox">
+                <!-- 단계 배지 -->
+                <div class="stream-steps hidden" id="streamSteps">
+                    <span class="step-badge" id="stepSearch">검색</span>
+                    <span class="step-badge" id="stepSources">출처 확인</span>
+                    <span class="step-badge" id="stepGenerate">답변 생성</span>
+                    <span class="step-badge" id="stepDone">완료</span>
+                </div>
+                <!-- 상태 메시지 -->
+                <div class="stream-status hidden" id="streamStatus">
+                    <div class="spinner"></div>
+                    <span id="streamStatusText">문서 검색 중...</span>
+                </div>
+                <!-- 답변 텍스트 -->
                 <div class="answer-text" id="answerText"></div>
-                <div class="sources" id="answerSources"></div>
+                <!-- 출처 + 메타 -->
+                <div class="answer-meta" id="answerMeta"></div>
             </div>
             <div class="notice" id="qaNotice">문서를 먼저 업로드해주세요.</div>
         </div>
@@ -289,39 +354,32 @@
 
     <script>
         const API = '';
-        const dropZone = document.getElementById('dropZone');
-        const fileInput = document.getElementById('fileInput');
-        const uploadStatus = document.getElementById('uploadStatus');
-        const docListContainer = document.getElementById('docListContainer');
-        const questionInput = document.getElementById('questionInput');
-        const askBtn = document.getElementById('askBtn');
-        const answerBox = document.getElementById('answerBox');
-        const answerText = document.getElementById('answerText');
-        const answerSources = document.getElementById('answerSources');
-        const qaNotice = document.getElementById('qaNotice');
+        const $ = id => document.getElementById(id);
 
-        let hasDocuments = false;
+        const dropZone = $('dropZone');
+        const fileInput = $('fileInput');
+        const uploadStatus = $('uploadStatus');
+        const docListContainer = $('docListContainer');
+        const questionInput = $('questionInput');
+        const askBtn = $('askBtn');
+        const answerBox = $('answerBox');
+        const answerText = $('answerText');
+        const answerMeta = $('answerMeta');
+        const qaNotice = $('qaNotice');
+        const streamSteps = $('streamSteps');
+        const streamStatus = $('streamStatus');
+        const streamStatusText = $('streamStatusText');
 
         // ── 드래그 앤 드롭 ──
 
         dropZone.addEventListener('click', () => fileInput.click());
-
-        dropZone.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            dropZone.classList.add('dragover');
-        });
-
-        dropZone.addEventListener('dragleave', () => {
-            dropZone.classList.remove('dragover');
-        });
-
-        dropZone.addEventListener('drop', (e) => {
+        dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+        dropZone.addEventListener('drop', e => {
             e.preventDefault();
             dropZone.classList.remove('dragover');
-            const files = e.dataTransfer.files;
-            if (files.length > 0) uploadFile(files[0]);
+            if (e.dataTransfer.files.length > 0) uploadFile(e.dataTransfer.files[0]);
         });
-
         fileInput.addEventListener('change', () => {
             if (fileInput.files.length > 0) uploadFile(fileInput.files[0]);
         });
@@ -330,31 +388,22 @@
 
         async function uploadFile(file) {
             setStatus('loading', `업로드 중: ${file.name}...`);
-
             const formData = new FormData();
             formData.append('file', file);
 
             try {
-                const res = await fetch(`${API}/api/v1/documents`, {
-                    method: 'POST',
-                    body: formData,
-                });
-
+                const res = await fetch(`${API}/api/v1/documents`, { method: 'POST', body: formData });
                 const json = await res.json();
-
                 if (!res.ok) {
-                    const msg = json.error?.message || json.detail || '업로드 실패';
-                    setStatus('error', msg);
+                    setStatus('error', json.error?.message || json.detail || '업로드 실패');
                     return;
                 }
-
                 const d = json.data;
                 setStatus('success', `${d.filename} 업로드 완료 (${d.chunk_count}개 청크)`);
                 loadDocuments();
             } catch (err) {
                 setStatus('error', `오류: ${err.message}`);
             }
-
             fileInput.value = '';
         }
 
@@ -379,23 +428,19 @@
 
                 const ul = document.createElement('ul');
                 ul.className = 'doc-list';
-
                 docs.forEach(d => {
                     const li = document.createElement('li');
-                    const sizeStr = d.file_size < 1024
-                        ? `${d.file_size}B`
-                        : `${(d.file_size / 1024).toFixed(1)}KB`;
+                    const sizeStr = d.file_size < 1024 ? `${d.file_size}B` : `${(d.file_size / 1024).toFixed(1)}KB`;
                     li.innerHTML = `
-                        <span class="doc-name">${escapeHtml(d.filename)}</span>
+                        <span class="doc-name">${esc(d.filename)}</span>
                         <span class="doc-meta">${d.chunk_count}개 청크 / ${sizeStr}</span>
                     `;
                     ul.appendChild(li);
                 });
-
                 docListContainer.innerHTML = '';
                 docListContainer.appendChild(ul);
                 setQAEnabled(true);
-            } catch (err) {
+            } catch {
                 docListContainer.innerHTML = '<div class="doc-empty">목록을 불러올 수 없습니다.</div>';
             }
         }
@@ -403,31 +448,50 @@
         // ── 질의응답 ──
 
         function setQAEnabled(enabled) {
-            hasDocuments = enabled;
             questionInput.disabled = !enabled;
             askBtn.disabled = !enabled;
-            qaNotice.textContent = enabled
-                ? ''
-                : '문서를 먼저 업로드해주세요.';
+            qaNotice.textContent = enabled ? '' : '문서를 먼저 업로드해주세요.';
             qaNotice.style.display = enabled ? 'none' : 'block';
         }
 
         askBtn.addEventListener('click', askQuestion);
-        questionInput.addEventListener('keydown', (e) => {
+        questionInput.addEventListener('keydown', e => {
             if (e.key === 'Enter' && !askBtn.disabled) askQuestion();
         });
+
+        function setStep(step) {
+            ['stepSearch', 'stepSources', 'stepGenerate', 'stepDone'].forEach(id => {
+                $(id).className = 'step-badge';
+            });
+            const order = ['stepSearch', 'stepSources', 'stepGenerate', 'stepDone'];
+            const idx = order.indexOf(step);
+            for (let i = 0; i < idx; i++) $(order[i]).classList.add('done');
+            if (idx >= 0) $(order[idx]).classList.add('active');
+        }
+
+        function showStreamUI(statusMsg) {
+            streamSteps.classList.remove('hidden');
+            streamStatus.classList.remove('hidden');
+            streamStatusText.textContent = statusMsg;
+        }
+
+        function hideStreamUI() {
+            streamStatus.classList.add('hidden');
+        }
 
         async function askQuestion() {
             const question = questionInput.value.trim();
             if (!question) return;
 
+            // 초기화
             askBtn.disabled = true;
-            answerText.textContent = '답변 생성 중...';
-            answerSources.innerHTML = '';
+            answerText.innerHTML = '';
+            answerMeta.innerHTML = '';
             answerBox.classList.add('visible');
+            showStreamUI('문서 검색 중...');
+            setStep('stepSearch');
 
             try {
-                // SSE 스트리밍 시도 → 실패 시 JSON fallback
                 const res = await fetch(`${API}/api/v1/query/stream`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -435,13 +499,16 @@
                 });
 
                 if (res.status === 501 || res.status === 500) {
-                    // 03-query 미구현 상태
-                    answerText.textContent = '질의응답 기능이 아직 준비 중입니다. (03-query 단계에서 구현 예정)';
+                    hideStreamUI();
+                    streamSteps.classList.add('hidden');
+                    answerText.textContent = '질의응답 기능이 아직 준비 중입니다.';
                     askBtn.disabled = false;
                     return;
                 }
 
                 if (!res.ok) {
+                    hideStreamUI();
+                    streamSteps.classList.add('hidden');
                     const json = await res.json();
                     answerText.textContent = json.error?.message || '오류가 발생했습니다.';
                     askBtn.disabled = false;
@@ -449,7 +516,6 @@
                 }
 
                 // SSE 스트리밍 파싱
-                answerText.textContent = '';
                 const reader = res.body.getReader();
                 const decoder = new TextDecoder();
                 let fullAnswer = '';
@@ -461,9 +527,7 @@
                     if (done) break;
 
                     const chunk = decoder.decode(value, { stream: true });
-                    const lines = chunk.split('\n');
-
-                    for (const line of lines) {
+                    for (const line of chunk.split('\n')) {
                         if (!line.startsWith('data: ')) continue;
                         const data = line.slice(6);
                         if (data === '[DONE]') continue;
@@ -473,35 +537,54 @@
 
                             if (parsed.type === 'sources') {
                                 sources = parsed.sources || [];
-                                // sources 먼저 도착 → 즉시 표시
+                                setStep('stepSources');
+                                streamStatusText.textContent = '출처 확인 완료';
+
                                 if (sources.length > 0) {
-                                    answerSources.innerHTML = '출처: ' + sources
-                                        .map(s => `<span>${escapeHtml(s.file)} #${s.chunk_id}</span>`)
+                                    answerMeta.innerHTML = '출처: ' + sources
+                                        .map(s => `<span class="source-tag">${esc(s.file)} #${s.chunk_id}</span>`)
                                         .join('');
                                 }
+
+                                // 답변 생성 단계로 전환
+                                setTimeout(() => {
+                                    setStep('stepGenerate');
+                                    streamStatusText.textContent = '답변 생성 중...';
+                                }, 300);
+
                             } else if (parsed.type === 'token') {
                                 fullAnswer += parsed.content || '';
-                                answerText.textContent = fullAnswer;
+                                answerText.innerHTML = esc(fullAnswer) + '<span class="cursor"></span>';
+
                             } else if (parsed.type === 'done') {
                                 meta = parsed;
+
                             } else if (parsed.type === 'error') {
+                                hideStreamUI();
                                 answerText.textContent = parsed.message || '오류가 발생했습니다.';
                             }
                         } catch {
                             fullAnswer += data;
-                            answerText.textContent = fullAnswer;
+                            answerText.innerHTML = esc(fullAnswer) + '<span class="cursor"></span>';
                         }
                     }
                 }
 
-                // 메타 정보 표시
+                // 완료 처리
+                answerText.textContent = fullAnswer;
+                setStep('stepDone');
+                hideStreamUI();
+
                 if (meta.latency_ms !== undefined) {
                     const cached = meta.cached ? ' (캐시)' : '';
                     const info = `${meta.model || ''} · ${meta.latency_ms}ms${cached}`;
-                    answerSources.innerHTML += `<br><span style="color:#aaa;font-size:11px">${info}</span>`;
+                    answerMeta.innerHTML += `<span class="info">${info}</span>`;
                 }
-            } catch (err) {
-                answerText.textContent = '질의응답 기능이 아직 준비 중입니다. (03-query 단계에서 구현 예정)';
+
+            } catch {
+                hideStreamUI();
+                streamSteps.classList.add('hidden');
+                answerText.textContent = '질의응답 기능이 아직 준비 중입니다.';
             }
 
             askBtn.disabled = false;
@@ -509,7 +592,7 @@
 
         // ── 유틸 ──
 
-        function escapeHtml(text) {
+        function esc(text) {
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
