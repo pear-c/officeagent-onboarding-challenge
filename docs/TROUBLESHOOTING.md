@@ -94,6 +94,30 @@ SYSTEM_PROMPT_STREAM # 자연어 텍스트용 (POST /api/v1/query/stream)
 
 ---
 
+## TS-005. Claude SDK max_turns=1에서 응답 생성 안 됨
+
+**단계**: 04-eval Claude 측정  
+**증상**: 20케이스 전부 `"Claude 응답 오류: Reached maximum number of turns (1)"` 에러. 결과 파일에 정상 답변 0건.
+
+**원인**: `ClaudeAgentOptions(max_turns=1)`로 설정했으나, SDK 내부에서 1턴이 "프롬프트 전송 + 응답 수신"이 아니라 응답 생성 전에 소진됨. `ResultMessage.is_error=True` + `errors` 리스트에 "Reached maximum number of turns (1)" 메시지 포함.
+
+**해결**: 
+1. `max_turns=1` → `max_turns=2`로 변경 (1턴 여유)
+2. `errors` 리스트에서 "maximum number of turns" 문자열 포함 시 정상 동작으로 처리
+3. `result_text`가 있으면 에러 무시하고 정상 반환
+
+```python
+# before — stop_reason으로 판별 시도 (실패)
+is_max_turns = msg.stop_reason and "max" in msg.stop_reason.lower()
+
+# after — errors 리스트 문자열 매칭 (성공)
+is_max_turns = any("maximum number of turns" in e.lower() for e in errors)
+```
+
+**교훈**: claude-agent-sdk의 에러 보고 방식이 `stop_reason`이 아닌 `errors` 리스트를 통해 전달됨. SDK 문서보다 실제 동작을 검증해야 함.
+
+---
+
 # 면접 포인트 — 설계 결정과 트레이드오프
 
 프로젝트에서 "왜 이렇게 했나?"로 설명할 수 있는 주요 결정들.
@@ -190,3 +214,31 @@ SYSTEM_PROMPT_STREAM # 자연어 텍스트용 (POST /api/v1/query/stream)
 4. 평가 하네스에서 provider만 swap해 동일 조건 비교 가능
 
 **핵심**: "Strategy 패턴 적용 → 비즈니스 로직(RAGService)이 구체 LLM에 의존하지 않음"
+
+---
+
+## INT-008. 초기 가설이 데이터로 뒤집힌 경험 — Claude vs Codex
+
+**질문**: "왜 초기에 Claude를 메인으로 가정했다가 바꿨나요?"  
+**답변 구조**:
+1. 초기 가설: "Claude = 정확도 최고 → 답변 생성, Codex = 속도 → 보조"
+2. 50케이스 × 7메트릭 측정 결과, **정확도 동률 + 거절 정확도 Codex 압승 + 속도 2.4배**
+3. Claude의 Refusal 83% — "도움이 되려는" 성향이 RAG에서는 환각 위험으로 작용
+4. Codex의 Refusal 100% — 지시 추종이 강해 "모르면 모른다"를 정확히 따름
+5. 가설을 뒤집고 Codex를 기본 모델로 확정
+
+**핵심**: "똑똑한 모델 ≠ RAG에 적합한 모델". 데이터로 검증하지 않았으면 잘못된 선택을 했을 것.
+
+---
+
+## INT-009. 평가 하네스 고도화 — 20케이스에서 차이가 안 나던 문제
+
+**질문**: "평가를 어떻게 고도화했나요?"  
+**답변 구조**:
+1. 처음 20케이스(simple docs 2개)에서 양쪽 모두 100% → 차이 식별 불가
+2. **복잡한 문서 3개 추가** (200줄 인사규정, 150줄 아키텍처, 100줄 회의록)
+3. **난이도 유형 확장**: 수치 계산(4), 멀티홉(2), 함정(6), 긴 답변(1) 추가
+4. 50케이스로 확장 후 비로소 Retrieval Hit, Refusal에서 모델 간 차이 발생
+5. 특히 Q48(스톡옵션 함정), Q49(미결 사항 구분)에서 모델 차이 극명
+
+**핵심**: "평가 데이터셋의 품질이 평가 결과의 품질을 결정한다"
