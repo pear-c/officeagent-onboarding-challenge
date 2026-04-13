@@ -73,3 +73,27 @@
 | `.claude/knowledge/decisions/01-llm-sdk-claude-vs-codex.md` | LLM SDK 결정 |
 | `.claude/knowledge/decisions/05-cache-db.md` | 캐시 설계 |
 | `.claude/knowledge/decisions/07-eval-harness.md` | 평가 하네스 설계 |
+
+## 추가 결정 (구현 중 발생)
+
+### D27. 스트리밍 전용 시스템 프롬프트 분리 (2026-04-13)
+
+- **결정**: `SYSTEM_PROMPT_STREAM` 추가. JSON 대신 자연어 한국어 텍스트만 출력 지시
+- **이유**: TS-004 — `SYSTEM_PROMPT`가 JSON 출력을 지시하여 스트리밍 시 원시 JSON이 UI에 표시됨
+- **구현**: `templates.py`에 `SYSTEM_PROMPT`(JSON용) + `SYSTEM_PROMPT_STREAM`(자연어용) 분리
+
+### D28. Codex CLI 실제 플래그 확인 결과 (2026-04-13)
+
+- **결정**: `codex exec --json "프롬프트"` 형태 사용. 별도 모델 지정 불가 (ChatGPT 계정 제한)
+- **이유**: `codex --help` 실행 결과 — `--quiet` 플래그 없음, `--model codex-mini-latest` 미지원
+- **구현**: JSONL 출력 파싱 (`item.completed` → `item.text`), system prompt는 프롬프트에 합성
+
+### D29. LLMProvider에 model_name 프로퍼티 추가 (2026-04-13)
+
+- **결정**: `LLMProvider` ABC에 `@property model_name` 추가, 각 Provider에서 구현
+- **이유**: 리뷰 피드백 — RAGService에서 `self._answer_llm._model` private 속성 직접 접근 (캡슐화 위반)
+
+### D30. get_similar() 동기 유지 (2026-04-13)
+
+- **결정**: `CacheService.get_similar()`를 동기 메서드로 유지
+- **이유**: ChromaStore가 동기 클라이언트(D18). async로 감싸도 실질적 이점 없음. `get_exact()`는 Redis(async)이므로 async인 것이 자연스러움
