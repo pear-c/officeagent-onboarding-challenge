@@ -2,24 +2,61 @@
 
 문서를 업로드하면 텍스트를 분석하고, 사용자 질문에 대해 **문서 근거 기반 답변**을 생성하는 RAG REST API 서버.
 
-## 빠른 시작
+## 사전 요구사항
+
+- **Docker + Docker Compose** (Chroma, Redis 실행용)
+- **Python 3.12+** (앱 실행용)
+- **LLM CLI** (아래 중 하나 이상):
+  - Claude Code CLI: `npm install -g @anthropic-ai/claude-code` + `claude` 로그인 완료
+  - Codex CLI: `npm install -g @openai/codex` + `codex` 로그인 완료
+
+> LLM은 Claude Pro/Max 또는 ChatGPT Pro 구독 기반입니다 (PRD 명시).
+> CLI 로그인이 되어있으면 별도 API 키 없이 동작합니다.
+
+## 빠른 시작 (한 줄 실행)
 
 ```bash
-# 1. 클론
 git clone <repo-url> && cd officeagent-onboarding-challenge
-
-# 2. 실행 (Docker만 있으면 됨)
-docker compose up -d
-
-# 3. 샘플 문서 업로드 (서버 준비될 때까지 자동 대기)
-chmod +x scripts/seed.sh && ./scripts/seed.sh
-
-# 4. 브라우저에서 테스트
-open http://localhost:8000
+chmod +x start.sh && ./start.sh
 ```
 
-> 첫 실행 시 임베딩 모델(bge-m3, 2.3GB) 다운로드로 2~3분 소요됩니다.
-> `docker compose logs -f app`으로 "리소스 초기화 완료" 메시지를 확인하세요.
+이 스크립트가 자동으로:
+1. Chroma + Redis 실행 (Docker)
+2. Python 가상환경 + 의존성 설치
+3. 서버 시작 (임베딩 모델 첫 로딩 시 ~2분)
+4. 샘플 문서 5개 업로드
+
+완료되면 `http://localhost:8000`에서 바로 테스트 가능합니다.
+
+### LLM 설정
+
+`.env`에서 사용할 LLM을 선택합니다 (`start.sh`가 자동 생성):
+
+```env
+# Claude 사용 시 (기본값)
+LLM_ANSWER_PROVIDER=claude
+
+# Codex 사용 시
+LLM_ANSWER_PROVIDER=codex
+```
+
+### 수동 실행 (단계별)
+
+```bash
+# 1. DB 실행
+docker compose up -d chroma redis
+
+# 2. Python 환경
+python -m venv .venv && source .venv/bin/activate
+pip install -e .
+cp .env.example .env
+
+# 3. 서버 실행
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+# 4. (별도 터미널) 샘플 문서 업로드
+chmod +x scripts/seed.sh && ./scripts/seed.sh
+```
 
 ## 데모 시나리오
 
@@ -77,6 +114,7 @@ curl -N -X POST http://localhost:8000/api/v1/query/stream \
 
 ```bash
 # 서버 실행 상태에서 별도 터미널
+source .venv/bin/activate
 python eval/run.py run --provider claude     # Claude 측정 (~12분)
 python eval/run.py run --provider codex      # Codex 측정 (~12분)
 python eval/run.py compare eval/results/*.json   # 비교 표 출력
@@ -92,20 +130,15 @@ python eval/run.py compare eval/results/*.json   # 비교 표 출력
 | [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) | 프롬프트 설계 + Claude vs Codex 비교 분석 |
 | [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | 트러블슈팅 기록 + 면접 포인트 |
 
-## 개발 모드 (Docker 없이)
+## 종료
 
 ```bash
-# DB만 Docker
-docker compose up -d chroma redis
+# 서버 종료 (Ctrl+C 또는)
+kill $(lsof -ti:8000) 2>/dev/null
 
-# Python 환경
-python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev]"
-cp .env.example .env  # 필요 시 수정
+# DB 종료
+docker compose down
 
-# 서버 실행
-uvicorn app.main:app --reload --port 8000
-
-# 테스트
-pytest tests/ -v
+# DB + 데이터 전부 삭제 (초기화)
+docker compose down -v
 ```
