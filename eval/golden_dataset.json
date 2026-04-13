@@ -178,5 +178,288 @@
     "expected_keywords": ["요구사항", "테스트", "보안", "스타일"],
     "answerable": true,
     "difficulty": "edge"
+  },
+
+  {
+    "id": "Q21",
+    "question": "입사 7년차 직원의 연차는 총 며칠인가요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "연차 계산",
+    "expected_keywords": ["18일"],
+    "answerable": true,
+    "difficulty": "computation",
+    "note": "표에서 7~8년 = 18일 확인 필요"
+  },
+  {
+    "id": "Q22",
+    "question": "대리에서 과장으로 승진하려면 최소 몇 년이 걸리나요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "직급 체계 및 승진",
+    "expected_keywords": ["4년"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q23",
+    "question": "발탁 승진의 조건은 무엇인가요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "발탁 승진",
+    "expected_keywords": ["50%", "A 이상", "만장일치"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q24",
+    "question": "기술직과 관리직의 직무급 차이는 얼마인가요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "급여 구성",
+    "expected_keywords": ["30만원", "20만원"],
+    "answerable": true,
+    "difficulty": "computation",
+    "note": "기술직 30만원 - 관리직 20만원 = 10만원 차이 계산"
+  },
+  {
+    "id": "Q25",
+    "question": "휴일에 4시간 초과근무하면 수당은 통상임금의 몇 %인가요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "수당",
+    "expected_keywords": ["200%"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q26",
+    "question": "안식월을 받으려면 몇 년을 근무해야 하나요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "안식월",
+    "expected_keywords": ["10년"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q27",
+    "question": "사원에서 부장까지 최소 몇 년이 걸리나요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "직급 체계",
+    "expected_keywords": ["16년"],
+    "answerable": true,
+    "difficulty": "computation",
+    "note": "사원3 + 대리4 + 과장4 + 차장5 = 16년 계산"
+  },
+  {
+    "id": "Q28",
+    "question": "무단결근 3일 시 어떤 징계를 받나요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "징계",
+    "expected_keywords": ["감봉"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q29",
+    "question": "자녀 대학 등록금은 얼마까지 지원되나요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "학자금 지원",
+    "expected_keywords": ["400만원", "2명"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q30",
+    "question": "주문 생성 시 재고가 부족하면 어떻게 되나요?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "주문 생성 흐름",
+    "expected_keywords": ["REJECTED"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q31",
+    "question": "결제 실패 시 재고는 어떻게 처리되나요?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "주문 생성 흐름",
+    "expected_keywords": ["보상 트랜잭션", "재고 복원"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q32",
+    "question": "서비스 간 분산 트랜잭션은 어떤 패턴을 사용하나요?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "데이터 정합성",
+    "expected_keywords": ["Saga"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q33",
+    "question": "inventory-service의 기술 스택은 무엇인가요?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "핵심 서비스",
+    "expected_keywords": ["Go", "Gin"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q34",
+    "question": "카나리 배포 시 트래픽 증가 단계는?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "CI/CD 파이프라인",
+    "expected_keywords": ["5%", "20%", "50%", "100%"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q35",
+    "question": "배송 시작 후 주문 취소가 가능한가요?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "주문 취소 흐름",
+    "expected_keywords": ["취소 불가", "반품"],
+    "answerable": true,
+    "difficulty": "edge"
+  },
+  {
+    "id": "Q36",
+    "question": "Java 21 마이그레이션 1차 대상 서비스는 무엇인가요?",
+    "expected_source": "meeting-minutes.md",
+    "expected_section": "Java 21 마이그레이션",
+    "expected_keywords": ["order-api"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q37",
+    "question": "order_items 테이블 성능 문제의 해결책은?",
+    "expected_source": "meeting-minutes.md",
+    "expected_section": "데이터베이스 성능 개선",
+    "expected_keywords": ["파티셔닝", "월별"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q38",
+    "question": "보안 감사에서 지적된 PII 문제는 어떤 서비스에서 발생했나요?",
+    "expected_source": "meeting-minutes.md",
+    "expected_section": "보안 감사",
+    "expected_keywords": ["notification-service"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q39",
+    "question": "프론트엔드를 React로 전환하기로 했나요?",
+    "expected_source": "meeting-minutes.md",
+    "expected_section": "프론트엔드 기술 스택",
+    "expected_keywords": ["Vue 3", "기각"],
+    "answerable": true,
+    "difficulty": "edge",
+    "note": "함정 — React는 논의되었지만 기각됨. LLM이 이를 정확히 전달해야 함"
+  },
+
+  {
+    "id": "Q40",
+    "question": "입사 5년차인데 재택근무하면서 교육비를 신청하려면 어떻게 해야 하나요?",
+    "expected_source": "company-policy.txt",
+    "expected_section": "재택근무+교육비",
+    "expected_keywords": ["2회", "15일", "HR팀"],
+    "answerable": true,
+    "difficulty": "multi-hop",
+    "note": "재택근무 정책 + 교육비 신청 절차 두 섹션을 조합해야 함"
+  },
+  {
+    "id": "Q41",
+    "question": "서비스 간 통신 인증 문제를 어떻게 해결하기로 했고, 일정은?",
+    "expected_source": "meeting-minutes.md",
+    "expected_section": "보안 감사",
+    "expected_keywords": ["Istio", "mTLS", "4월", "5월"],
+    "answerable": true,
+    "difficulty": "multi-hop",
+    "note": "보안 지적 + 결정사항 + 일정을 종합해야 함"
+  },
+  {
+    "id": "Q42",
+    "question": "주문 처리 시스템에서 중복 결제를 방지하는 방법은?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "데이터 정합성",
+    "expected_keywords": ["멱등성"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+  {
+    "id": "Q43",
+    "question": "근속 20년 직원이 받을 수 있는 총 안식월은 몇 개월인가요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "안식월",
+    "expected_keywords": ["2개월"],
+    "answerable": true,
+    "difficulty": "computation",
+    "note": "10년 1개월 + 20년 추가 1개월 = 총 2개월 계산"
+  },
+  {
+    "id": "Q44",
+    "question": "OrderFlow의 API 응답시간 p95 목표와 현재 수치는?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "성능 기준",
+    "expected_keywords": ["200ms", "180ms"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q45",
+    "question": "징계위원회 개최 전 피징계자에게 얼마 전에 통보해야 하나요?",
+    "expected_source": "hr-policy-detailed.md",
+    "expected_section": "징계 절차",
+    "expected_keywords": ["7일"],
+    "answerable": true,
+    "difficulty": "medium"
+  },
+
+  {
+    "id": "Q46",
+    "question": "회사에서 사용하는 쿠버네티스 버전은?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "인프라 구성",
+    "expected_keywords": ["1.29"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q47",
+    "question": "마이크로서비스 간 비동기 통신에 어떤 메시지 브로커를 사용하나요?",
+    "expected_source": "tech-architecture.md",
+    "expected_section": "인프라 서비스",
+    "expected_keywords": ["RabbitMQ"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+  {
+    "id": "Q48",
+    "question": "회사 주식 스톡옵션 정책은 어떻게 되나요?",
+    "expected_source": null,
+    "expected_section": null,
+    "expected_keywords": [],
+    "answerable": false,
+    "difficulty": "medium",
+    "note": "함정 — 급여/복리후생 문서가 있지만 스톡옵션은 언급 없음"
+  },
+  {
+    "id": "Q49",
+    "question": "search-service를 Java로 전환하기로 했나요?",
+    "expected_source": "meeting-minutes.md",
+    "expected_section": "Java 21 마이그레이션",
+    "expected_keywords": ["다음 분기", "재논의"],
+    "answerable": true,
+    "difficulty": "edge",
+    "note": "미결 사항 — 전환이 결정되지 않았음을 정확히 전달해야 함"
+  },
+  {
+    "id": "Q50",
+    "question": "신입 개발자가 첫 달에 알아야 할 핵심 정책들을 정리해주세요.",
+    "expected_source": "company-policy.txt",
+    "expected_section": "복합",
+    "expected_keywords": ["교육비", "재택근무", "연차"],
+    "answerable": true,
+    "difficulty": "long-answer",
+    "note": "여러 섹션을 종합한 긴 답변 — 요약 능력 테스트"
   }
 ]
