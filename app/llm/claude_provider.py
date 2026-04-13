@@ -69,9 +69,6 @@ class ClaudeProvider(LLMProvider):
                 if isinstance(msg, AssistantMessage):
                     result_text = self._extract_text(msg)
                 elif isinstance(msg, ResultMessage):
-                    if msg.is_error:
-                        errors = msg.errors or []
-                        raise RuntimeError(f"Claude 응답 오류: {'; '.join(errors)}")
                     # structured_output이 있으면 우선 사용
                     if msg.structured_output is not None:
                         result_text = (
@@ -81,6 +78,12 @@ class ClaudeProvider(LLMProvider):
                         )
                     elif msg.result:
                         result_text = msg.result
+
+                    # max_turns 도달은 정상 동작 (의도적으로 1턴만 요청)
+                    is_max_turns = msg.stop_reason and "max" in msg.stop_reason.lower()
+                    if msg.is_error and not is_max_turns and not result_text:
+                        errors = msg.errors or []
+                        raise RuntimeError(f"Claude 응답 오류: {'; '.join(errors)}")
 
             latency_ms = int((time.time() - start) * 1000)
             logger.info("Claude generate 완료: %d자, %dms", len(result_text), latency_ms)
@@ -114,7 +117,9 @@ class ClaudeProvider(LLMProvider):
                     if text:
                         yield text
                 elif isinstance(msg, ResultMessage):
-                    if msg.is_error:
+                    # max_turns 도달은 정상 동작
+                    is_max_turns = msg.stop_reason and "max" in msg.stop_reason.lower()
+                    if msg.is_error and not is_max_turns:
                         errors = msg.errors or []
                         raise RuntimeError(f"Claude 스트리밍 오류: {'; '.join(errors)}")
 
