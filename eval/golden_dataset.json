@@ -182,284 +182,288 @@
 
   {
     "id": "Q21",
-    "question": "입사 7년차 직원의 연차는 총 며칠인가요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "연차 계산",
-    "expected_keywords": ["18일"],
+    "question": "기밀(Confidential) 등급 문서를 외부에 전송하려면 누구의 승인이 필요한가요?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "등급별 접근 권한",
+    "expected_keywords": ["보안팀"],
     "answerable": true,
-    "difficulty": "computation",
-    "note": "표에서 7~8년 = 18일 확인 필요"
+    "difficulty": "easy",
+    "note": "표에서 C 등급의 외부 전송 열 확인"
   },
   {
     "id": "Q22",
-    "question": "대리에서 과장으로 승진하려면 최소 몇 년이 걸리나요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "직급 체계 및 승진",
-    "expected_keywords": ["4년"],
+    "question": "비밀번호 최소 길이는 몇 자인가요? 관리자 계정은?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "비밀번호 규칙",
+    "expected_keywords": ["14자", "20자"],
     "answerable": true,
-    "difficulty": "medium"
+    "difficulty": "easy"
   },
   {
     "id": "Q23",
-    "question": "발탁 승진의 조건은 무엇인가요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "발탁 승진",
-    "expected_keywords": ["50%", "A 이상", "만장일치"],
+    "question": "프로덕션 DB에 긴급 접근(Break Glass) 시 최대 접근 시간과 사후 보고 기한은?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "특수 접근",
+    "expected_keywords": ["2시간", "48시간"],
     "answerable": true,
     "difficulty": "medium"
   },
   {
     "id": "Q24",
-    "question": "기술직과 관리직의 직무급 차이는 얼마인가요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "급여 구성",
-    "expected_keywords": ["30만원", "20만원"],
+    "question": "CVSS 9.0 이상 취약점 발견 시 패치 기한은?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "오픈소스 관리",
+    "expected_keywords": ["24시간"],
     "answerable": true,
-    "difficulty": "computation",
-    "note": "기술직 30만원 - 관리직 20만원 = 10만원 차이 계산"
+    "difficulty": "easy"
   },
   {
     "id": "Q25",
-    "question": "휴일에 4시간 초과근무하면 수당은 통상임금의 몇 %인가요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "수당",
-    "expected_keywords": ["200%"],
+    "question": "P1 인시던트 발생 시 CTO에게 보고하기까지 최대 몇 분인가요?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "에스컬레이션 체계",
+    "expected_keywords": ["30분"],
     "answerable": true,
-    "difficulty": "medium"
+    "difficulty": "medium",
+    "note": "코드블록에서 P1 에스컬레이션 체인 확인: 담당→팀장(15분)→CTO(30분)"
   },
   {
     "id": "Q26",
-    "question": "안식월을 받으려면 몇 년을 근무해야 하나요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "안식월",
-    "expected_keywords": ["10년"],
+    "question": "개인정보 유출 시 개인정보보호위원회 신고 기한은?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "개인정보 유출 대응",
+    "expected_keywords": ["72시간"],
     "answerable": true,
     "difficulty": "easy"
   },
   {
     "id": "Q27",
-    "question": "사원에서 부장까지 최소 몇 년이 걸리나요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "직급 체계",
-    "expected_keywords": ["16년"],
+    "question": "Super Admin 권한은 얼마나 자주 검토하나요?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "권한 검토 주기",
+    "expected_keywords": ["월 1회", "CISO"],
     "answerable": true,
-    "difficulty": "computation",
-    "note": "사원3 + 대리4 + 과장4 + 차장5 = 16년 계산"
+    "difficulty": "easy"
   },
   {
     "id": "Q28",
-    "question": "무단결근 3일 시 어떤 징계를 받나요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "징계",
-    "expected_keywords": ["감봉"],
+    "question": "정보보안 교육을 이수하지 않으면 어떤 조치를 받나요?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "교육",
+    "expected_keywords": ["접근 차단"],
     "answerable": true,
-    "difficulty": "easy"
+    "difficulty": "medium"
   },
   {
     "id": "Q29",
-    "question": "자녀 대학 등록금은 얼마까지 지원되나요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "학자금 지원",
-    "expected_keywords": ["400만원", "2명"],
+    "question": "프로덕션 서버 접속 시 MFA 방식은 무엇인가요?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "다중 인증",
+    "expected_keywords": ["하드웨어 키", "YubiKey"],
     "answerable": true,
-    "difficulty": "medium"
+    "difficulty": "easy",
+    "note": "MFA 요건 표에서 프로덕션 서버 행 확인"
   },
   {
     "id": "Q30",
-    "question": "주문 생성 시 재고가 부족하면 어떻게 되나요?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "주문 생성 흐름",
-    "expected_keywords": ["REJECTED"],
+    "question": "P1 인시던트의 재발 방지 대책 이행 기한과 P2의 이행 기한은 각각?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "사후 분석",
+    "expected_keywords": ["30일", "60일"],
     "answerable": true,
     "difficulty": "medium"
   },
+
   {
     "id": "Q31",
-    "question": "결제 실패 시 재고는 어떻게 처리되나요?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "주문 생성 흐름",
-    "expected_keywords": ["보상 트랜잭션", "재고 복원"],
+    "question": "2,000만원짜리 서버를 구매하려면 누구의 승인이 필요한가요?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "구매 승인 권한",
+    "expected_keywords": ["CFO"],
     "answerable": true,
-    "difficulty": "medium"
+    "difficulty": "medium",
+    "note": "2,000만원 이상 5,000만원 미만은 CFO 승인 + IT 장비는 금액 무관 CFO 필수"
   },
   {
     "id": "Q32",
-    "question": "서비스 간 분산 트랜잭션은 어떤 패턴을 사용하나요?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "데이터 정합성",
-    "expected_keywords": ["Saga"],
+    "question": "해외 출장 시 뉴욕 숙박비 상한은 얼마인가요?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "해외 출장",
+    "expected_keywords": ["$300"],
     "answerable": true,
-    "difficulty": "easy"
+    "difficulty": "medium",
+    "note": "미주/유럽 $250이지만 뉴욕/런던/파리는 $300 예외"
   },
   {
     "id": "Q33",
-    "question": "inventory-service의 기술 스택은 무엇인가요?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "핵심 서비스",
-    "expected_keywords": ["Go", "Gin"],
+    "question": "법인카드를 개인 용도로 실수로 사용했을 때 환급 기한은?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "법인카드 사용 규칙",
+    "expected_keywords": ["3영업일"],
     "answerable": true,
     "difficulty": "easy"
   },
   {
     "id": "Q34",
-    "question": "카나리 배포 시 트래픽 증가 단계는?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "CI/CD 파이프라인",
-    "expected_keywords": ["5%", "20%", "50%", "100%"],
+    "question": "긴급 구매의 금액 한도와 사후 등록 기한은?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "긴급 구매",
+    "expected_keywords": ["100만원", "48시간"],
     "answerable": true,
     "difficulty": "medium"
   },
   {
     "id": "Q35",
-    "question": "배송 시작 후 주문 취소가 가능한가요?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "주문 취소 흐름",
-    "expected_keywords": ["취소 불가", "반품"],
+    "question": "야근 식대 한도는 얼마이고, 월 최대 몇 회까지 청구 가능한가요?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "식대",
+    "expected_keywords": ["1만 5천원", "10회"],
     "answerable": true,
-    "difficulty": "edge"
+    "difficulty": "easy"
   },
   {
     "id": "Q36",
-    "question": "Java 21 마이그레이션 1차 대상 서비스는 무엇인가요?",
-    "expected_source": "meeting-minutes.md",
-    "expected_section": "Java 21 마이그레이션",
-    "expected_keywords": ["order-api"],
+    "question": "500만원 이상 구매 시 필수로 첨부해야 하는 서류는?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "구매 요청",
+    "expected_keywords": ["3개", "비교 견적서"],
     "answerable": true,
     "difficulty": "easy"
   },
   {
     "id": "Q37",
-    "question": "order_items 테이블 성능 문제의 해결책은?",
-    "expected_source": "meeting-minutes.md",
-    "expected_section": "데이터베이스 성능 개선",
-    "expected_keywords": ["파티셔닝", "월별"],
+    "question": "법인카드 부정 사용 2차 적발 시 어떤 처분을 받나요?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "법인카드 부정 사용",
+    "expected_keywords": ["감봉 1개월", "3개월 정지"],
     "answerable": true,
     "difficulty": "medium"
   },
   {
     "id": "Q38",
-    "question": "보안 감사에서 지적된 PII 문제는 어떤 서비스에서 발생했나요?",
-    "expected_source": "meeting-minutes.md",
-    "expected_section": "보안 감사",
-    "expected_keywords": ["notification-service"],
+    "question": "IT 장비 폐기 시 데이터 삭제 기준은 무엇인가요?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "자산 폐기",
+    "expected_keywords": ["NIST 800-88", "보안팀 입회"],
     "answerable": true,
     "difficulty": "medium"
   },
   {
     "id": "Q39",
-    "question": "프론트엔드를 React로 전환하기로 했나요?",
-    "expected_source": "meeting-minutes.md",
-    "expected_section": "프론트엔드 기술 스택",
-    "expected_keywords": ["Vue 3", "기각"],
-    "answerable": true,
-    "difficulty": "edge",
-    "note": "함정 — React는 논의되었지만 기각됨. LLM이 이를 정확히 전달해야 함"
-  },
-
-  {
-    "id": "Q40",
-    "question": "입사 5년차인데 재택근무하면서 교육비를 신청하려면 어떻게 해야 하나요?",
-    "expected_source": "company-policy.txt",
-    "expected_section": "재택근무+교육비",
-    "expected_keywords": ["2회", "15일", "HR팀"],
-    "answerable": true,
-    "difficulty": "multi-hop",
-    "note": "재택근무 정책 + 교육비 신청 절차 두 섹션을 조합해야 함"
-  },
-  {
-    "id": "Q41",
-    "question": "서비스 간 통신 인증 문제를 어떻게 해결하기로 했고, 일정은?",
-    "expected_source": "meeting-minutes.md",
-    "expected_section": "보안 감사",
-    "expected_keywords": ["Istio", "mTLS", "4월", "5월"],
-    "answerable": true,
-    "difficulty": "multi-hop",
-    "note": "보안 지적 + 결정사항 + 일정을 종합해야 함"
-  },
-  {
-    "id": "Q42",
-    "question": "주문 처리 시스템에서 중복 결제를 방지하는 방법은?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "데이터 정합성",
-    "expected_keywords": ["멱등성"],
-    "answerable": true,
-    "difficulty": "medium"
-  },
-  {
-    "id": "Q43",
-    "question": "근속 20년 직원이 받을 수 있는 총 안식월은 몇 개월인가요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "안식월",
-    "expected_keywords": ["2개월"],
-    "answerable": true,
-    "difficulty": "computation",
-    "note": "10년 1개월 + 20년 추가 1개월 = 총 2개월 계산"
-  },
-  {
-    "id": "Q44",
-    "question": "OrderFlow의 API 응답시간 p95 목표와 현재 수치는?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "성능 기준",
-    "expected_keywords": ["200ms", "180ms"],
+    "question": "동남아 출장 시 일비와 숙박비 상한은?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "해외 출장",
+    "expected_keywords": ["$70", "$150"],
     "answerable": true,
     "difficulty": "easy"
   },
   {
-    "id": "Q45",
-    "question": "징계위원회 개최 전 피징계자에게 얼마 전에 통보해야 하나요?",
-    "expected_source": "hr-policy-detailed.md",
-    "expected_section": "징계 절차",
-    "expected_keywords": ["7일"],
+    "id": "Q40",
+    "question": "자차 출장 시 km당 지원 금액은?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "교통비",
+    "expected_keywords": ["300원"],
+    "answerable": true,
+    "difficulty": "easy"
+  },
+
+  {
+    "id": "Q41",
+    "question": "예방적 품질관리 진단 영역은 몇 개이며 무엇인가요?",
+    "expected_source": "public-data-quality-guide.pdf",
+    "expected_section": "진단 영역",
+    "expected_keywords": ["4개", "데이터 표준", "데이터 구조", "데이터 값", "데이터 관리체계"],
+    "answerable": true,
+    "difficulty": "medium",
+    "note": "PDF 표 추출 테스트 — 4개 영역을 표에서 정확히 추출해야 함"
+  },
+  {
+    "id": "Q42",
+    "question": "진단항목과 진단기준은 각각 몇 개인가요?",
+    "expected_source": "public-data-quality-guide.pdf",
+    "expected_section": "진단 영역 및 항목",
+    "expected_keywords": ["10개", "20개"],
+    "answerable": true,
+    "difficulty": "easy",
+    "note": "PDF 수치 추출 정확도 테스트"
+  },
+  {
+    "id": "Q43",
+    "question": "예방적 품질관리의 법적 근거는 무엇인가요?",
+    "expected_source": "public-data-quality-guide.pdf",
+    "expected_section": "목적 및 근거",
+    "expected_keywords": ["공공데이터", "제22조", "품질관리"],
     "answerable": true,
     "difficulty": "medium"
+  },
+  {
+    "id": "Q44",
+    "question": "시스템 구축은 몇 단계로 수행되며 각 단계는?",
+    "expected_source": "public-data-quality-guide.pdf",
+    "expected_section": "단계별 품질관리",
+    "expected_keywords": ["5단계", "계획", "발주", "설계", "개발", "완료"],
+    "answerable": true,
+    "difficulty": "medium",
+    "note": "PDF 레이아웃 파싱 테스트 — 복잡한 표/다이어그램에서 단계 추출"
+  },
+  {
+    "id": "Q45",
+    "question": "데이터 이관 검증 시 컨설팅사업에서 도출해야 할 요건은?",
+    "expected_source": "public-data-quality-guide.pdf",
+    "expected_section": "이관 데이터 검증",
+    "expected_keywords": ["조직체계", "절차", "우선순위"],
+    "answerable": true,
+    "difficulty": "hard",
+    "note": "PDF 깊은 섹션 검색 — 진단항목 3.2의 상세 내용"
   },
 
   {
     "id": "Q46",
-    "question": "회사에서 사용하는 쿠버네티스 버전은?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "인프라 구성",
-    "expected_keywords": ["1.29"],
+    "question": "극비 문서의 보존 기간과 기밀 문서의 보존 기간 차이는?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "분류 등급",
+    "expected_keywords": ["영구", "5년"],
     "answerable": true,
-    "difficulty": "easy"
+    "difficulty": "computation",
+    "note": "표에서 두 등급의 보존 기간을 비교해야 함"
   },
   {
     "id": "Q47",
-    "question": "마이크로서비스 간 비동기 통신에 어떤 메시지 브로커를 사용하나요?",
-    "expected_source": "tech-architecture.md",
-    "expected_section": "인프라 서비스",
-    "expected_keywords": ["RabbitMQ"],
+    "question": "해외 출장 정산 기한을 넘기면 어떻게 되나요?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "출장 정산",
+    "expected_keywords": ["2주", "정산 거부"],
     "answerable": true,
-    "difficulty": "easy"
+    "difficulty": "medium"
   },
   {
     "id": "Q48",
-    "question": "회사 주식 스톡옵션 정책은 어떻게 되나요?",
+    "question": "회사의 클라우드 인프라 비용 절감 방안은 무엇인가요?",
     "expected_source": null,
     "expected_section": null,
     "expected_keywords": [],
     "answerable": false,
     "difficulty": "medium",
-    "note": "함정 — 급여/복리후생 문서가 있지만 스톡옵션은 언급 없음"
+    "note": "함정 — IT 보안/구매 규정은 있지만 클라우드 비용 최적화는 언급 없음"
   },
   {
     "id": "Q49",
-    "question": "search-service를 Java로 전환하기로 했나요?",
-    "expected_source": "meeting-minutes.md",
-    "expected_section": "Java 21 마이그레이션",
-    "expected_keywords": ["다음 분기", "재논의"],
+    "question": "재택근무 중 VPN 없이 사내 시스템에 접속해도 되나요?",
+    "expected_source": "it-security-compliance.md",
+    "expected_section": "외부 접속",
+    "expected_keywords": ["VPN 필수", "금지"],
     "answerable": true,
     "difficulty": "edge",
-    "note": "미결 사항 — 전환이 결정되지 않았음을 정확히 전달해야 함"
+    "note": "함정 — 재택근무 가능 여부가 아니라 VPN 필수 정책 확인"
   },
   {
     "id": "Q50",
-    "question": "신입 개발자가 첫 달에 알아야 할 핵심 정책들을 정리해주세요.",
-    "expected_source": "company-policy.txt",
-    "expected_section": "복합",
-    "expected_keywords": ["교육비", "재택근무", "연차"],
+    "question": "500만원짜리 소프트웨어를 긴급 구매할 수 있나요?",
+    "expected_source": "procurement-expense-policy.txt",
+    "expected_section": "긴급 구매",
+    "expected_keywords": ["100만원", "불가"],
     "answerable": true,
-    "difficulty": "long-answer",
-    "note": "여러 섹션을 종합한 긴 답변 — 요약 능력 테스트"
+    "difficulty": "edge",
+    "note": "함정 — 긴급 구매는 100만원 이하 한정. 소프트웨어는 CFO 승인 필수. 두 조건 모두 불충족"
   }
 ]

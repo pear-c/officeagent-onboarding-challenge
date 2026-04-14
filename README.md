@@ -24,9 +24,10 @@ chmod +x start.sh && ./start.sh
 1. Chroma + Redis 실행 (Docker)
 2. Python 가상환경 + 의존성 설치
 3. 서버 시작 (임베딩 모델 첫 로딩 시 ~2분)
-4. 샘플 문서 5개 업로드
+4. 샘플 문서 2개 업로드 (company-policy.txt, development-guide.md)
 
 완료되면 `http://localhost:8000`에서 바로 테스트 가능합니다.
+추가 문서(PDF, MD, TXT)는 웹 UI에서 드래그 앤 드롭으로 업로드하세요.
 
 ### LLM 설정
 

@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document Q&A</title>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -170,7 +171,6 @@
             font-size: 14px;
             line-height: 1.7;
             min-height: 60px;
-            white-space: pre-wrap;
             display: none;
         }
 
@@ -241,7 +241,38 @@
 
         @keyframes blink { 50% { opacity: 0; } }
 
-        .answer-text { color: #333; }
+        .answer-text {
+            color: #333;
+        }
+        .answer-text p { margin: 0 0 8px 0; }
+        .answer-text p:last-child { margin-bottom: 0; }
+        .answer-text ul, .answer-text ol { margin: 4px 0 8px 20px; }
+        .answer-text li { margin-bottom: 2px; }
+        .answer-text strong { font-weight: 600; }
+        .answer-text h1, .answer-text h2, .answer-text h3 {
+            margin: 12px 0 6px 0;
+            font-weight: 600;
+        }
+        .answer-text h1 { font-size: 16px; }
+        .answer-text h2 { font-size: 15px; }
+        .answer-text h3 { font-size: 14px; }
+        .answer-text table {
+            border-collapse: collapse;
+            margin: 8px 0;
+            font-size: 13px;
+        }
+        .answer-text th, .answer-text td {
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            text-align: left;
+        }
+        .answer-text th { background: #f0f0f0; font-weight: 600; }
+        .answer-text code {
+            background: #f0f0f0;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 13px;
+        }
 
         .answer-meta {
             margin-top: 12px;
@@ -554,7 +585,7 @@
 
                             } else if (parsed.type === 'token') {
                                 fullAnswer += parsed.content || '';
-                                answerText.innerHTML = esc(fullAnswer) + '<span class="cursor"></span>';
+                                answerText.innerHTML = renderMd(fullAnswer) + '<span class="cursor"></span>';
 
                             } else if (parsed.type === 'done') {
                                 meta = parsed;
@@ -565,13 +596,13 @@
                             }
                         } catch {
                             fullAnswer += data;
-                            answerText.innerHTML = esc(fullAnswer) + '<span class="cursor"></span>';
+                            answerText.innerHTML = renderMd(fullAnswer) + '<span class="cursor"></span>';
                         }
                     }
                 }
 
                 // 완료 처리
-                answerText.textContent = fullAnswer;
+                answerText.innerHTML = renderMd(fullAnswer);
                 setStep('stepDone');
                 hideStreamUI();
 
@@ -596,6 +627,13 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function renderMd(text) {
+            if (typeof marked !== 'undefined') {
+                return marked.parse(text, { breaks: true });
+            }
+            return esc(text);
         }
 
         // ── 초기 로드 ──

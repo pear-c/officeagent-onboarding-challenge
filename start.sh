@@ -43,16 +43,20 @@ for i in $(seq 1 90); do
 done
 echo "      서버 준비 완료"
 
-# 5. 샘플 문서 업로드
+# 5. 샘플 문서 업로드 (평가자 제공 파일 2개)
 echo "[4/4] 샘플 문서 업로드..."
-for file in sample-docs/*; do
-    filename=$(basename "$file")
-    result=$(curl -sf -X POST http://localhost:8000/api/v1/documents -F "file=@$file" 2>/dev/null || echo "")
-    if [ -n "$result" ]; then
-        chunks=$(echo "$result" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['chunk_count'])" 2>/dev/null || echo "?")
-        echo "      $filename (${chunks}개 청크)"
+SEED_FILES=("sample-docs/company-policy.txt" "sample-docs/development-guide.md")
+for file in "${SEED_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        filename=$(basename "$file")
+        result=$(curl -sf -X POST http://localhost:8000/api/v1/documents -F "file=@$file" 2>/dev/null || echo "")
+        if [ -n "$result" ]; then
+            chunks=$(echo "$result" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['chunk_count'])" 2>/dev/null || echo "?")
+            echo "      $filename (${chunks}개 청크)"
+        fi
     fi
 done
+echo "      추가 문서는 웹 UI(http://localhost:8000)에서 직접 업로드하세요."
 
 echo ""
 echo "=== 준비 완료 ==="

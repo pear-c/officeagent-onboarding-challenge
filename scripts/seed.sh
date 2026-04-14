@@ -25,18 +25,24 @@ done
 
 echo ""
 
-# 샘플 문서 업로드
-for file in sample-docs/*; do
-    filename=$(basename "$file")
-    echo -n "업로드: $filename ... "
-    result=$(curl -sf -X POST "$API_URL/api/v1/documents" -F "file=@$file" 2>/dev/null || echo "")
-    if [ -n "$result" ]; then
-        chunks=$(echo "$result" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['chunk_count'])" 2>/dev/null || echo "?")
-        echo "완료 (${chunks}개 청크)"
-    else
-        echo "실패"
+# 샘플 문서 업로드 (평가자 제공 파일 2개)
+SEED_FILES=("sample-docs/company-policy.txt" "sample-docs/development-guide.md")
+for file in "${SEED_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        filename=$(basename "$file")
+        echo -n "업로드: $filename ... "
+        result=$(curl -sf -X POST "$API_URL/api/v1/documents" -F "file=@$file" 2>/dev/null || echo "")
+        if [ -n "$result" ]; then
+            chunks=$(echo "$result" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['chunk_count'])" 2>/dev/null || echo "?")
+            echo "완료 (${chunks}개 청크)"
+        else
+            echo "실패"
+        fi
     fi
 done
+echo ""
+echo "추가 문서는 웹 UI 또는 API로 직접 업로드하세요."
+echo "  curl -X POST $API_URL/api/v1/documents -F 'file=@sample-docs/파일명'"
 
 echo ""
 echo "=== 업로드 완료 ==="

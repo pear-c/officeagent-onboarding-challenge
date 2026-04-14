@@ -242,3 +242,52 @@ is_max_turns = any("maximum number of turns" in e.lower() for e in errors)
 5. 특히 Q48(스톡옵션 함정), Q49(미결 사항 구분)에서 모델 차이 극명
 
 **핵심**: "평가 데이터셋의 품질이 평가 결과의 품질을 결정한다"
+
+---
+
+## INT-010. PDF 추출 전략 — LlamaParse vs pypdf 트레이드오프
+
+**질문**: "PDF 추출을 왜 pypdf로 했나요? LlamaParse 같은 고급 파서는 검토 안 했나요?"  
+**답변 구조**:
+1. **검토함**. LlamaParse(PDF→Markdown 변환)를 실제 테스트까지 진행
+2. LlamaParse의 강점: 표/헤더/목록 구조를 마크다운으로 변환 → 기존 마크다운 인식 청킹 재활용 가능
+3. **그러나 이 과제에서는 부적합**:
+
+| 제약 | LlamaParse | pypdf |
+|------|-----------|-------|
+| 실행 방식 | API Key 발급 + `.env` 설정 필요 | `docker compose up` 한 줄로 끝 |
+| 데이터 전송 | PDF가 외부 클라우드 서버로 전송 | 완전 로컬 처리 |
+| 의존성 | `llama-parse` 패키지 + LlamaCloud 가입 | `pypdf` (이미 포함, MIT) |
+| 대상 PDF 특성 | 복잡한 레이아웃/표/이미지에 최적 | 순수 텍스트 PDF에 충분 |
+
+4. **핵심 트레이드오프**: 서버 배포 환경이라면 LlamaParse를 선택했겠지만, PRD의 "한 줄 실행 가능" 요구사항과 평가자의 환경 구성 부담을 고려하여 pypdf 유지를 결정
+5. 대신 **pypdf + 경량 마크다운 변환 후처리**로 section 메타데이터 보존 — 외부 의존성 없이 마크다운 인식 청킹 재활용
+
+### 실험 결과 (Before/After)
+
+> LlamaParse 실험은 별도 브랜치(`experiment/llamaparse-comparison`)에서 진행. 본 코드에는 미반영.
+
+```
+[Before — pypdf + 재귀 분할]
+- 추출 방식: pypdf PdfReader.extract_text()
+- 청크 수: (측정 예정)
+- section 메타데이터: "" (빈 문자열, 구조 정보 없음)
+- 표 보존: 텍스트만 (셀 구분 유실)
+- 외부 의존성: 없음
+
+[After — LlamaParse + 마크다운 청킹]
+- 추출 방식: LlamaParse API (PDF→Markdown)
+- 청크 수: (측정 예정)
+- section 메타데이터: 헤더 경로 보존 (예: "1. 비밀번호 정책")
+- 표 보존: 마크다운 테이블로 변환
+- 외부 의존성: LLAMA_CLOUD_API_KEY 필요
+
+[최종 선택 — pypdf + 경량 마크다운 변환]
+- 추출 방식: pypdf + 번호 헤더 정규식 변환
+- 청크 수: (측정 예정)
+- section 메타데이터: 번호 헤더 보존 (예: "1. 비밀번호 정책")
+- 표 보존: 텍스트만 (현재 PDF에 표 없음)
+- 외부 의존성: 없음
+```
+
+**핵심**: "서버 배포라면 LlamaParse, Docker 한 줄 실행이라면 pypdf — 환경 제약에 맞는 선택을 데이터로 검증했다"
