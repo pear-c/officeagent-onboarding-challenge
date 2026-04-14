@@ -99,12 +99,12 @@ curl -N -X POST http://localhost:8000/api/v1/query/stream \
 | 임베딩 | BAAI/bge-m3 (sentence-transformers) |
 | 벡터 DB | Chroma |
 | 캐시 | Redis 7 |
-| LLM (기본) | Codex (OpenAI, codex CLI) |
-| LLM (fallback) | Claude Sonnet 4.6 (claude-agent-sdk) |
+| LLM (기본) | Claude Sonnet 4.6 (claude-agent-sdk) |
+| LLM (대안) | Codex (OpenAI, codex CLI) |
 | 컨테이너 | Docker Compose |
 
-> LLM 역할 분할은 50케이스 평가 하네스 측정 결과로 확정.
-> 자세한 내용: [PROMPT_DESIGN.md](./PROMPT_DESIGN.md)
+> LLM 선택: 자동 평가(50케이스) + UI 비교로 Claude를 기본 모델로 확정.
+> 자세한 내용: [ARCHITECTURE.md](./ARCHITECTURE.md) 3.6절
 
 ## API 엔드포인트
 
@@ -133,9 +133,9 @@ python eval/run.py compare eval/results/*.json   # 비교 표 출력
 
 | 문서 | 내용 |
 |------|------|
-| [ARCHITECTURE.md](./ARCHITECTURE.md) | 시스템 아키텍처 + 기술 선택 근거 + 측정 결과 |
-| [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) | 프롬프트 설계 + Claude vs Codex 비교 분석 |
-| [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | 트러블슈팅 기록 + 면접 포인트 |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | 시스템 아키텍처 + 기술 선택 근거 + LLM 비교 + 평가 하네스 |
+| [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) | 프롬프트 설계 (시스템 프롬프트, 스트리밍 분리, 튜닝 히스토리) |
+| [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | 트러블슈팅 기록 + 면접 포인트 (10개) |
 
 ## 종료
 

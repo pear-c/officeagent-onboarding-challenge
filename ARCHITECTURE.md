@@ -23,8 +23,8 @@
 │    → LLM 호출 → 캐시 저장 → 응답 (JSON/SSE)    │
 │                                                 │
 │  LLMProvider (추상화)                           │
-│    ├─ CodexProvider (기본 답변 — 측정 결과)     │
-│    └─ ClaudeProvider (fallback)                │
+│    ├─ ClaudeProvider (기본 답변 — UX 품질)     │
+│    └─ CodexProvider (fallback/속도 우선)       │
 └──────────┬──────────────┬───────────────────────┘
            │              │
      [Chroma DB]    [Redis 7]
@@ -53,8 +53,8 @@
 | 임베딩 모델 | BAAI/bge-m3 (sentence-transformers) | - |
 | 벡터 DB | Chroma | - |
 | 캐시 DB | Redis | 7 |
-| LLM (기본 답변) | Codex (@openai/codex) | - |
-| LLM (fallback) | Claude Sonnet 4.6 (claude-agent-sdk) | - |
+| LLM (기본 답변) | Claude Sonnet 4.6 (claude-agent-sdk) | - |
+| LLM (대안) | Codex (@openai/codex) | - |
 | 컨테이너 | Docker Compose | - |
 
 ---
@@ -159,16 +159,9 @@
 
 **선택 이유**: 두 SDK를 모두 활용하되, 역할에 따라 최적 모델을 배치.
 
-**초기 가설**: Claude=답변(정확도), Codex=보조(속도). → **측정 결과 가설 뒤집힘.**
-
-| 역할 | 모델 | 이유 |
-|------|------|------|
-| **기본 답변** | **Codex** | 거절 정확도 100%, 속도 2.4배, 키워드 정확도 동률 |
-| fallback | Claude Sonnet 4.6 | Retrieval/Citation +2.27%p 우위 |
-
 **`LLMProvider` 추상화**: 인터페이스 1개 + 어댑터 2개로 1줄 수정으로 모델 swap 가능.
 
-**모델 비교 측정 결과** (50케이스, 문서 5개):
+#### 자동 평가 결과 (50케이스)
 
 | 메트릭 | Claude Sonnet 4.6 | Codex | 승자 |
 |--------|-------------------|-------|------|
@@ -180,9 +173,28 @@
 | Latency p50 | 10,773ms | **4,516ms** | **Codex (2.4x)** |
 | Latency p95 | 16,892ms | **10,557ms** | **Codex (1.6x)** |
 
-**핵심 발견**: Claude의 "도움이 되려는" 성향이 RAG 거절 시나리오에서 환각 위험. Codex의 지시 추종이 이 사용 사례에 적합.
+자동 평가 메트릭만 보면 Codex가 우세하다 (거절 정확도 100%, 속도 2.4배).
 
-> 자세한 분석은 [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 참조.
+#### UI 비교 → Claude 최종 선택
+
+그러나 **실제 UI에서 동일 질문 5개를 양쪽으로 비교**한 결과, 정답률이 동일한 상황에서 사용자 체감 품질이 달랐다:
+
+| 관점 | Claude | Codex |
+|------|--------|-------|
+| 답변 구조 | 번호/불릿/볼드 마크다운 구조화 | 1~2줄 평문 |
+| 정보량 | 부가 설명 + 관련 맥락까지 제공 | 핵심 키워드만 |
+| 투명성 | "청크 잘려있어 원문 확인 권장" 한계 고지 | 없음 |
+| UX 체감 | 친절한 상담원 | 검색 엔진 결과 |
+
+**최종 결정**: 이 제품은 "문서 Q&A 서비스"이므로 사용자가 답변을 읽고 이해해야 한다. 자동 평가 메트릭은 최소 기준선(정답률, 거절)을 보장하는 도구이고, **정답률이 동일한 상황에서는 답변의 구조화·가독성·투명성이 사용자 경험을 결정**한다. Claude를 기본 모델로 선택.
+
+| 역할 | 모델 | 근거 |
+|------|------|------|
+| **기본 답변** | **Claude** | 답변 구조화, 가독성, 투명성 우위 (UI 비교 기반) |
+| 대안 (속도 우선) | Codex | 거절 정확도 100%, 속도 2.4배 |
+
+> 스크린샷: `eval/images/Q_{N}_pypdf-claude.png` vs `Q_{N}_pypdf-codex.png`
+> 상세 분석: [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) INT-008, INT-008-1 참조
 
 ---
 
@@ -368,15 +380,18 @@ officeagent-onboarding-challenge/
 ## 7. 실행 방법
 
 ```bash
-# 한 줄 실행
-docker compose up
+# 한 줄 실행 (CLI 자동 감지 + .env 생성 + 서버 시작 + 샘플 업로드)
+chmod +x start.sh && ./start.sh
 
-# 개발 모드 (호스트에서 직접)
-cp .env.example .env
+# 개발 모드 (단계별)
 docker compose up -d chroma redis   # DB만 컨테이너
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
+pip install -e .
+cp .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
+
+> start.sh가 설치된 LLM CLI(claude/codex)를 자동 감지하여 `.env`의 `LLM_ANSWER_PROVIDER`를 설정합니다.
 
 ---
 
@@ -388,7 +403,7 @@ uvicorn app.main:app --reload --port 8000
 
 ### 8.2 골든 데이터셋
 
-sample-docs 5개 파일에서 추출한 50개 케이스:
+sample-docs 6개 파일에서 추출한 50개 케이스:
 - easy: 16개, medium: 11개, computation: 4개 (수치 계산)
 - multi-hop: 2개 (정보 조합), edge/함정: 6개, long-answer: 1개
 - unanswerable: 6개 (문서에 답이 없는 질문 — 거절 테스트)
@@ -418,8 +433,9 @@ sample-docs 5개 파일에서 추출한 50개 케이스:
 | Latency p50 | 10,773ms | **4,516ms** | < 10초 | Codex만 달성 |
 | Latency p95 | 16,892ms | **10,557ms** | < 20초 | **달성** |
 
-> 측정 조건: golden_dataset 50케이스, 문서 5개, 각 모델 1회 실행.
-> 상세 결과: `eval/results/` 및 [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 참조.
+> 측정 조건: golden_dataset 50케이스, 문서 6개, 각 모델 1회 실행.
+> 자동 평가에서는 Codex 우세지만, UI 비교에서 Claude 답변 품질이 우수하여 Claude를 기본 모델로 선택.
+> 상세 분석: [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) INT-008, INT-008-1 참조
 
 ---
 
