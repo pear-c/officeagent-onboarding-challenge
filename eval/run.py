@@ -56,10 +56,17 @@ class NoOpCacheService:
         return 0
 
 
-def load_golden() -> list[dict]:
-    """골든 데이터셋 로드."""
+def load_golden(filter_source: str | None = None) -> list[dict]:
+    """골든 데이터셋 로드. filter_source 지정 시 해당 파일명을 포함하는 케이스만 반환."""
     with open(GOLDEN_PATH, encoding="utf-8") as f:
-        return json.load(f)
+        data = json.load(f)
+    if filter_source:
+        data = [
+            d for d in data
+            if filter_source in (d.get("expected_source") or "")
+            or (not d.get("answerable") and not filter_source)
+        ]
+    return data
 
 
 def create_provider(name: str):
@@ -88,9 +95,12 @@ def init_resources():
     return embedder, chroma
 
 
-async def run_eval(provider_name: str) -> dict:
-    """20케이스 순차 실행 + 메트릭 계산."""
-    golden = load_golden()
+async def run_eval(provider_name: str, filter_source: str | None = None) -> dict:
+    """골든 데이터셋 순차 실행 + 메트릭 계산. filter_source로 특정 파일 케이스만 실행."""
+    golden = load_golden(filter_source)
+    if not golden:
+        logger.error("필터 '%s'에 해당하는 케이스가 없습니다.", filter_source)
+        sys.exit(1)
     embedder, chroma = init_resources()
 
     # 문서가 업로드되어 있는지 확인
@@ -166,7 +176,8 @@ async def run_eval(provider_name: str) -> dict:
     # 결과 저장
     RESULTS_DIR.mkdir(exist_ok=True)
     date_str = datetime.now().strftime("%Y-%m-%d")
-    result_path = RESULTS_DIR / f"{date_str}_{provider_name}.json"
+    suffix = f"_{filter_source.replace('.', '')}" if filter_source else ""
+    result_path = RESULTS_DIR / f"{date_str}_{provider_name}{suffix}.json"
     with open(result_path, "w", encoding="utf-8") as f:
         json.dump(output, f, ensure_ascii=False, indent=2)
 
@@ -251,6 +262,7 @@ def main():
     # run 서브커맨드
     run_parser = sub.add_parser("run", help="평가 실행")
     run_parser.add_argument("--provider", required=True, choices=["claude", "codex"])
+    run_parser.add_argument("--filter", default=None, help="소스 파일명 필터 (예: .pdf, security, it-security)")
 
     # compare 서브커맨드
     cmp_parser = sub.add_parser("compare", help="결과 비교")
@@ -259,7 +271,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "run":
-        asyncio.run(run_eval(args.provider))
+        asyncio.run(run_eval(args.provider, args.filter))
     elif args.command == "compare":
         compare_results(args.files[0], args.files[1])
     else:

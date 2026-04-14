@@ -606,6 +606,11 @@
                 setStep('stepDone');
                 hideStreamUI();
 
+                // 답변 불가 시 출처 숨김
+                if (meta.answerable === false) {
+                    answerMeta.innerHTML = '';
+                }
+
                 if (meta.latency_ms !== undefined) {
                     const cached = meta.cached ? ' (캐시)' : '';
                     const info = `${meta.model || ''} · ${meta.latency_ms}ms${cached}`;
