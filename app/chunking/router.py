@@ -9,15 +9,16 @@ def chunk_document(
     filename: str,
     chunk_size: int = 400,
     overlap: int = 80,
+    force_markdown: bool = False,
 ) -> list[Chunk]:
     """파일 확장자에 따라 적절한 청킹 전략을 선택하고 Chunk 리스트 반환.
 
-    - .md: 마크다운 인식 (헤더 기반 섹션 분할 → 재귀 fallback)
-    - .txt, .pdf 등: 재귀 분할
+    - .md 또는 force_markdown=True: 마크다운 인식 (헤더 기반 섹션 분할 → 재귀 fallback)
+    - .txt 등: 재귀 분할
     """
     ext = ("." + filename.rsplit(".", 1)[-1].lower()) if "." in filename else ""
 
-    if ext == ".md":
+    if ext == ".md" or force_markdown:
         raw_chunks = markdown_aware_chunk(text, chunk_size, overlap)
         return _build_chunks_with_sections(raw_chunks, filename, text)
 

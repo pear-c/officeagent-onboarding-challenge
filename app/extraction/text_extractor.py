@@ -2,9 +2,12 @@
 
 import io
 import logging
+import re
 from abc import ABC, abstractmethod
 
 from pypdf import PdfReader
+
+_NUMBERED_HEADER = re.compile(r"^(\d+\.\s+[가-힣].+)$", re.MULTILINE)
 
 logger = logging.getLogger(__name__)
 
@@ -34,7 +37,7 @@ class MdExtractor(TextExtractor):
 
 
 class PdfExtractor(TextExtractor):
-    """PDF 파일 추출기 (pypdf 사용)."""
+    """PDF 파일 추출기 (pypdf + 경량 마크다운 변환)."""
 
     def extract(self, content: bytes, filename: str) -> str:
         reader = PdfReader(io.BytesIO(content))
@@ -45,7 +48,13 @@ class PdfExtractor(TextExtractor):
                 pages.append(text)
             else:
                 logger.warning("PDF 페이지 %d 텍스트 추출 실패: %s", i + 1, filename)
-        return "\n\n".join(pages)
+        raw_text = "\n\n".join(pages)
+        return self._to_markdown(raw_text)
+
+    @staticmethod
+    def _to_markdown(text: str) -> str:
+        """번호 헤더(N. 한글제목)만 마크다운 ## 으로 변환."""
+        return _NUMBERED_HEADER.sub(r"## \1", text)
 
 
 _EXTRACTOR_MAP: dict[str, type[TextExtractor]] = {

@@ -65,10 +65,12 @@ class IngestService:
 
         # ③ 청킹
         step_start = time.time()
+        ext = ("." + filename.rsplit(".", 1)[-1].lower()) if "." in filename else ""
         chunks = chunk_document(
             text, filename,
             chunk_size=settings.chunk_size,
             overlap=settings.chunk_overlap,
+            force_markdown=(ext == ".pdf"),
         )
         logger.info("청킹 완료: %d chunks (%.2f초)", len(chunks), time.time() - step_start)
 
