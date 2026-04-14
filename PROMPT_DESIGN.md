@@ -71,7 +71,7 @@
 | 평가 도구 | `eval/run.py` — RAGService 직접 호출 (HTTP API 아닌) |
 | 캐시 우회 | `NoOpCacheService` — 항상 캐시 miss (순수 LLM 성능 측정) |
 | 데이터셋 | `eval/golden_dataset.json` — 50케이스 |
-| 문서 | 5개 (company-policy.txt, development-guide.md, hr-policy-detailed.md, tech-architecture.md, meeting-minutes.md) |
+| 문서 | 6개 (company-policy.txt, development-guide.md, it-security-compliance.md, procurement-expense-policy.txt, public-data-quality-guide.pdf, security-policy.pdf) |
 | 임베딩 | BAAI/bge-m3 (동일 조건) |
 | 검색 | Chroma top_k=5 (동일 조건) |
 
