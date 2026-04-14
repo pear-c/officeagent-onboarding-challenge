@@ -94,6 +94,23 @@ SYSTEM_PROMPT_STREAM # 자연어 텍스트용 (POST /api/v1/query/stream)
 
 ---
 
+## TS-007. LLM CLI 미설치 시 start.sh가 실패하지 않는 문제
+
+**단계**: 제출 전 전체 테스트  
+**증상**: codex CLI만 설치된 환경에서 `./start.sh` 실행 → CLI 체크 통과 → `.env`에 `LLM_ANSWER_PROVIDER=claude` → 질문 시 Claude 호출 실패  
+**원인**: start.sh의 CLI 체크는 "설치 여부"만 확인하고, 실제 LLM 선택은 `.env` 값이 결정. 두 로직이 연동되지 않음  
+**해결**: start.sh에서 `.env` 생성 후 설치된 CLI에 맞춰 `LLM_ANSWER_PROVIDER`를 자동 설정. claude 우선, claude 없으면 codex로 전환.
+
+```bash
+# 자동 감지 로직
+if has_claude → LLM_ANSWER_PROVIDER=claude
+elif has_codex → LLM_ANSWER_PROVIDER=codex (자동 전환 + 안내 메시지)
+```
+
+**교훈**: "한 줄 실행"을 목표로 하려면 사전 체크와 설정 생성이 연동되어야 한다. 체크만 하고 설정에 반영하지 않으면 의미 없음.
+
+---
+
 ## TS-005. Claude SDK max_turns=1에서 응답 생성 안 됨
 
 **단계**: 04-eval Claude 측정  

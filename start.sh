@@ -12,10 +12,11 @@ command -v docker >/dev/null 2>&1 || missing="${missing}  - docker (https://docs
 command -v python3 >/dev/null 2>&1 || missing="${missing}  - python3 3.12+ (https://python.org)\n"
 
 # LLM CLI 확인 (claude 또는 codex 중 하나 이상)
-has_llm=false
-command -v claude >/dev/null 2>&1 && has_llm=true
-command -v codex >/dev/null 2>&1 && has_llm=true
-if [ "$has_llm" = false ]; then
+has_claude=false
+has_codex=false
+command -v claude >/dev/null 2>&1 && has_claude=true
+command -v codex >/dev/null 2>&1 && has_codex=true
+if [ "$has_claude" = false ] && [ "$has_codex" = false ]; then
     missing="${missing}  - LLM CLI: claude 또는 codex 중 하나 이상 필요\n"
     missing="${missing}    Claude: npm install -g @anthropic-ai/claude-code && claude 로그인\n"
     missing="${missing}    Codex:  npm install -g @openai/codex && codex 로그인\n"
@@ -40,10 +41,19 @@ fi
 source .venv/bin/activate
 pip install -e .
 
-# 3. .env 복사 (없으면)
+# 3. .env 복사 (없으면) + LLM 자동 감지
 if [ ! -f ".env" ]; then
     cp .env.example .env
     echo "      .env 생성 완료 (기본 설정)"
+fi
+
+# 설치된 CLI에 맞춰 LLM_ANSWER_PROVIDER 자동 설정
+if [ "$has_claude" = true ]; then
+    sed -i 's/^LLM_ANSWER_PROVIDER=.*/LLM_ANSWER_PROVIDER=claude/' .env
+    echo "      LLM: Claude (자동 감지)"
+elif [ "$has_codex" = true ]; then
+    sed -i 's/^LLM_ANSWER_PROVIDER=.*/LLM_ANSWER_PROVIDER=codex/' .env
+    echo "      LLM: Codex (Claude 미설치, 자동 전환)"
 fi
 
 # 4. 서버 실행 (백그라운드)
