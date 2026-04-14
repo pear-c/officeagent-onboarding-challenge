@@ -6,6 +6,27 @@ set -euo pipefail
 echo "=== Document Q&A API 시작 ==="
 echo ""
 
+# 0. 사전 요구사항 확인
+missing=""
+command -v docker >/dev/null 2>&1 || missing="${missing}  - docker (https://docs.docker.com/get-docker/)\n"
+command -v python3 >/dev/null 2>&1 || missing="${missing}  - python3 3.12+ (https://python.org)\n"
+
+# LLM CLI 확인 (claude 또는 codex 중 하나 이상)
+has_llm=false
+command -v claude >/dev/null 2>&1 && has_llm=true
+command -v codex >/dev/null 2>&1 && has_llm=true
+if [ "$has_llm" = false ]; then
+    missing="${missing}  - LLM CLI: claude 또는 codex 중 하나 이상 필요\n"
+    missing="${missing}    Claude: npm install -g @anthropic-ai/claude-code && claude 로그인\n"
+    missing="${missing}    Codex:  npm install -g @openai/codex && codex 로그인\n"
+fi
+
+if [ -n "$missing" ]; then
+    echo "[오류] 다음 도구가 설치되지 않았습니다:"
+    echo -e "$missing"
+    exit 1
+fi
+
 # 1. Chroma + Redis 실행
 echo "[1/4] Chroma + Redis 시작..."
 docker compose up -d chroma redis
