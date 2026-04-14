@@ -31,7 +31,13 @@ chmod +x start.sh && ./start.sh
 
 ### LLM 설정
 
-`.env`에서 사용할 LLM을 선택합니다 (`start.sh`가 자동 생성):
+`start.sh`가 설치된 CLI를 자동 감지하여 `.env`를 설정합니다:
+
+- **Claude CLI + Codex CLI 모두 설치** → Claude 사용 (기본)
+- **Codex CLI만 설치** → Codex로 자동 전환
+- **둘 다 미설치** → 에러 메시지 + 설치 안내 후 종료
+
+수동으로 변경하려면 `.env`를 직접 수정하세요:
 
 ```env
 # Claude 사용 시 (기본값)
