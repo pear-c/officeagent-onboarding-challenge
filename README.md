@@ -135,7 +135,6 @@ python eval/run.py compare eval/results/*.json   # 비교 표 출력
 |------|------|
 | [ARCHITECTURE.md](./ARCHITECTURE.md) | 시스템 아키텍처 + 기술 선택 근거 + LLM 비교 + 평가 하네스 |
 | [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) | 프롬프트 설계 (시스템 프롬프트, 스트리밍 분리, 튜닝 히스토리) |
-| [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) | 트러블슈팅 기록 + 면접 포인트 (10개) |
 
 ## 종료
 
