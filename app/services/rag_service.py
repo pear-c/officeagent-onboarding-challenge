@@ -66,12 +66,13 @@ class RAGService:
         llm_model = llm_response.model
         sources = self._build_sources(answer_data, search_results)
 
-        # ⑥ 캐시 저장
-        source_files = self._extract_source_files(search_results)
-        await self._save_answer_cache(
-            question, question_hash, question_embedding,
-            answer_data, sources, llm_model, source_files,
-        )
+        # ⑥ 캐시 저장 (answerable=true인 경우만 — 문서 추가 시 재평가 필요)
+        if answer_data.get("answerable", True):
+            source_files = self._extract_source_files(search_results)
+            await self._save_answer_cache(
+                question, question_hash, question_embedding,
+                answer_data, sources, llm_model, source_files,
+            )
 
         latency_ms = int((time.time() - total_start) * 1000)
         logger.info("RAG 답변 완료: %dms", latency_ms)
@@ -137,12 +138,13 @@ class RAGService:
             "model": self._answer_llm.model_name, "latency_ms": latency_ms,
         })
 
-        # ⑥ 캐시 저장
-        source_files = self._extract_source_files(search_results)
-        await self._save_stream_cache(
-            question, question_hash, question_embedding,
-            accumulated_text, chunks, source_files,
-        )
+        # ⑥ 캐시 저장 (answerable=true인 경우만 — 문서 추가 시 재평가 필요)
+        if "찾을 수 없습니다" not in accumulated_text:
+            source_files = self._extract_source_files(search_results)
+            await self._save_stream_cache(
+                question, question_hash, question_embedding,
+                accumulated_text, chunks, source_files,
+            )
 
     # ===== 스트리밍 헬퍼 (answer_stream 분리) =====
 
