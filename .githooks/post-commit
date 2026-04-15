@@ -17,10 +17,16 @@ fi
 echo "🤖 Retrobot: 회고 생성 중..."
 
 # Claude Code SDK 또는 Codex CLI로 스킬 실행
+PROMPT="아래 SKILL.md 지침에 따라 지금 즉시 KPT 회고를 생성하고 retros/ 디렉토리에 파일로 저장하세요. 되묻지 말고 바로 실행하세요.
+
+---
+
+$(cat $SKILL_PATH)"
+
 if command -v claude >/dev/null 2>&1; then
-    claude -p "$(cat $SKILL_PATH)" --allowedTools 'Bash(command)' 'Read(file_path)' 'Write(file_path,content)' 'Glob(pattern)' 'Grep(pattern)' 2>/dev/null
+    claude -p "$PROMPT" --allowedTools 'Bash' 'Read' 'Write' 'Glob' 'Grep'
 elif command -v codex >/dev/null 2>&1; then
-    codex --quiet "$(cat $SKILL_PATH)" 2>/dev/null
+    codex --quiet "$PROMPT"
 else
     echo "ℹ Retrobot: claude 또는 codex CLI가 설치되어 있지 않습니다. 건너뜁니다."
     exit 0
