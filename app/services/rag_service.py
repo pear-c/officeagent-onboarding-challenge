@@ -132,9 +132,10 @@ class RAGService:
             yield self._sse_event("error", {"message": "답변 생성 중 오류가 발생했습니다."})
 
         # ⑤ done 이벤트
+        is_answerable = "찾을 수 없습니다" not in accumulated_text
         latency_ms = int((time.time() - total_start) * 1000)
         yield self._sse_event("done", {
-            "answerable": True, "cached": False,
+            "answerable": is_answerable, "cached": False,
             "model": self._answer_llm.model_name, "latency_ms": latency_ms,
         })
 
@@ -179,7 +180,7 @@ class RAGService:
         is_unanswerable = "찾을 수 없습니다" in accumulated_text
         answer_json = json.dumps({
             "answer": accumulated_text,
-            "sources": [{"file": c["file"], "chunk_id": c["chunk_id"]} for c in chunks],
+            "sources": [{"file": c["file"], "chunk_id": c["chunk_id"], "section": c.get("section", ""), "text": c["text"][:200]} for c in chunks],
             "answerable": not is_unanswerable,
             "model": self._answer_llm.model_name,
         }, ensure_ascii=False)
@@ -206,7 +207,7 @@ class RAGService:
         """JSON 응답 캐시 저장."""
         answer_json = json.dumps({
             "answer": answer_data.get("answer", ""),
-            "sources": [{"file": s.file, "chunk_id": s.chunk_id} for s in sources],
+            "sources": [{"file": s.file, "chunk_id": s.chunk_id, "section": s.section, "text": s.text[:200]} for s in sources],
             "answerable": answer_data.get("answerable", True),
             "model": model,
         }, ensure_ascii=False)
@@ -268,6 +269,12 @@ class RAGService:
                          and r.metadata.get("chunk_id") == s.get("chunk_id")),
                         "",
                     ),
+                    section=next(
+                        (r.metadata.get("section", "") for r in search_results
+                         if r.metadata.get("source_file") == s.get("file")
+                         and r.metadata.get("chunk_id") == s.get("chunk_id")),
+                        "",
+                    ),
                 )
                 for s in llm_sources
             ]
@@ -276,6 +283,7 @@ class RAGService:
                 file=r.metadata.get("source_file", "unknown"),
                 chunk_id=r.metadata.get("chunk_id", 0),
                 text=r.text[:200],
+                section=r.metadata.get("section", ""),
             )
             for r in search_results[:3]
         ]

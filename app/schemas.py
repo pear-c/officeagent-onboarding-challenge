@@ -47,6 +47,7 @@ class SourceInfo(BaseModel):
     file: str
     chunk_id: int
     text: str
+    section: str = ""
 
 
 class QueryAnswer(BaseModel):
