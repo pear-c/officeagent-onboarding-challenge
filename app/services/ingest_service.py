@@ -85,10 +85,12 @@ class IngestService:
 
         # ⑤ Chroma 저장 (기존 벡터 삭제 → 새 벡터 저장)
         step_start = time.time()
+
+        # 문서 집합 변경 → 전체 QA 캐시 무효화 (신규 추가/내용 변경 모두 포함)
+        if self._cache_service is not None:
+            await self._cache_service.invalidate_all()
+
         if existing_hash is not None:
-            # 문서 변경 감지 → 관련 캐시 무효화 (D26)
-            if self._cache_service is not None:
-                await self._cache_service.invalidate_by_document(filename)
             self._chroma.delete_by_document(filename)
 
         ids = [f"{filename}::{c.chunk_id}" for c in chunks]

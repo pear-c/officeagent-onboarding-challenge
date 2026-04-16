@@ -289,7 +289,31 @@
             border-radius: 4px;
             margin: 2px 4px 2px 0;
             color: #4f8cff;
+            position: relative;
+            cursor: pointer;
         }
+
+        .answer-meta .source-tag .preview {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            width: 320px;
+            max-height: 160px;
+            overflow-y: auto;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px 10px;
+            font-size: 12px;
+            color: #555;
+            line-height: 1.5;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            z-index: 10;
+            white-space: pre-wrap;
+        }
+
+        .answer-meta .source-tag:hover .preview { display: block; }
 
         .answer-meta .info {
             display: block;
@@ -572,9 +596,7 @@
                                 streamStatusText.textContent = '출처 확인 완료';
 
                                 if (sources.length > 0) {
-                                    answerMeta.innerHTML = '출처: ' + sources
-                                        .map(s => `<span class="source-tag">${esc(s.file)} #${s.chunk_id}</span>`)
-                                        .join('');
+                                    answerMeta.innerHTML = '출처: ' + formatSources(sources);
                                 }
 
                                 // 답변 생성 단계로 전환
@@ -632,6 +654,28 @@
             const div = document.createElement('div');
             div.textContent = text;
             return div.innerHTML;
+        }
+
+        function formatSources(sources) {
+            // 섹션 기준으로 그룹핑 (동일 파일+섹션은 하나로)
+            const seen = new Set();
+            return sources
+                .filter(s => {
+                    const key = `${s.file}::${s.section || s.chunk_id}`;
+                    if (seen.has(key)) return false;
+                    seen.add(key);
+                    return true;
+                })
+                .map(s => {
+                    const label = s.section
+                        ? `${esc(s.file)} > ${esc(s.section)}`
+                        : `${esc(s.file)} #${s.chunk_id}`;
+                    const preview = s.text
+                        ? `<span class="preview">${esc(s.text)}</span>`
+                        : '';
+                    return `<span class="source-tag">${label}${preview}</span>`;
+                })
+                .join('');
         }
 
         function renderMd(text) {

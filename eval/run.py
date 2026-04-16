@@ -55,6 +55,9 @@ class NoOpCacheService:
     async def invalidate_by_document(self, _filename: str) -> int:
         return 0
 
+    async def invalidate_all(self) -> int:
+        return 0
+
 
 def load_golden(filter_source: str | None = None) -> list[dict]:
     """골든 데이터셋 로드. filter_source 지정 시 해당 파일명을 포함하는 케이스만 반환."""

@@ -230,6 +230,7 @@ class RAGService:
             {
                 "file": r.metadata.get("source_file", "unknown"),
                 "chunk_id": r.metadata.get("chunk_id", 0),
+                "section": r.metadata.get("section", ""),
                 "text": r.text,
             }
             for r in results
@@ -310,7 +311,12 @@ class RAGService:
     def _sse_sources(self, chunks: list[dict]) -> str:
         """검색 결과를 SSE sources 이벤트로 변환."""
         payload = [
-            {"file": c["file"], "chunk_id": c["chunk_id"], "text": c["text"][:200]}
+            {
+                "file": c["file"],
+                "chunk_id": c["chunk_id"],
+                "section": c.get("section", ""),
+                "text": c["text"][:200],
+            }
             for c in chunks
         ]
         return self._sse_event("sources", {"sources": payload})

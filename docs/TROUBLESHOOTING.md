@@ -121,7 +121,22 @@ if "찾을 수 없습니다" not in accumulated_text:
 2. 캐시 이득이 적음 — refusal은 LLM 호출 없이도 빠르게 판정 가능 (검색 결과 빈 경우)
 3. 답변 가능한 질문만 캐시하면 무효화 로직이 단순해짐 (source_files 기반 삭제가 의미 있음)
 
-**교훈**: 캐시 무효화는 "캐시 키의 의존성"을 명확히 해야 한다. 빈 의존성(source_files=[])을 가진 캐시는 무효화 불가능한 좀비 캐시가 된다.
+**근본 해결 (추가 적용)**: answerable=false 캐시 방지만으로는 answerable=true 캐시도 새 문서 추가 시 stale해지는 문제가 남음. → **문서 업로드(추가/변경) 시 전체 QA 캐시 삭제**(`invalidate_all()`)로 전환.
+
+```python
+# ingest_service.py — 문서 업로드 시
+if self._cache_service is not None:
+    await self._cache_service.invalidate_all()
+```
+
+**전체 삭제를 선택한 근거**:
+1. 문서 추가 시 기존 답변의 관련성이 달라질 수 있음 (새 문서에 더 정확한 정보가 있을 수 있음)
+2. 문서 업로드 빈도 << 질의 빈도 → 전체 캐시 재빌드 비용이 낮음
+3. 파일별 추적(source_files)보다 확실하고 엣지 케이스 없음
+
+**향후 개선**: 문서 추가 빈도가 높아지면 Corpus 버전 태깅(`corpus:version` Redis 키) 기반 lazy invalidation으로 전환 가능. 현재는 전체 삭제가 도메인 특성에 가장 안전.
+
+**교훈**: 캐시 무효화는 "캐시 키의 의존성"을 명확히 해야 한다. 빈 의존성(source_files=[])을 가진 캐시는 무효화 불가능한 좀비 캐시가 된다. 추적 누락 가능성이 있으면 전체 무효화가 더 안전한 선택이다.
 
 ---
 

@@ -158,3 +158,18 @@ class CacheService:
         total = redis_deleted
         logger.info("캐시 무효화 완료: %s (Redis %d건)", filename, redis_deleted)
         return total
+
+    async def invalidate_all(self) -> int:
+        """문서 집합 변경 시 전체 QA 캐시 무효화 (Redis + Chroma)."""
+        redis_deleted = await self._redis.delete_all_caches()
+
+        # Chroma cache 컬렉션 전체 삭제
+        try:
+            all_ids = self._chroma_cache._collection.get()["ids"]
+            if all_ids:
+                self._chroma_cache._collection.delete(ids=all_ids)
+        except Exception as e:
+            logger.warning("Chroma 캐시 전체 삭제 실패: %s", e)
+
+        logger.info("전체 QA 캐시 무효화 완료 (Redis %d건)", redis_deleted)
+        return redis_deleted

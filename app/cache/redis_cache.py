@@ -91,6 +91,23 @@ class RedisCache:
             logger.info("캐시 무효화: %s 참조 %d건 삭제", filename, deleted)
         return deleted
 
+    async def delete_all_caches(self) -> int:
+        """전체 QA 캐시 삭제 (문서 해시는 유지)."""
+        deleted = 0
+        for prefix in (_CACHE_EXACT_PREFIX, _CACHE_META_PREFIX):
+            cursor = 0
+            while True:
+                cursor, keys = await self._client.scan(
+                    cursor=cursor, match=f"{prefix}*", count=100,
+                )
+                if keys:
+                    await self._client.delete(*keys)
+                    deleted += len(keys)
+                if cursor == 0:
+                    break
+        logger.info("전체 QA 캐시 삭제: %d건", deleted)
+        return deleted
+
     # ===== 공통 =====
 
     async def ping(self) -> bool:

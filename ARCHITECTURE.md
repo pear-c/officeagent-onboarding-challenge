@@ -467,7 +467,7 @@ sample-docs 6개 파일에서 추출한 50개 케이스:
 |------|------|-----|-----|
 | 1. 정확 일치 | 질문 텍스트 SHA-256 → Redis key | `cache:exact:{hash}` | 1시간 |
 | 2. 유사 질문 | 질문 임베딩 → Chroma `cache_questions` collection → cosine ≥ 0.95 | 임베딩 벡터 | 1시간 |
-| 3. 무효화 | 문서 SHA-256 해시 비교 → 변경 시 관련 캐시 삭제 | `doc:hash:{filename}` | 없음 |
+| 3. 무효화 | 문서 업로드(추가/변경) 시 **전체 QA 캐시 삭제** | `doc:hash:{filename}` | 없음 |
 
 ### 9.2 캐시 히트 흐름
 
@@ -505,3 +505,5 @@ sample-docs 6개 파일에서 추출한 50개 케이스:
 - [ ] 하이브리드 검색 (벡터 + BM25 키워드) — 고유명사/숫자 검색 보강
 - [ ] Self-check — 답변 생성 후 LLM으로 자기 검증 (환각 추가 억제)
 - [ ] 대규모 문서 지원 — Qdrant 전환, 배치 임베딩
+- [ ] 캐시 무효화 고도화 — 현재 전체 무효화 → Corpus 버전 태깅(문서별 선택적 무효화)으로 전환. 문서 추가 빈도가 높아지면 전체 캐시 삭제 비용 증가하므로, `corpus:version` Redis 키로 lazy invalidation 적용
+- [ ] 문서 삭제 API — `POST /api/v1/documents/{filename}/delete` + 관련 벡터/캐시 정리
