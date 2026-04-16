@@ -56,6 +56,8 @@ class QueryAnswer(BaseModel):
     sources: list[SourceInfo]
     answerable: bool
     cached: bool
+    cache_type: str | None = None  # "exact" | "similar" | None(miss)
+    cache_similarity: float | None = None  # similar 캐시에서만 값 있음
     model: str
     latency_ms: int
 

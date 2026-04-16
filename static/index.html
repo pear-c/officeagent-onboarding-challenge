@@ -634,8 +634,15 @@
                 }
 
                 if (meta.latency_ms !== undefined) {
-                    const cached = meta.cached ? ' (캐시)' : '';
-                    const info = `${meta.model || ''} · ${meta.latency_ms}ms${cached}`;
+                    let cacheLabel = '';
+                    if (meta.cached) {
+                        if (meta.cache_type === 'similar' && meta.cache_similarity) {
+                            cacheLabel = ` (캐시·유사질문 ${(meta.cache_similarity * 100).toFixed(1)}%)`;
+                        } else {
+                            cacheLabel = ' (캐시·정확일치)';
+                        }
+                    }
+                    const info = `${meta.model || ''} · ${meta.latency_ms}ms${cacheLabel}`;
                     answerMeta.innerHTML += `<span class="info">${info}</span>`;
                 }
 

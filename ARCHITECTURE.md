@@ -506,4 +506,7 @@ sample-docs 6개 파일에서 추출한 50개 케이스:
 - [ ] Self-check — 답변 생성 후 LLM으로 자기 검증 (환각 추가 억제)
 - [ ] 대규모 문서 지원 — Qdrant 전환, 배치 임베딩
 - [ ] 캐시 무효화 고도화 — 현재 전체 무효화 → Corpus 버전 태깅(문서별 선택적 무효화)으로 전환. 문서 추가 빈도가 높아지면 전체 캐시 삭제 비용 증가하므로, `corpus:version` Redis 키로 lazy invalidation 적용
+- [ ] Chroma 캐시 LRU 제한 — 현재 `cache_questions` 컬렉션이 무제한 증가. 장기 운영 시 최근 N건(예: 1000건)만 유지하도록 LRU 정책 적용
+- [ ] LLM 호출 재시도 로직 — 일시적 네트워크/CLI 오류에 대해 지수 백오프 3회 재시도 (현재는 즉시 raise)
+- [ ] Prompt caching — `claude-agent-sdk`의 `cache_control` 지원 확인 후, system 프롬프트 + 문서 청크 캐싱으로 토큰 비용 30~50% 절감 가능
 - [ ] 문서 삭제 API — `POST /api/v1/documents/{filename}/delete` + 관련 벡터/캐시 정리

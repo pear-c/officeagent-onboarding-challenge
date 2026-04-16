@@ -47,12 +47,23 @@ if [ ! -f ".env" ]; then
     echo "      .env 생성 완료 (기본 설정)"
 fi
 
-# 설치된 CLI에 맞춰 LLM_ANSWER_PROVIDER 자동 설정
+# 설치된 CLI에 맞춰 LLM_ANSWER_PROVIDER 자동 설정 (macOS/Linux 포터블)
+set_provider() {
+    local provider=$1
+    python3 -c "
+import re, pathlib
+p = pathlib.Path('.env')
+text = p.read_text(encoding='utf-8')
+text = re.sub(r'^LLM_ANSWER_PROVIDER=.*', f'LLM_ANSWER_PROVIDER=${provider}', text, flags=re.MULTILINE)
+p.write_text(text, encoding='utf-8')
+"
+}
+
 if [ "$has_claude" = true ]; then
-    sed -i 's/^LLM_ANSWER_PROVIDER=.*/LLM_ANSWER_PROVIDER=claude/' .env
+    set_provider claude
     echo "      LLM: Claude (자동 감지)"
 elif [ "$has_codex" = true ]; then
-    sed -i 's/^LLM_ANSWER_PROVIDER=.*/LLM_ANSWER_PROVIDER=codex/' .env
+    set_provider codex
     echo "      LLM: Codex (Claude 미설치, 자동 전환)"
 fi
 

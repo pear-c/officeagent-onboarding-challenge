@@ -22,6 +22,7 @@ class CachedAnswer:
     answerable: bool
     model: str
     cache_type: str  # "exact" | "similar"
+    similarity: float | None = None  # similar 캐시에서만 값 있음 (exact는 None)
 
 
 class CacheService:
@@ -98,6 +99,7 @@ class CacheService:
                 answerable=data.get("answerable", True),
                 model=data.get("model", "cached"),
                 cache_type="similar",
+                similarity=round(similarity, 4),
             )
         except (json.JSONDecodeError, KeyError):
             return None

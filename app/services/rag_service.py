@@ -15,6 +15,25 @@ from app.vectorstore.chroma_store import ChromaStore, SearchResult
 
 logger = logging.getLogger(__name__)
 
+# 스트리밍 답변에서 거절 응답을 식별하는 패턴 (LLM이 동의어 사용 시 대비)
+_REFUSAL_PATTERNS = (
+    "찾을 수 없습니다",
+    "찾을 수가 없습니다",
+    "확인할 수 없",
+    "확인되지 않",
+    "답변할 수 없",
+    "답변하기 어려",
+    "정보가 없",
+    "제공되지 않",
+    "포함되어 있지 않",
+    "언급되어 있지 않",
+)
+
+
+def _is_refusal(text: str) -> bool:
+    """스트리밍 텍스트가 거절 응답인지 판정."""
+    return any(p in text for p in _REFUSAL_PATTERNS)
+
 
 class RAGService:
     """질의응답 파이프라인 조율."""
@@ -132,7 +151,7 @@ class RAGService:
             yield self._sse_event("error", {"message": "답변 생성 중 오류가 발생했습니다."})
 
         # ⑤ done 이벤트
-        is_answerable = "찾을 수 없습니다" not in accumulated_text
+        is_answerable = not _is_refusal(accumulated_text)
         latency_ms = int((time.time() - total_start) * 1000)
         yield self._sse_event("done", {
             "answerable": is_answerable, "cached": False,
@@ -140,7 +159,7 @@ class RAGService:
         })
 
         # ⑥ 캐시 저장 (answerable=true인 경우만 — 문서 추가 시 재평가 필요)
-        if "찾을 수 없습니다" not in accumulated_text:
+        if is_answerable:
             source_files = self._extract_source_files(search_results)
             await self._save_stream_cache(
                 question, question_hash, question_embedding,
@@ -157,8 +176,12 @@ class RAGService:
         yield self._sse_event("token", {"content": cached.answer})
         latency_ms = int((time.time() - total_start) * 1000)
         yield self._sse_event("done", {
-            "answerable": cached.answerable, "cached": True,
-            "model": cached.model, "latency_ms": latency_ms,
+            "answerable": cached.answerable,
+            "cached": True,
+            "cache_type": cached.cache_type,
+            "cache_similarity": cached.similarity,
+            "model": cached.model,
+            "latency_ms": latency_ms,
         })
 
     async def _stream_empty(self, total_start: float) -> AsyncIterator[str]:
@@ -177,7 +200,7 @@ class RAGService:
         chunks: list[dict], source_files: list[str],
     ) -> None:
         """스트리밍 완료 후 캐시 저장 (자연어 텍스트 → answer 필드에 직접 저장)."""
-        is_unanswerable = "찾을 수 없습니다" in accumulated_text
+        is_unanswerable = _is_refusal(accumulated_text)
         answer_json = json.dumps({
             "answer": accumulated_text,
             "sources": [{"file": c["file"], "chunk_id": c["chunk_id"], "section": c.get("section", ""), "text": c["text"][:200]} for c in chunks],
@@ -296,12 +319,17 @@ class RAGService:
             answer=cached.answer,
             sources=[
                 SourceInfo(
-                    file=s.get("file", ""), chunk_id=s.get("chunk_id", 0), text="",
+                    file=s.get("file", ""),
+                    chunk_id=s.get("chunk_id", 0),
+                    text=s.get("text", ""),
+                    section=s.get("section", ""),
                 )
                 for s in cached.sources
             ],
             answerable=cached.answerable,
             cached=True,
+            cache_type=cached.cache_type,
+            cache_similarity=cached.similarity,
             model=cached.model,
             latency_ms=latency_ms,
         )
