@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 
 from pypdf import PdfReader
 
-_NUMBERED_HEADER = re.compile(r"^(\d+\.\s+[가-힣].+)$", re.MULTILINE)
+_NUMBERED_HEADER = re.compile(r"(?:^|\n)(\d+(?:\.\d+)*\.?\s+[가-힣\uAC00-\uD7AF].{2,30}?)(?=\n|$|\d+\.\d+)", re.MULTILINE)
 
 logger = logging.getLogger(__name__)
 
@@ -53,8 +53,8 @@ class PdfExtractor(TextExtractor):
 
     @staticmethod
     def _to_markdown(text: str) -> str:
-        """번호 헤더(N. 한글제목)만 마크다운 ## 으로 변환."""
-        return _NUMBERED_HEADER.sub(r"## \1", text)
+        """번호 헤더(N. / N.N. 한글제목)만 마크다운 ## 으로 변환."""
+        return _NUMBERED_HEADER.sub(r"\n## \1\n", text)
 
 
 _EXTRACTOR_MAP: dict[str, type[TextExtractor]] = {
