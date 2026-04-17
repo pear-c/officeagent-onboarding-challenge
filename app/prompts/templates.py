@@ -15,6 +15,7 @@ SYSTEM_PROMPT = """당신은 사내 문서를 기반으로 직원의 질문에 �
      "answerable": true | false
    }
 5. answerable이 false일 경우 sources는 빈 배열 [] 입니다.
+6. 기술 용어, 고유명사, 약어는 원문 그대로 사용하세요. (예: Git Flow, AES-256, RabbitMQ)
 
 예시 1 (답변 가능):
 <문서>

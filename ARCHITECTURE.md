@@ -89,15 +89,11 @@
 
 **후보 비교**:
 
-| 모델 | MTEB Retrieval (ko) nDCG@10 | 차원 | 크기 | 최대 토큰 |
-|------|---------------------------|------|------|----------|
-| **BAAI/bge-m3** | <!-- 📊 [측정 필요] MTEB에서 확인 --> | 1024 | 2.3GB | 8192 |
-| intfloat/multilingual-e5-base | <!-- 📊 [측정 필요] MTEB에서 확인 --> | 768 | 1.1GB | 512 |
-| jhgan/ko-sroberta-multitask | <!-- 📊 [측정 필요] MTEB에서 확인 --> | 768 | 442MB | 512 |
-
-<!-- 📸 [스크린샷 필요] bge-m3 HuggingFace 모델 카드 — 성능 표 부분 -->
-<!-- 파일: docs/images/bge-m3-model-card.png -->
-<!-- 출처: https://huggingface.co/BAAI/bge-m3 -->
+| 모델 | 차원 | 크기 | 최대 토큰 | 비고 |
+|------|------|------|----------|------|
+| **BAAI/bge-m3** | 1024 | 2.3GB | 8192 | MTEB 한국어 Retrieval 최상위권 |
+| intfloat/multilingual-e5-base | 768 | 1.1GB | 512 | 입력 길이 제한 (긴 청크 절단) |
+| jhgan/ko-sroberta-multitask | 768 | 442MB | 512 | 한국어 특화이나 다국어 약함 |
 
 **bge-m3를 선택한 결정적 이유**:
 1. 한국어 Retrieval 정확도 최상위 (nDCG@10 기준)
@@ -289,7 +285,7 @@ PDF에서 재귀 분할 vs 마크다운 인식 청킹의 차이를 동일 문서
 ```
 원본 파일 업로드
     ↓
-① 텍스트 추출 (pypdf / pdfplumber / 직접 읽기)
+① 텍스트 추출 (pypdf + 마크다운 변환 / 직접 읽기)
     ↓
 ② 청킹 (하이브리드: .md → 마크다운 인식, 그 외 → 재귀 분할)
     ↓
@@ -411,7 +407,7 @@ cp .env.example .env
 uvicorn app.main:app --reload --port 8000
 ```
 
-> start.sh가 설치된 LLM CLI(claude/codex)를 자동 감지하여 `.env`의 `LLM_ANSWER_PROVIDER`를 설정합니다.
+> start.sh가 설치된 LLM CLI(claude/codex)를 자동 감지하여 `.env`의 `LLM_ANSWER_PROVIDER`를 설정.
 
 ---
 
