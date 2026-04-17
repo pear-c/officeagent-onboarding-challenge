@@ -7,29 +7,7 @@
 
 ### 1.1 아키텍처 다이어그램
 
-```
-[클라이언트]
-    │
-    ▼ POST /api/v1/documents
-┌─────────────────────────────────────────────────┐
-│  FastAPI (uvicorn, async)                       │
-│                                                 │
-│  Ingestion Pipeline                             │
-│    텍스트 추출 → 청킹 → 임베딩 → Chroma 저장    │
-│    문서 해시 → Redis 저장 (캐시 무효화 키)       │
-│                                                 │
-│  Query Pipeline                                 │
-│    캐시 확인 → 임베딩 → 벡터 검색 → 프롬프트     │
-│    → LLM 호출 → 캐시 저장 → 응답 (JSON/SSE)    │
-│                                                 │
-│  LLMProvider (추상화)                           │
-│    ├─ ClaudeProvider (기본 답변 — UX 품질)     │
-│    └─ CodexProvider (fallback/속도 우선)       │
-└──────────┬──────────────┬───────────────────────┘
-           │              │
-     [Chroma DB]    [Redis 7]
-     벡터 저장/검색   캐시/무효화
-```
+![아키텍처 다이어그램](./docs/architecture.png)
 
 ### 1.2 설계 원칙
 
@@ -76,14 +54,7 @@ FastAPI는 네이티브 async를 지원하므로 LLM 호출(3~15초) ~ 응답까
 
 ### 3.2 임베딩 모델 — BAAI/bge-m3
 
-MTEB 한국어 Retrieval 벤치마크에서 최상위권인 것을 확인했습니다.
-
-<!-- 📸 [스크린샷 필요] MTEB Leaderboard — Retrieval 탭, 한국어 필터 적용 -->
-<!-- 파일: docs/images/mteb-leaderboard-ko-retrieval.png -->
-<!-- 출처: https://huggingface.co/spaces/mteb/leaderboard -->
-
-![MTEB Leaderboard 한국어 Retrieval](./docs/images/mteb-leaderboard-ko-retrieval.png)
-*출처: [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)*
+MTEB 한국어 Retrieval 벤치마크에서 최상위권인 것을 확인했습니다. - [MTEB Leaderboard](https://huggingface.co/spaces/mteb/leaderboard)*
 
 **후보 비교**:
 
@@ -93,9 +64,13 @@ MTEB 한국어 Retrieval 벤치마크에서 최상위권인 것을 확인했습�
 | intfloat/multilingual-e5-base | 768 | 1.1GB | 512 | 입력 길이 제한 (긴 청크 절단) |
 | jhgan/ko-sroberta-multitask | 768 | 442MB | 512 | 한국어 특화이나 다국어 약함 |
 
-모델은 bge-m3 모델을 선택했습미다.
+**선택** : bge-m3 모델
 
-한국어 Retrieval 정확도가 높고, 8192 토큰까지 입력을 받아 비교적 긴 청크도 수용 가능하겠다고 생각했습니다.
+초기에는 크기가 작고 한국어 특화라는 점에서 'ko-sroberta-multitask' 로 시작했지만, 영문 약어/기술 용어가 섞인 공공데이터 가이드라인 (pdf) 에서 검색 품질이 떨어지는 걸 확인했습니다.
+
+또한 pdf 한 페이지가 800+ 토큰을 쉽게 넘기기 때문에, 512 토큰 모델은 청크를 더 잘게 쪼개야하므로 문맥 손실이 커졌습니다.
+
+따라서, 한국어 Retrieval 정확도가 높고, 8192 토큰까지 입력을 받아 비교적 긴 청크도 수용 가능하겠다고 생각했습니다.
 다른 모델에 비해 크기가 2.3GB로 무겁긴 하지만, 초기 설계 의도와 동일하게, 비용 - 성능간의 트레에드오프에서 성능을 선택하였습니다.
 
 ### 3.3 벡터 DB — Chroma
@@ -117,13 +92,29 @@ MTEB 한국어 Retrieval 벤치마크에서 최상위권인 것을 확인했습�
 
 ### 3.4 캐시 DB — Redis
 
-캐시 용도로는 사실상 업계 표준이고, PRD 요구사항(동일 질문, 유사 질문, 무효화) 3가지를 모두 충족합니다.
+| 후보 | 탈락 이유 |
+|------|----------|
+| Memcached | 패턴 삭제 미지원 → `cache:exact:*` 일괄 무효화를 직접 구현해야 함 |
+| SQLite | 디스크 I/O 기반이라 캐시 히트 시에도 ms 단위 지연. TTL도 직접 구현 필요 |
+| 로컬 딕셔너리 | 서버 재시작 시 유실, 멀티 프로세스 공유 불가 |
+
+처음에는 Memcached도 고려했지만, 문서 변경 시 `cache:exact:*` 패턴으로 캐시를 일괄 삭제해야 하는 무효화 요구사항 때문에 탈락했습니다. Memcached는 키를 개별로 알고 있어야 삭제할 수 있어서, 별도로 키 목록을 관리하는 로직이 필요했습니다.
+
+Redis는 추가로, 문서 해시(`doc:hash:{filename}`)와 QA 캐시(`cache:exact:{hash}`)를 같은 인스턴스에서 관리할 수 있어서 인프라를 하나로 통합할 수 있었고, Chroma와 함께 `docker compose up -d` 한 줄로 실행되므로 과제의 한 줄 실행 조건에도 부합했습니다.
+
+캐시 DB 요구사항:
+- 동일 질문 캐시
+- 유사 질문 캐시
+- 문서 변경 시 무효화
+
+위 3가지 사항을 별도 구현 없이 네이티브로 지원하고, Chroma와 함께 사용가능한 Redis를 캐시 DB로 선택하였습니다.
+또한 KV 방식으로, 문서 해시 + QA 캐시를 같은 인스턴스에서 키만 분리하면 관리가 가능합니다.
 
 | PRD 요구사항 | Redis 구현 방식 |
 |-------------|----------------|
-| 동일 질문 캐시 | 질문 해시 → Redis key, 답변 JSON → value |
+| 동일 질문 캐시 | 질문 해시 → Redis key (`cache:exact:{sha256}`), 답변 JSON → value, TTL 1시간 |
 | 유사 질문 캐시 | 질문 임베딩 벡터를 별도 Chroma collection에 저장, cosine similarity ≥ 0.95이면 hit |
-| 문서 변경 시 무효화 | 문서 SHA-256 해시 기반. 문서 재업로드 시 해시 비교 → 변경되었으면 관련 캐시 키 삭제 |
+| 문서 변경 시 무효화 | 문서 SHA-256 해시 기반. 문서 재업로드 시 해시 비교 → 변경되었으면 `cache:exact:*` 전체 삭제 |
 
 ### 3.5 청킹 전략 — 파일 포맷별 하이브리드
 
@@ -165,7 +156,7 @@ PDF에서 재귀 분할 vs 마크다운 인식 청킹의 차이를 동일 문서
 
 **해결**: 인접 섹션 병합 로직 추가 (100자 미만 섹션 → 다음 섹션과 병합) → 28개 → 21개 청크, 평균 156자 → 208자.
 
-> 자세한 실험 조건: [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) TS-002, TS-006, INT-010 참조.
+> 자세한 실험 조건: [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) TS-002, TS-006 참조.
 
 ### 3.6 LLM SDK — Claude Code SDK + Codex CLI
 
@@ -181,7 +172,7 @@ PDF에서 재귀 분할 vs 마크다운 인식 청킹의 차이를 동일 문서
 | 대안 (속도 우선) | Codex | 속도 2.4배 빠름, .env 한 줄로 전환 가능 |
 
 > UI 비교 스크린샷: `eval/images/` 참조
-> 상세 분석: [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 4장, [TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) INT-008, INT-008-1
+> 상세 분석: [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 4장
 
 ---
 
@@ -332,8 +323,12 @@ officeagent-onboarding-challenge/
 │   │   ├── provider.py         # LLMProvider ABC
 │   │   ├── claude_provider.py  # Claude Code SDK 어댑터
 │   │   └── codex_provider.py   # Codex CLI 어댑터
+│   ├── extraction/
+│   │   └── text_extractor.py   # 포맷별 텍스트 추출 (.txt/.md/.pdf)
 │   ├── chunking/
-│   │   └── recursive.py        # 재귀 분할 + 마크다운 인식
+│   │   ├── router.py           # 포맷별 청킹 전략 분기
+│   │   ├── recursive.py        # 재귀 분할 청킹
+│   │   └── markdown.py         # 마크다운 인식 청킹 (헤더 기반)
 │   ├── embedding/
 │   │   └── embedder.py         # sentence-transformers 래퍼
 │   ├── vectorstore/
@@ -422,7 +417,7 @@ sample-docs 6개 파일에서 추출한 50개 케이스:
 
 > 측정 조건: golden_dataset 50케이스, 문서 6개. v3 프롬프트 (Few-shot + 이중 방어) 적용.
 > v2→v3 핵심 개선: Refusal 83%→100%, Retrieval 93%→98%.
-> 상세 분석: [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 4장, [TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) INT-008, INT-008-1
+> 상세 분석: [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 4장
 
 ---
 

@@ -152,7 +152,7 @@ v3로 Refusal 문제까지 해결된 후에는 Claude가 속도를 제외한 모
 
 > UI 비교 스크린샷: `eval/images/` 참조
 > 측정 결과 원본: `eval/results/2026-04-17_claude.json`
-> 상세 분석: [ARCHITECTURE.md](./ARCHITECTURE.md) 3.6절, [TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) INT-008, INT-008-1
+> 상세 분석: [ARCHITECTURE.md](./ARCHITECTURE.md) 3.6절
 
 ---
 

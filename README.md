@@ -24,10 +24,23 @@ chmod +x start.sh && ./start.sh
 1. Chroma + Redis 실행 (Docker)
 2. Python 가상환경 + 의존성 설치
 3. 서버 시작 (임베딩 모델 첫 로딩 시 ~2분)
-4. 샘플 문서 2개 업로드 (company-policy.txt, development-guide.md)
+4. 샘플 문서 2개 자동 업로드 (company-policy.txt, development-guide.md)
 
 완료되면 `http://localhost:8000`에서 바로 테스트 가능합니다.
 추가 문서(PDF, MD, TXT)는 웹 UI에서 드래그 앤 드롭으로 업로드하세요.
+
+### 샘플 문서 (`sample-docs/`)
+
+| 파일 | 용도 |
+|------|------|
+| `company-policy.txt` | 자동 업로드 (start.sh) |
+| `development-guide.md` | 자동 업로드 (start.sh) |
+| `it-security-compliance.md` | 평가 하네스용 (수동 업로드) |
+| `procurement-expense-policy.txt` | 평가 하네스용 (수동 업로드) |
+| `public-data-quality-guide.pdf` | 평가 하네스용 (수동 업로드) |
+| `security-policy.pdf` | 평가 하네스용 (수동 업로드) |
+
+> 평가 하네스(`eval/run.py`)는 6개 파일 전부를 사용하여 50케이스를 측정합니다.
 
 ### LLM 설정
 
