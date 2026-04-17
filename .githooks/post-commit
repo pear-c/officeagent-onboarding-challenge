@@ -1,5 +1,13 @@
+#!/usr/bin/env bash
 # Retrobot post-commit hook
 # 커밋 후 AI 에이전트를 호출하여 자동 회고를 생성합니다.
+
+# rebase/merge/cherry-pick 진행 중이면 건너뜀 (히스토리 재작성 중 훅 충돌 방지)
+GIT_DIR=$(git rev-parse --git-dir 2>/dev/null)
+if [ -d "$GIT_DIR/rebase-merge" ] || [ -d "$GIT_DIR/rebase-apply" ] || \
+   [ -f "$GIT_DIR/MERGE_HEAD" ] || [ -f "$GIT_DIR/CHERRY_PICK_HEAD" ]; then
+    exit 0
+fi
 
 # Retrobot이 만든 커밋에서 다시 트리거되지 않도록 방지 (무한 루프 차단)
 LAST_MSG=$(git log -1 --pretty=%s 2>/dev/null)
@@ -16,10 +24,16 @@ fi
 echo "🤖 Retrobot: 회고 생성 중..."
 
 # Claude Code SDK 또는 Codex CLI로 스킬 실행
+PROMPT="아래 SKILL.md 지침에 따라 지금 즉시 KPT 회고를 생성하고 retros/ 디렉토리에 파일로 저장하세요. 되묻지 말고 바로 실행하세요.
+
+---
+
+$(cat $SKILL_PATH)"
+
 if command -v claude >/dev/null 2>&1; then
-    claude -p "$(cat $SKILL_PATH)" --allowedTools 'Bash(command)' 'Read(file_path)' 'Write(file_path,content)' 'Glob(pattern)' 'Grep(pattern)' 2>/dev/null
+    claude -p "$PROMPT" --allowedTools 'Bash' 'Read' 'Write' 'Glob' 'Grep'
 elif command -v codex >/dev/null 2>&1; then
-    codex --quiet "$(cat $SKILL_PATH)" 2>/dev/null
+    codex --quiet "$PROMPT"
 else
     echo "ℹ Retrobot: claude 또는 codex CLI가 설치되어 있지 않습니다. 건너뜁니다."
     exit 0
