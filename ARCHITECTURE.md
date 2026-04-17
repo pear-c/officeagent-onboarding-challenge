@@ -437,21 +437,21 @@ sample-docs 6개 파일에서 추출한 50개 케이스:
 | Latency p50 | 응답 시간 중앙값 | < 10초 |
 | Latency p95 | 응답 시간 95퍼센타일 | < 20초 |
 
-### 8.4 측정 결과
+### 8.4 측정 결과 (최신 — v3 프롬프트 적용 후)
 
-| 메트릭 | Claude Sonnet 4.6 | Codex | 목표 | 달성 |
-|--------|-------------------|-------|------|------|
-| Retrieval Hit Rate | **93.18%** | 90.91% | ≥ 85% | **달성** |
-| Citation Accuracy | **93.18%** | 90.91% | ≥ 80% | **달성** |
-| Refusal Accuracy | 83.33% | **100.00%** | ≥ 90% | Codex만 달성 |
-| Keyword Hit Rate | 90.91% | 90.91% | ≥ 80% | **달성** |
+| 메트릭 | Claude v3 | Codex | 목표 | 달성 |
+|--------|----------|-------|------|------|
+| Retrieval Hit Rate | **97.73%** | 90.91% | ≥ 85% | **달성** |
+| Citation Accuracy | **97.73%** | 90.91% | ≥ 80% | **달성** |
+| Refusal Accuracy | **100.00%** | 100.00% | ≥ 90% | **달성** |
+| Keyword Hit Rate | 88.64% | 90.91% | ≥ 80% | **달성** |
 | JSON Parse Rate | 100.00% | 100.00% | ≥ 95% | **달성** |
-| Latency p50 | 10,773ms | **4,516ms** | < 10초 | Codex만 달성 |
-| Latency p95 | 16,892ms | **10,557ms** | < 20초 | **달성** |
+| Latency p50 | 8,803ms | **4,516ms** | < 10초 | **달성** |
+| Latency p95 | 15,731ms | **10,557ms** | < 20초 | **달성** |
 
-> 측정 조건: golden_dataset 50케이스, 문서 6개, 각 모델 1회 실행.
-> 자동 평가에서는 Codex 우세지만, UI 비교에서 Claude 답변 품질이 우수하여 Claude를 기본 모델로 선택.
-> 상세 분석: [docs/TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) INT-008, INT-008-1 참조
+> 측정 조건: golden_dataset 50케이스, 문서 6개. v3 프롬프트 (Few-shot + 이중 방어) 적용.
+> v2→v3 핵심 개선: Refusal 83%→100%, Retrieval 93%→98%.
+> 상세 분석: [PROMPT_DESIGN.md](./PROMPT_DESIGN.md) 4장, [TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) INT-008, INT-008-1
 
 ---
 
