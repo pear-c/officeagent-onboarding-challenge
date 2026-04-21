@@ -22,6 +22,7 @@ from app.config import settings
 from app.embedding.embedder import Embedder
 from app.llm.claude_provider import ClaudeProvider
 from app.llm.codex_provider import CodexProvider
+from app.llm.ollama_provider import OllamaProvider
 from app.services.rag_service import RAGService
 from app.vectorstore.chroma_store import ChromaStore
 from eval.metrics import compute_all
@@ -78,6 +79,11 @@ def create_provider(name: str):
         return ClaudeProvider()
     elif name == "codex":
         return CodexProvider()
+    elif name == "ollama":
+        return OllamaProvider(
+            base_url=settings.ollama_base_url,
+            model=settings.ollama_model,
+        )
     else:
         raise ValueError(f"지원하지 않는 provider: {name}")
 
@@ -264,7 +270,7 @@ def main():
 
     # run 서브커맨드
     run_parser = sub.add_parser("run", help="평가 실행")
-    run_parser.add_argument("--provider", required=True, choices=["claude", "codex"])
+    run_parser.add_argument("--provider", required=True, choices=["claude", "codex", "ollama"])
     run_parser.add_argument("--filter", default=None, help="소스 파일명 필터 (예: .pdf, security, it-security)")
 
     # compare 서브커맨드

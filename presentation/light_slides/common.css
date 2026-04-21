@@ -1,0 +1,406 @@
+/* ──────────────────────────────────────────────
+   Light Slides — Design System
+   Principle: One idea per slide. Speaker leads.
+   ────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Pretendard+Variable:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #FAFAF8;
+  --bg-card: #FFFFFF;
+  --bg-dark: #1A1A1A;
+  --bg-code: #F5F3EE;
+
+  --text: #1A1A1A;
+  --text-secondary: #6B6B6B;
+  --text-muted: #9A9A9A;
+  --text-white: #FAFAF8;
+
+  --accent: #0F4C5C;
+  --accent-light: rgba(15, 76, 92, 0.08);
+  --highlight: #D97706;
+  --highlight-light: rgba(217, 119, 6, 0.08);
+  --success: #059669;
+  --danger: #DC2626;
+
+  --radius: 12px;
+  --radius-sm: 6px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 1920px;
+  height: 1080px;
+  overflow: hidden;
+  background: var(--bg);
+  font-family: 'Pretendard Variable', 'Pretendard', -apple-system, sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Layout ────────────────────────────────── */
+.slide {
+  width: 1920px;
+  height: 1080px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 160px;
+  position: relative;
+}
+
+.slide--center {
+  align-items: center;
+  text-align: center;
+}
+
+.slide--split {
+  flex-direction: row;
+  align-items: center;
+  gap: 80px;
+}
+
+.slide__left, .slide__right {
+  flex: 1;
+}
+
+/* ── Page indicator ────────────────────────── */
+.page-tag {
+  position: absolute;
+  top: 40px;
+  right: 60px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.section-tag {
+  position: absolute;
+  top: 40px;
+  left: 60px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+/* ── Typography ────────────────────────────── */
+.t-hero {
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.t-headline {
+  font-size: 52px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+  color: var(--text);
+}
+
+.t-subhead {
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
+.t-body {
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+.t-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.t-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* ── Accent elements ──────────────────────── */
+.accent-bar {
+  width: 48px;
+  height: 4px;
+  background: var(--accent);
+  border-radius: 2px;
+  margin-bottom: 32px;
+}
+
+.accent-bar--highlight {
+  background: var(--highlight);
+}
+
+.highlight { color: var(--highlight); }
+.accent { color: var(--accent); }
+.muted { color: var(--text-muted); }
+
+/* ── Cards ─────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius);
+  padding: 40px;
+  box-shadow: var(--shadow);
+}
+
+.card--accent {
+  border-left: 4px solid var(--accent);
+}
+
+.card--highlight {
+  border-left: 4px solid var(--highlight);
+  background: var(--highlight-light);
+}
+
+/* ── Number badge ──────────────────────────── */
+.num-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--text-white);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 20px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.num-badge--sm {
+  width: 36px;
+  height: 36px;
+  font-size: 15px;
+}
+
+/* ── Flow / Pipeline ───────────────────────── */
+.flow {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.flow-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 24px 32px;
+  background: var(--bg-card);
+  border: 1px solid rgba(0,0,0,0.06);
+  border-radius: var(--radius-sm);
+  min-width: 140px;
+}
+
+.flow-arrow {
+  font-size: 24px;
+  color: var(--text-muted);
+  padding: 0 8px;
+  flex-shrink: 0;
+}
+
+.flow-step__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.flow-step__name {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.flow-step__tech {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* ── Metric pill ───────────────────────────── */
+.metric {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.metric__value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 56px;
+  font-weight: 800;
+  color: var(--highlight);
+  line-height: 1;
+}
+
+.metric__unit {
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+/* ── Grid ──────────────────────────────────── */
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 40px;
+}
+
+/* ── Spacers ───────────────────────────────── */
+.sp-8  { height: 8px; }
+.sp-16 { height: 16px; }
+.sp-24 { height: 24px; }
+.sp-32 { height: 32px; }
+.sp-48 { height: 48px; }
+.sp-64 { height: 64px; }
+
+/* ── Dark slide variant ────────────────────── */
+.slide--dark {
+  background: var(--bg-dark);
+  color: var(--text-white);
+}
+
+.slide--dark .t-headline {
+  color: var(--text-white);
+}
+
+.slide--dark .t-subhead,
+.slide--dark .t-body {
+  color: rgba(250, 250, 248, 0.6);
+}
+
+.slide--dark .t-label {
+  color: rgba(250, 250, 248, 0.4);
+}
+
+.slide--dark .page-tag {
+  color: rgba(250, 250, 248, 0.3);
+}
+
+.slide--dark .section-tag {
+  color: var(--highlight);
+}
+
+/* ── Subtle background decoration ──────────── */
+.bg-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.bg-glow--accent {
+  background: var(--accent);
+}
+
+.bg-glow--highlight {
+  background: var(--highlight);
+}
+
+/* Content z-index above glow */
+.slide > *:not(.bg-glow):not(.page-tag):not(.section-tag) {
+  position: relative;
+  z-index: 1;
+}
+
+/* ── Screenshot placeholder ───────────────── */
+.screenshot-placeholder {
+  border: 2px dashed rgba(217, 119, 6, 0.4);
+  border-radius: var(--radius);
+  background: rgba(217, 119, 6, 0.04);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 120px;
+  position: relative;
+}
+
+.screenshot-placeholder::before {
+  content: '\1F4F7';
+  font-size: 24px;
+  opacity: 0.6;
+}
+
+.screenshot-placeholder__label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--highlight);
+}
+
+.screenshot-placeholder__desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.screenshot-placeholder__priority {
+  position: absolute;
+  top: 8px;
+  right: 12px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.screenshot-placeholder__priority--must {
+  background: rgba(220, 38, 38, 0.1);
+  color: var(--danger);
+}
+
+.screenshot-placeholder__priority--recommended {
+  background: rgba(217, 119, 6, 0.1);
+  color: var(--highlight);
+}
+
+/* Dark variant */
+.slide--dark .screenshot-placeholder {
+  border-color: rgba(217, 119, 6, 0.3);
+  background: rgba(217, 119, 6, 0.06);
+}
+
+.slide--dark .screenshot-placeholder__desc {
+  color: rgba(250, 250, 248, 0.4);
+}

@@ -121,7 +121,7 @@
 
     .eyebrow {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 500;
       color: var(--text-subtle);
       letter-spacing: 0.14em;
@@ -135,7 +135,7 @@
     }
 
     h1 {
-      font-size: 68px;
+      font-size: 60px;
       font-weight: 800;
       line-height: 1.05;
       letter-spacing: -0.04em;
@@ -157,7 +157,7 @@
       position: absolute;
       left: 152px;
       right: 120px;
-      top: 500px;
+      top: 400px;
       bottom: 180px;
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -185,7 +185,7 @@
     }
     .block-label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: 0.18em;
@@ -193,7 +193,7 @@
       margin-bottom: 12px;
     }
     .block-text {
-      font-size: 18px;
+      font-size: 21px;
       color: var(--text);
       line-height: 1.55;
       letter-spacing: -0.005em;
@@ -267,34 +267,34 @@
     }
     .layer .lnum {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: 0.18em;
       margin-bottom: 4px;
     }
     .layer .lname {
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 800;
       color: var(--ink);
       letter-spacing: -0.015em;
       margin-bottom: 12px;
     }
     .layer .lname small {
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 500;
       color: var(--text-muted);
       letter-spacing: 0;
       margin-left: 6px;
     }
     .layer .ldetail {
-      font-size: 14px;
+      font-size: 16px;
       color: var(--text-muted);
       line-height: 1.55;
     }
     .layer code {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 12.5px;
+      font-size: 14px;
       background: var(--code-bg);
       padding: 2px 6px;
       color: var(--accent);
@@ -304,7 +304,7 @@
       background: var(--code-bg);
       padding: 10px 14px;
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 12.5px;
+      font-size: 14px;
       line-height: 1.65;
       color: var(--ink);
       overflow: hidden;
@@ -334,7 +334,7 @@
       position: absolute;
       left: 152px;
       right: 120px;
-      bottom: 60px;
+      bottom: 48px;
       padding-left: 40px;
       border-left: 1px solid var(--rule-fine);
       z-index: 2;
@@ -347,7 +347,7 @@
     }
     .footer-label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--highlight);
       letter-spacing: 0.2em;
@@ -355,7 +355,7 @@
       margin-bottom: 6px;
     }
     .footer-text {
-      font-size: 18px;
+      font-size: 21px;
       font-weight: 500;
       color: var(--text);
       letter-spacing: -0.005em;
@@ -382,9 +382,9 @@
       <div class="meta-top">
         <div class="page-indicator">
           <span class="dot"></span>
-          <span class="current">06</span>
+          <span class="current">07</span>
           <span class="sep">/</span>
-          <span>13</span>
+          <span>14</span>
           <span class="section">Part I · Lessons I</span>
         </div>
         <div class="context-tag">
@@ -394,9 +394,9 @@
       </div>
 
       <div class="header">
-        <div class="eyebrow"><span class="num">03</span>고민 · 환각</div>
-        <h1>환각을 프롬프트만으로<br>막을 수 있을까?</h1>
-        <div class="subtitle">"문서에 없으면 모른다고 답해" — 이 지시가 얼마나 지켜지는지부터 의심해봐야 했습니다.</div>
+        <div class="eyebrow"><span class="num">04</span>고민 · 할루시네이션</div>
+        <h1>"모른다" 라고<br>말하게 하려면?</h1>
+        <div class="subtitle">"문서에 없으면 모른다고 답해" — 해당 지시를 얼마나 잘 따르는지 체크</div>
       </div>
 
       <div class="body">
@@ -453,7 +453,8 @@
             <div class="lnum">LAYER 02</div>
             <div class="lname">서버 패턴 매칭 <small>2차 방어 · 결정론적</small></div>
             <div class="ldetail">
-              <code>_REFUSAL_PATTERNS</code> 9종으로 답변 텍스트 검증 → 동의어 포함 시 <code>answerable=false</code> 재판정
+              <code>_REFUSAL_PATTERNS</code> <strong>10종</strong>으로 답변 텍스트 검증 → 동의어 포함 시 <code>answerable=false</code> 재판정<br>
+              거절 판정 시 출처 반환 차단 + 캐시 미저장 (좀비 캐시 방지)
             </div>
             <pre><span class="kw">_REFUSAL_PATTERNS</span> = (
     <span class="str">"찾을 수 없습니다"</span>, <span class="str">"확인할 수 없"</span>,
@@ -467,9 +468,9 @@
 
       <!-- Footer -->
       <div class="footer-note">
-        <div class="footer-label">배운 것</div>
+        <div class="footer-label">배운 점</div>
         <div class="footer-text">
-          LLM 지시는 <span class="hl">확률적 제어</span>입니다. 형식이 중요한 판정(거절 여부, JSON 구조)은 <span class="hl">코드로 재검증</span>하는 것이 안전합니다.
+          "이렇게 답해"라고 써도 LLM은 <span class="hl">100% 지키지 않습니다.</span> 그래서 코드로 한 번 더 잡아야 했습니다. 아직 이 2차 체크가 <span class="hl">실제로 얼마나 발동하는지는 측정 못 했고</span>, 이게 다음 우선과제입니다.
         </div>
         <div class="footer-xref">
           → 실제 코드 : app/services/rag_service.py:19 · TS-004 · TS-009 · D22 · D27 &nbsp;|&nbsp; 결과 (Refusal 83 → 100%) : Slide 09

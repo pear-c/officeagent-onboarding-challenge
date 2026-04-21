@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 160px;
+      gap: 52px;
+    }
+
+    .features {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 28px;
+      max-width: 1400px;
+      width: 100%;
+    }
+
+    .feature {
+      padding: 36px 32px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .feature__num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-white);
+      background: var(--accent);
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .feature__title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    .feature__desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .feature__code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      margin-top: 8px;
+      opacity: 0.7;
+    }
+
+    .feature__effect {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--highlight);
+      margin-top: 4px;
+      font-weight: 600;
+    }
+
+    .bottom-msg {
+      max-width: 1400px;
+      width: 100%;
+      padding: 24px 32px;
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .bottom-msg__text {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .bottom-msg__text strong {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part III &middot; Lessons II</span>
+    <span class="page-tag">09 / 12</span>
+
+    <div>
+      <div class="accent-bar"></div>
+      <h2 class="t-headline">Naive RAG가 아닌 이유</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">이미 구현된 Advanced 요소 &mdash; 과제 제출 후 재발견한 네 가지</p>
+    </div>
+
+    <div class="features">
+      <div class="feature">
+        <div class="feature__num">1</div>
+        <div>
+          <div class="feature__title">상위 헤더 경로 보존</div>
+          <div class="feature__desc">
+            청크 메타데이터에 문서 구조 경로 저장.<br>
+            "정책 안내 > 교육비 지원" &mdash; 맥락까지 검색
+          </div>
+          <div class="feature__code">chunking/markdown.py:40</div>
+          <div class="feature__effect">&rarr; 검색 컨텍스트 정확도 향상</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature__num">2</div>
+        <div>
+          <div class="feature__title">Semantic Cache</div>
+          <div class="feature__desc">
+            Chroma 별도 컬렉션 + cosine &ge; 0.95.<br>
+            "교육비 지원 금액?" &asymp; "교육비 한도?" 자동 매칭
+          </div>
+          <div class="feature__code">cache_service.py:68 get_similar()</div>
+          <div class="feature__effect">&rarr; 유사 표현 캐시 히트, 0ms 응답</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature__num">3</div>
+        <div>
+          <div class="feature__title">answerable=false 캐시 미저장</div>
+          <div class="feature__desc">
+            거절 응답을 캐시에 넣지 않음.<br>
+            문서 추가 후에도 "못 찾겠다"가 남는 좀비 캐시 방지
+          </div>
+          <div class="feature__code">rag_service.py:89</div>
+          <div class="feature__effect">&rarr; stale 응답 제거</div>
+        </div>
+      </div>
+
+      <div class="feature">
+        <div class="feature__num">4</div>
+        <div>
+          <div class="feature__title">7메트릭 평가 하네스</div>
+          <div class="feature__desc">
+            50개 골든셋, NoOpCacheService 주입으로<br>
+            순수 LLM 성능만 분리 측정
+          </div>
+          <div class="feature__code">eval/metrics.py</div>
+          <div class="feature__effect">&rarr; 데이터 기반 의사결정 체계</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-msg">
+      <p class="bottom-msg__text">
+        의도적으로 설계한 것도, 트러블슈팅 중 필요에 의해 추가한 것도 있습니다.<br>
+        <strong>정리하면서 다시 가치를 인식하게 됐습니다.</strong>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

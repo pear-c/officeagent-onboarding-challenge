@@ -9,6 +9,7 @@ from app.config import settings
 from app.embedding.embedder import Embedder
 from app.llm.provider import LLMProvider
 from app.prompts.templates import SYSTEM_PROMPT, SYSTEM_PROMPT_STREAM, build_user_prompt
+from app.reranker.cross_encoder import Reranker
 from app.schemas import QueryAnswer, SourceInfo
 from app.services.cache_service import CachedAnswer, CacheService
 from app.vectorstore.chroma_store import ChromaStore, SearchResult
@@ -44,11 +45,13 @@ class RAGService:
         chroma: ChromaStore,
         embedder: Embedder,
         answer_llm: LLMProvider,
+        reranker: Reranker | None = None,
     ):
         self._cache = cache_service
         self._chroma = chroma
         self._embedder = embedder
         self._answer_llm = answer_llm
+        self._reranker = reranker
 
     async def answer(self, question: str) -> QueryAnswer:
         """질문 → 답변 (JSON 응답용)."""
@@ -68,12 +71,23 @@ class RAGService:
         if similar:
             return self._cached_to_answer(similar, total_start)
 
-        # ④ 벡터 검색
+        # ④ 벡터 검색 (reranker 사용 시 후보를 넉넉히 가져옴)
+        candidate_k = (
+            settings.reranker_candidates if self._reranker else settings.search_top_k
+        )
         search_results = self._chroma.search(
-            query_embedding=question_embedding, top_k=settings.search_top_k,
+            query_embedding=question_embedding, top_k=candidate_k,
         )
         if not search_results:
             return self._no_documents_answer(total_start)
+
+        # ④-b Reranker 재정렬
+        if self._reranker:
+            search_results = self._reranker.rerank(
+                query=question,
+                results=search_results,
+                top_k=settings.reranker_top_k,
+            )
 
         # ⑤ LLM 호출 + 응답 처리
         chunks = self._results_to_chunks(search_results)
@@ -125,14 +139,25 @@ class RAGService:
                 yield event
             return
 
-        # ③ 벡터 검색
+        # ③ 벡터 검색 (reranker 사용 시 후보를 넉넉히 가져옴)
+        candidate_k = (
+            settings.reranker_candidates if self._reranker else settings.search_top_k
+        )
         search_results = self._chroma.search(
-            query_embedding=question_embedding, top_k=settings.search_top_k,
+            query_embedding=question_embedding, top_k=candidate_k,
         )
         if not search_results:
             async for event in self._stream_empty(total_start):
                 yield event
             return
+
+        # ③-b Reranker 재정렬
+        if self._reranker:
+            search_results = self._reranker.rerank(
+                query=question,
+                results=search_results,
+                top_k=settings.reranker_top_k,
+            )
 
         # ④ sources 먼저 전송 (D25) + LLM 스트리밍
         chunks = self._results_to_chunks(search_results)

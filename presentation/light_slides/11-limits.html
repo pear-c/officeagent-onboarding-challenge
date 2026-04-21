@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 140px;
+      gap: 44px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
+      max-width: 1500px;
+      width: 100%;
+    }
+
+    /* Left: Priority limits */
+    .limits {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .limits__title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .limit-item {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 14px 16px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.04);
+      border-radius: var(--radius-sm);
+    }
+
+    .limit-item--high { border-left: 3px solid var(--danger); }
+    .limit-item--mid { border-left: 3px solid var(--highlight); }
+    .limit-item--low { border-left: 3px solid var(--text-muted); }
+
+    .limit-rank {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--text-muted);
+      width: 24px;
+      flex-shrink: 0;
+      text-align: center;
+    }
+
+    .limit-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.4;
+    }
+
+    .limit-text strong { color: var(--text); }
+
+    /* Right: Tech stack summary + next steps */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .stack-table {
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
+    }
+
+    .stack-header {
+      display: grid;
+      grid-template-columns: 100px 1fr 1fr;
+      background: var(--accent);
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .stack-header > div { padding: 10px 14px; }
+
+    .stack-row {
+      display: grid;
+      grid-template-columns: 100px 1fr 1fr;
+      background: var(--bg-card);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      font-size: 13px;
+    }
+
+    .stack-row:last-child { border-bottom: none; }
+    .stack-row > div { padding: 10px 14px; line-height: 1.4; }
+
+    .stack-row__tech {
+      font-weight: 700;
+      color: var(--text);
+      background: rgba(0,0,0,0.02);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+    }
+
+    .stack-row__limit { color: var(--text-muted); }
+    .stack-row__next { color: var(--text-secondary); }
+
+    .next-box {
+      padding: 20px 24px;
+      background: var(--highlight-light);
+      border: 1px solid rgba(217,119,6,0.15);
+      border-radius: var(--radius-sm);
+    }
+
+    .next-box__title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: var(--highlight);
+      margin-bottom: 10px;
+    }
+
+    .next-box__list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .next-box__list li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      gap: 8px;
+      line-height: 1.4;
+    }
+
+    .next-box__list li::before {
+      content: '\2192';
+      color: var(--highlight);
+      flex-shrink: 0;
+    }
+
+    /* Bottom principle */
+    .principle {
+      max-width: 1500px;
+      width: 100%;
+      text-align: center;
+      padding: 20px 32px;
+      background: var(--highlight-light);
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(217,119,6,0.15);
+    }
+
+    .principle__text {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--highlight);
+      letter-spacing: -0.01em;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part IV &middot; Next Lessons</span>
+    <span class="page-tag">11 / 12</span>
+
+    <div>
+      <div class="accent-bar accent-bar--highlight"></div>
+      <h2 class="t-headline">한계와 다음 단계</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">우선순위를 아는 엔지니어 &mdash; 프로덕트 영향도 기준</p>
+    </div>
+
+    <div class="content">
+      <div class="limits">
+        <div class="limits__title">인정한 한계 7가지</div>
+        <div class="limit-item limit-item--high">
+          <div class="limit-rank">1</div>
+          <div class="limit-text"><strong>Retrieval 분리 평가 미수행</strong> &mdash; gold passage Recall@K</div>
+        </div>
+        <div class="limit-item limit-item--high">
+          <div class="limit-rank">2</div>
+          <div class="limit-text"><strong>서버 방어 발동률 계측 부재</strong> &mdash; false positive/negative 분리</div>
+        </div>
+        <div class="limit-item limit-item--mid">
+          <div class="limit-rank">3</div>
+          <div class="limit-text"><strong>PDF 파서 한계</strong> &mdash; 표/다단 &rarr; Docling 이전</div>
+        </div>
+        <div class="limit-item limit-item--mid">
+          <div class="limit-rank">4</div>
+          <div class="limit-text"><strong>캐시 threshold 경험적</strong> &mdash; 0.95 정량 튜닝 미수행</div>
+        </div>
+        <div class="limit-item limit-item--low">
+          <div class="limit-rank">5</div>
+          <div class="limit-text"><strong>RBAC / 민감정보</strong> &mdash; 메타데이터 필터링 + presidio</div>
+        </div>
+        <div class="limit-item limit-item--low">
+          <div class="limit-rank">6</div>
+          <div class="limit-text"><strong>Ollama 어댑터 미구현</strong> &mdash; 추상화만 존재</div>
+        </div>
+        <div class="limit-item limit-item--low">
+          <div class="limit-rank">7</div>
+          <div class="limit-text"><strong>Agentic RAG 부재</strong> &mdash; 의도적 범위 외</div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="stack-table">
+          <div class="stack-header">
+            <div>기술</div>
+            <div>현재 한계</div>
+            <div>다음 단계</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-row__tech">Claude</div>
+            <div class="stack-row__limit">외산 API, 8.8s 지연</div>
+            <div class="stack-row__next">Ollama + Qwen2.5 검증</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-row__tech">BGE-M3</div>
+            <div class="stack-row__limit">Dense only 활용</div>
+            <div class="stack-row__next">Sparse + Reranker</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-row__tech">ChromaDB</div>
+            <div class="stack-row__limit">RBAC/대규모 약함</div>
+            <div class="stack-row__next">Qdrant / Milvus</div>
+          </div>
+          <div class="stack-row">
+            <div class="stack-row__tech">pypdf</div>
+            <div class="stack-row__limit">표/레이아웃 약함</div>
+            <div class="stack-row__next">Docling / PyMuPDF</div>
+          </div>
+        </div>
+
+        <div class="next-box">
+          <div class="next-box__title">제품화 첫 스프린트 3가지</div>
+          <ul class="next-box__list">
+            <li>고객사 샘플 PDF로 파서 교체 검증</li>
+            <li>RBAC 최소 구현 (메타데이터 필터링)</li>
+            <li>환각 2차 체크 계측 파이프라인 추가</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="principle">
+      <div class="principle__text">모든 개선은 측정 기반으로 &mdash; RAG는 측정하지 않으면 감이 됩니다</div>
+    </div>
+  </div>
+</body>
+</html>

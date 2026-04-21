@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 80px 140px;
+      gap: 32px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      max-width: 1500px;
+      width: 100%;
+    }
+
+    /* Left: Defense layers */
+    .defense {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .layer {
+      padding: 28px 24px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      box-shadow: var(--shadow);
+      position: relative;
+    }
+
+    .layer--prompt { border: 2px solid var(--accent); }
+    .layer--server { border: 2px solid var(--highlight); }
+
+    .layer__tag {
+      position: absolute;
+      top: -12px;
+      left: 24px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 3px 12px;
+      border-radius: 20px;
+      color: white;
+    }
+
+    .layer__tag--prompt { background: var(--accent); }
+    .layer__tag--server { background: var(--highlight); }
+
+    .layer__title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+
+    .layer__items {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .layer__items li {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.5;
+    }
+
+    .layer__items li::before {
+      content: '\2192';
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+
+    .plus-divider {
+      text-align: center;
+      font-size: 24px;
+      font-weight: 300;
+      color: var(--text-muted);
+    }
+
+    /* Right: Troubleshooting + result + screenshot */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .ts-card {
+      padding: 16px 20px;
+      border-radius: var(--radius-sm);
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .ts-card__id {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: white;
+      background: var(--danger);
+      padding: 3px 10px;
+      border-radius: 20px;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+
+    .ts-card__id--resolved { background: var(--success); }
+
+    .ts-card__text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .ts-card__text strong { color: var(--text); }
+
+    .result-banner {
+      padding: 24px 28px;
+      background: var(--bg-card);
+      border: 2px solid var(--success);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .result-banner__metric {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 44px;
+      font-weight: 800;
+      color: var(--success);
+      line-height: 1;
+    }
+
+    .result-banner__text {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .result-banner__text strong { color: var(--text); }
+
+    .result-banner__arrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .result-banner__arrow .from {
+      color: var(--danger);
+      text-decoration: line-through;
+      opacity: 0.6;
+    }
+
+    /* Screenshot evidence */
+    .evidence-row {
+      max-width: 1500px;
+      width: 100%;
+    }
+
+    .evidence-row .screenshot-placeholder {
+      min-height: 80px;
+    }
+
+    .result-caveat {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part I &middot; Lessons I</span>
+    <span class="page-tag">08 / 12</span>
+
+    <div>
+      <div class="accent-bar accent-bar--highlight"></div>
+      <h2 class="t-headline">고민 &#9315; "모른다"고 말하게 만들기</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">프롬프트만으로는 부족했습니다 &mdash; 실제 버그에서 배운 것</p>
+    </div>
+
+    <div class="content">
+      <div class="defense">
+        <div class="layer layer--prompt">
+          <div class="layer__tag layer__tag--prompt">LAYER 1 &mdash; PROMPT</div>
+          <div class="layer__title">프롬프트 방어</div>
+          <ul class="layer__items">
+            <li>거절 시 정확한 문장 강제</li>
+            <li>Few-shot 예시 2개 (답변 가능 + 불가)</li>
+            <li>"확인할 수 없습니다" 등 동의어 사용 금지</li>
+          </ul>
+        </div>
+
+        <div class="plus-divider">+</div>
+
+        <div class="layer layer--server">
+          <div class="layer__tag layer__tag--server">LAYER 2 &mdash; SERVER</div>
+          <div class="layer__title">서버 방어</div>
+          <ul class="layer__items">
+            <li>10종 거절 패턴 정규식 매칭</li>
+            <li>LLM 동의어 우회 시에도 탐지</li>
+            <li>확정적 fallback 응답 반환</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <div class="ts-card">
+          <span class="ts-card__id">TS-004</span>
+          <div class="ts-card__text">
+            <strong>SSE에서 raw JSON 출력</strong><br>
+            스트리밍 전용 프롬프트 분리로 해결
+          </div>
+        </div>
+
+        <div class="ts-card">
+          <span class="ts-card__id">TS-008</span>
+          <div class="ts-card__text">
+            <strong>좀비 캐시 &mdash; "못 찾겠다"가 영구 저장</strong><br>
+            answerable=false 응답 캐시 미저장으로 해결
+          </div>
+        </div>
+
+        <div class="ts-card">
+          <span class="ts-card__id ts-card__id--resolved">TS-009</span>
+          <div class="ts-card__text">
+            <strong>LLM 동의어 우회 &mdash; "확인할 수 없습니다"</strong><br>
+            10종 패턴 매칭 + 프롬프트 금지어 추가로 해결
+          </div>
+        </div>
+
+        <div class="result-banner">
+          <div>
+            <div class="result-banner__arrow">
+              <span class="from">83%</span> &rarr;
+            </div>
+            <div class="result-banner__metric">100%</div>
+          </div>
+          <div class="result-banner__text">
+            <strong>Refusal Accuracy</strong><br>
+            v3 프롬프트 + 서버 이중 방어
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screenshot: IDE에서 _REFUSAL_PATTERNS 코드 -->
+    <div class="evidence-row">
+      <div class="screenshot-placeholder">
+        <span class="screenshot-placeholder__priority screenshot-placeholder__priority--recommended">RECOMMENDED</span>
+        <span class="screenshot-placeholder__label">Screenshot #7</span>
+        <span class="screenshot-placeholder__desc">IDE: _REFUSAL_PATTERNS 10종 코드 (rag_service.py:18-35) &mdash; 서버 단 방어 코드 레벨 증거</span>
+      </div>
+    </div>
+
+    <div class="result-caveat">
+      빈 칸: 서버 방어 발동률 &middot; 적중률 계측 미수행 &rarr; 다음 우선과제
+    </div>
+  </div>
+</body>
+</html>

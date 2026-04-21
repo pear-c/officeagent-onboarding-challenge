@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 80px 140px;
+      gap: 36px;
+    }
+
+    .demo-cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      max-width: 1400px;
+      width: 100%;
+    }
+
+    .demo-card {
+      border-radius: var(--radius);
+      padding: 36px 28px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .demo-card--hero {
+      border-color: var(--highlight);
+      background: rgba(217, 119, 6, 0.06);
+    }
+
+    .demo-card__num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      color: rgba(255,255,255,0.3);
+    }
+
+    .demo-card--hero .demo-card__num {
+      color: var(--highlight);
+    }
+
+    .demo-card__title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text-white);
+      line-height: 1.3;
+    }
+
+    .demo-card__question {
+      font-size: 14px;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.6;
+      font-style: italic;
+      padding-left: 16px;
+      border-left: 2px solid rgba(255,255,255,0.12);
+    }
+
+    .demo-card--hero .demo-card__question {
+      border-left-color: var(--highlight);
+    }
+
+    .demo-card__proves {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--highlight);
+      letter-spacing: 0.04em;
+      margin-top: auto;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #EF4444;
+    }
+
+    .live-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #EF4444;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    /* Screenshot backup section */
+    .backup-section {
+      max-width: 1400px;
+      width: 100%;
+    }
+
+    .backup-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.2);
+      margin-bottom: 12px;
+    }
+
+    .backup-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .backup-grid .screenshot-placeholder {
+      min-height: 100px;
+    }
+
+    .demo-footer {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      max-width: 1400px;
+      width: 100%;
+    }
+
+    .demo-footer__item {
+      font-size: 13px;
+      color: rgba(255,255,255,0.25);
+      font-family: 'JetBrains Mono', monospace;
+      letter-spacing: 0.04em;
+    }
+
+    .demo-footer__item .val {
+      color: rgba(255,255,255,0.5);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide slide--dark" style="background: #111111;">
+    <span class="section-tag">Part II &middot; Demo</span>
+    <span class="page-tag">04 / 12</span>
+
+    <div>
+      <div class="accent-bar accent-bar--highlight"></div>
+      <div style="display: flex; align-items: center; gap: 24px;">
+        <h2 class="t-headline">라이브 데모</h2>
+        <span class="live-badge"><span class="live-dot"></span>LIVE</span>
+      </div>
+      <div class="sp-8"></div>
+      <p class="t-body">세 가지 시나리오로 증명합니다</p>
+    </div>
+
+    <div class="demo-cards">
+      <div class="demo-card">
+        <div class="demo-card__num">SCENARIO 01</div>
+        <div class="demo-card__title">단일 문서 질의</div>
+        <div class="demo-card__question">"연차 일수가 어떻게 되나요?"</div>
+        <div class="demo-card__proves">&rarr; 출처 포함 답변 확인</div>
+      </div>
+
+      <div class="demo-card">
+        <div class="demo-card__num">SCENARIO 02</div>
+        <div class="demo-card__title">복합 질의</div>
+        <div class="demo-card__question">"코드 리뷰 절차와 배포 프로세스는?"</div>
+        <div class="demo-card__proves">&rarr; 멀티 청크 검색 + SSE 스트리밍</div>
+      </div>
+
+      <div class="demo-card demo-card--hero">
+        <div class="demo-card__num">SCENARIO 03</div>
+        <div class="demo-card__title">답할 수 없는 질문</div>
+        <div class="demo-card__question">"사내 식당 메뉴가 뭐예요?"</div>
+        <div class="demo-card__proves">&rarr; 환각 없이 "모른다" 응답</div>
+      </div>
+    </div>
+
+    <!-- Screenshot backup: 라이브 데모 실패 시 대비 -->
+    <div class="backup-section">
+      <div class="backup-label">Backup Screenshots</div>
+      <div class="backup-grid">
+        <div class="screenshot-placeholder">
+          <span class="screenshot-placeholder__priority screenshot-placeholder__priority--recommended">RECOMMENDED</span>
+          <span class="screenshot-placeholder__label">Screenshot #1</span>
+          <span class="screenshot-placeholder__desc">Web UI: 시나리오 1 정상 답변<br>출처 태그 + 메타데이터 표시 화면</span>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="screenshot-placeholder__priority screenshot-placeholder__priority--must">MUST</span>
+          <span class="screenshot-placeholder__label">Screenshot #2</span>
+          <span class="screenshot-placeholder__desc">Web UI: 시나리오 3 거절 답변<br>"제공된 문서에서 해당 내용을 찾을 수 없습니다" + answerable: false</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-footer">
+      <div class="demo-footer__item">+ 동일 질문 재질의 &rarr; 캐시 히트 <span class="val">154ms</span> vs 미스 <span class="val">11,045ms</span></div>
+      <div class="demo-footer__item">| citation &middot; answerable &middot; sources 동시 확인</div>
+    </div>
+  </div>
+</body>
+</html>

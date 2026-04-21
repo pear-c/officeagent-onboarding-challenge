@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 06 · 고민 ③ 벡터 DB & 캐시</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ---------- Top meta strip ---------- */
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--accent); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag {
+      display: flex; align-items: center; gap: 12px;
+      letter-spacing: 0.04em;
+    }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* ---------- Header ---------- */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 148px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 12px; bottom: 12px;
+      width: 2px; background: var(--accent);
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .eyebrow .num {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+
+    h1 {
+      font-size: 60px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1100px;
+    }
+
+    /* ---------- Body ---------- */
+    .body {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 400px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      align-items: start;
+      gap: 64px;
+      z-index: 2;
+    }
+
+    /* Narrative column */
+    .narrative {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    .block {
+      padding-left: 32px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+    }
+    .block::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 8px; bottom: 8px;
+      width: 2px; background: var(--accent);
+    }
+    .block.lesson::before {
+      background: var(--highlight);
+    }
+    .block.lesson .block-label {
+      color: var(--highlight);
+    }
+    .block.lesson .concern-text {
+      font-size: 21px;
+    }
+
+    .block-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .concern-text {
+      font-size: 23px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .concern-text strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .choice-list {
+      list-style: none;
+      counter-reset: item;
+    }
+    .choice-list li {
+      counter-increment: item;
+      font-size: 19px;
+      color: var(--text);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+      padding: 12px 0 12px 40px;
+      position: relative;
+      border-bottom: 1px solid var(--rule-fine);
+    }
+    .choice-list li:last-child { border-bottom: none; }
+    .choice-list li::before {
+      content: counter(item, decimal-leading-zero);
+      position: absolute;
+      left: 0; top: 13px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+    .choice-list code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      color: var(--accent);
+      font-weight: 500;
+      border-radius: 2px;
+    }
+
+    /* Tech column */
+    .tech {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 0;
+    }
+
+    /* Cache cards */
+    .cache-card {
+      background: var(--code-bg);
+      border: 1px solid var(--code-border);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .cache-card .level {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+    }
+    .cache-card .c-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 0.08em;
+    }
+    .cache-card .c-tech {
+      font-size: 21px;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .cache-card .c-detail {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .cache-card .c-detail code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      background: var(--bg);
+      padding: 1px 4px;
+      color: var(--accent);
+    }
+
+    /* Evidence anchor */
+    .anchor-wrap {
+      margin-top: 4px;
+    }
+    .anchor {
+      background: transparent;
+      border: 1px solid var(--rule);
+      padding: 16px 20px;
+    }
+    .anchor .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+    .anchor .stat {
+      font-size: 15px;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+    .anchor .figure {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+    }
+    .anchor .figure.highlight {
+      color: var(--highlight);
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <!-- Top meta -->
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">06</span>
+          <span class="sep">/</span>
+          <span>14</span>
+          <span class="section">Part I · Lessons I</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="header">
+        <div class="eyebrow"><span class="num">03</span>고민 · 벡터 DB & 캐시</div>
+        <h1>어디에 저장하고,<br>같은 질문은 어떻게?</h1>
+        <div class="subtitle">PoC 속도와 프로덕션 확장성 사이에서, 3단계 캐시로 체감 지연을 해결했습니다.</div>
+      </div>
+
+      <!-- Body -->
+      <div class="body">
+        <!-- Narrative -->
+        <div class="narrative">
+          <div class="block">
+            <div class="block-label">고민</div>
+            <div class="concern-text">
+              Vector DB는 PoC 속도를 우선할지, 프로덕션 요구(RBAC, Hybrid)를 미리 고려할지가 갈림길이었습니다.
+              캐시는 단순 exact match를 넘어 <strong>유사 질문까지 커버</strong>해야 했고, <strong>문서 변경 시 무효화</strong> 설계가 필요했습니다. 많은 PoC가 정확 일치만 구현하는데, 여기서 차별화를 만들고 싶었습니다.
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block-label">선택</div>
+            <ol class="choice-list">
+              <li>ChromaDB — Docker 한 줄, PoC 속도 우선. 한계: RBAC·Sparse·대규모 약함</li>
+              <li>3단계 캐시 — Redis 정확 일치 → <strong>Chroma Semantic Cache</strong> → 전체 무효화</li>
+              <li>Semantic Cache: <code>cache_questions</code> 컬렉션에 질문 임베딩 저장, cosine ≥ 0.95 히트</li>
+              <li><code>answerable=false</code> 캐시 미저장 + 문서 업로드 시 전체 삭제 — 좀비 캐시 차단</li>
+            </ol>
+          </div>
+
+          <div class="block lesson">
+            <div class="block-label">배운 점</div>
+            <div class="concern-text">
+              '찾을 수 없다'는 캐시가 어떤 문서와도 연관이 없어, 문서를 올려도 무효화되지 않는 <strong>좀비 캐시</strong>를 겪었습니다. 파일별 추적 대신 <strong>"단순한 전체 무효화 + 거절 캐시 미저장"</strong>을 택했습니다. threshold 0.95는 경험적 값 — 정량 튜닝이 다음 과제입니다.
+            </div>
+          </div>
+        </div>
+
+        <!-- Technical -->
+        <div class="tech">
+          <div class="cache-card">
+            <div class="level">L1</div>
+            <div class="c-label">EXACT MATCH</div>
+            <div class="c-tech">Redis</div>
+            <div class="c-detail"><code>SHA-256(question)</code> → <code>cache:exact:{hash}</code> / TTL 1시간</div>
+          </div>
+
+          <div class="cache-card">
+            <div class="level">L2</div>
+            <div class="c-label">SEMANTIC CACHE</div>
+            <div class="c-tech">Chroma</div>
+            <div class="c-detail"><code>cache_questions</code> 컬렉션 · cosine ≥ 0.95 / TTL 1시간</div>
+          </div>
+
+          <div class="cache-card">
+            <div class="level">L3</div>
+            <div class="c-label">INVALIDATION</div>
+            <div class="c-tech">전체 무효화</div>
+            <div class="c-detail">문서 업로드 시 QA 캐시 전체 삭제 / <code>answerable=false</code> 미저장</div>
+          </div>
+
+          <div class="anchor-wrap">
+            <div class="anchor">
+              <div class="label">Measured · 체감 효과</div>
+              <div class="stat">캐시 miss (RAG 전체)</div>
+              <div class="figure">~13.6초</div>
+              <div class="stat">정확 일치 hit</div>
+              <div class="figure highlight">0ms</div>
+              <div class="stat">Semantic hit (cosine ≥ 0.95)</div>
+              <div class="figure highlight">0ms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -31,9 +31,13 @@ class Settings(BaseSettings):
     chunk_overlap: int = 80
 
     # LLM
-    llm_answer_provider: str = "claude"  # claude | codex
-    llm_auxiliary_provider: str = "codex"  # claude | codex
+    llm_answer_provider: str = "claude"  # claude | codex | ollama
+    llm_auxiliary_provider: str = "codex"  # claude | codex | ollama
     llm_max_tokens: int = 1024
+
+    # Ollama
+    ollama_base_url: str = "http://localhost:11434"
+    ollama_model: str = "qwen3:4b"
 
     # 파일 업로드
     max_file_size: int = 10 * 1024 * 1024  # 10MB
@@ -42,6 +46,12 @@ class Settings(BaseSettings):
     # 검색
     search_top_k: int = 5
     cache_similarity_threshold: float = 0.95
+
+    # Reranker
+    reranker_enabled: bool = True
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
+    reranker_top_k: int = 5        # rerank 후 최종 전달할 청크 수
+    reranker_candidates: int = 15   # 벡터 검색에서 reranker로 넘길 후보 수
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

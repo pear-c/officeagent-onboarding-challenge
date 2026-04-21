@@ -74,7 +74,14 @@ async def lifespan(app: FastAPI):
         cache_service=app.state.cache_service,
     )
 
-    # 7) RAGService (CacheService + Chroma + Embedder + LLM)
+    # 7) Reranker (옵션)
+    reranker = None
+    if settings.reranker_enabled:
+        from app.reranker.cross_encoder import Reranker
+
+        reranker = Reranker(model_name=settings.reranker_model)
+
+    # 8) RAGService (CacheService + Chroma + Embedder + LLM + Reranker)
     from app.api.deps import get_answer_llm
     from app.services.rag_service import RAGService
 
@@ -83,6 +90,7 @@ async def lifespan(app: FastAPI):
         chroma=app.state.chroma,
         embedder=app.state.embedder,
         answer_llm=get_answer_llm(),
+        reranker=reranker,
     )
 
     logger.info("=== 리소스 초기화 완료 ===")

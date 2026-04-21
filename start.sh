@@ -47,7 +47,11 @@ if [ ! -f ".env" ]; then
     echo "      .env 생성 완료 (기본 설정)"
 fi
 
+# .env에 이미 설정된 provider 읽기
+current_provider=$(grep -E '^LLM_ANSWER_PROVIDER=' .env 2>/dev/null | cut -d= -f2)
+
 # 설치된 CLI에 맞춰 LLM_ANSWER_PROVIDER 자동 설정 (macOS/Linux 포터블)
+# 단, 사용자가 명시적으로 ollama를 설정한 경우 덮어쓰지 않음
 set_provider() {
     local provider=$1
     python3 -c "
@@ -59,7 +63,9 @@ p.write_text(text, encoding='utf-8')
 "
 }
 
-if [ "$has_claude" = true ]; then
+if [ "$current_provider" = "ollama" ]; then
+    echo "      LLM: Ollama (사용자 설정 유지)"
+elif [ "$has_claude" = true ]; then
     set_provider claude
     echo "      LLM: Claude (자동 감지)"
 elif [ "$has_codex" = true ]; then

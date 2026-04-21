@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 140px;
+      gap: 44px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      max-width: 1500px;
+      width: 100%;
+    }
+
+    .section-card {
+      padding: 36px 32px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .sc__header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .sc__badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      padding: 4px 12px;
+      border-radius: 20px;
+      white-space: nowrap;
+      background: var(--accent);
+      color: white;
+    }
+
+    .sc__title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .sc__body {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .sc__row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .sc__row::before {
+      content: '\2192';
+      color: var(--text-muted);
+      flex-shrink: 0;
+      font-weight: 600;
+    }
+
+    .sc__limit {
+      font-size: 13px;
+      color: var(--text-muted);
+      font-style: italic;
+      padding-left: 24px;
+      margin-top: 4px;
+    }
+
+    .sc__highlight {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--highlight);
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    /* Bottom: key insight */
+    .insight {
+      max-width: 1500px;
+      width: 100%;
+      padding: 24px 32px;
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .insight__text {
+      font-size: 17px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .insight__text strong {
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part I &middot; Lessons I</span>
+    <span class="page-tag">06 / 12</span>
+
+    <div>
+      <div class="accent-bar"></div>
+      <h2 class="t-headline">고민 &#9313; 임베딩 & 청킹</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">문서를 어떻게 쪼개고, 어떻게 검색할 것인가</p>
+    </div>
+
+    <div class="content">
+      <div class="section-card">
+        <div class="sc__header">
+          <span class="sc__badge">EMBED</span>
+          <span class="sc__title">BGE-M3</span>
+        </div>
+        <div class="sc__body">
+          <div class="sc__row">한&middot;영 혼재 문서에 안정적 (MTEB Korean 상위)</div>
+          <div class="sc__row">API 과금 없음, 온프렘 배포 가능</div>
+          <div class="sc__row">Dense + Sparse + 8192 토큰 단일 모델</div>
+        </div>
+        <div class="sc__limit">한계: Dense만 사용 중 &mdash; Sparse 전환 시 DB 이전 필요</div>
+        <div class="sc__highlight">&rarr; 선택 근거: 온프렘 + 확장성</div>
+      </div>
+
+      <div class="section-card">
+        <div class="sc__header">
+          <span class="sc__badge">CHUNK</span>
+          <span class="sc__title">문서 타입별 분기</span>
+        </div>
+        <div class="sc__body">
+          <div class="sc__row"><strong>Markdown</strong> &mdash; 헤더 기반 + 상위 경로 메타데이터 보존</div>
+          <div class="sc__row"><strong>PDF</strong> &mdash; 번호 헤더 감지 &rarr; MD 변환 (TS-006)</div>
+          <div class="sc__row">400자 초과 시 재귀 분할, 80자 overlap</div>
+        </div>
+        <div class="sc__limit">한계: pypdf 표/다단 레이아웃 약함 &rarr; Docling 이전 필요</div>
+        <div class="sc__highlight">&rarr; "정책 안내 > 교육비 지원" 경로가 검색 품질 결정</div>
+      </div>
+    </div>
+
+    <div class="insight">
+      <p class="insight__text">
+        <strong>핵심 설계 원칙:</strong> 문서 구조가 의미 단위를 결정한다.
+        단순히 토큰 수로 자르지 않고, 헤더 경계에서 분할하고 상위 경로를 메타데이터로 보존합니다.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

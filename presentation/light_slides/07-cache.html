@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 80px 140px;
+      gap: 32px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      max-width: 1500px;
+      width: 100%;
+    }
+
+    /* Left: 3-stage explanation */
+    .left-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .cache-stages {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cache-stage {
+      padding: 24px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+    }
+
+    .cache-stage--hero {
+      border: 2px solid var(--highlight);
+      background: var(--highlight-light);
+    }
+
+    .cs__num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-white);
+      background: var(--accent);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .cache-stage--hero .cs__num {
+      background: var(--highlight);
+    }
+
+    .cs__name {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .cs__tech {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .cs__detail {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      line-height: 1.5;
+    }
+
+    /* Zombie cache callout */
+    .zombie-box {
+      padding: 20px 24px;
+      background: var(--bg-card);
+      border-left: 3px solid var(--highlight);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .zombie-box__title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .zombie-box__desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Right: Screenshots */
+    .right-col {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .right-col .screenshot-placeholder {
+      flex: 1;
+      min-height: 140px;
+    }
+
+    /* Bottom metrics */
+    .metrics-bar {
+      max-width: 1500px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      padding: 20px 32px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .metrics-bar__item {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .metrics-bar__item .val {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .metrics-bar__item .val--fast { color: var(--success); }
+    .metrics-bar__item .val--slow { color: var(--danger); }
+
+    .metrics-bar__sep {
+      font-size: 20px;
+      color: var(--text-muted);
+      opacity: 0.3;
+    }
+
+    .metrics-bar__note {
+      font-size: 12px;
+      color: var(--text-muted);
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part I &middot; Lessons I</span>
+    <span class="page-tag">07 / 12</span>
+
+    <div>
+      <div class="accent-bar accent-bar--highlight"></div>
+      <h2 class="t-headline">고민 &#9314; 3단계 캐시</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">동일 질문과 유사 질문, 그리고 좀비 캐시</p>
+    </div>
+
+    <div class="content">
+      <div class="left-col">
+        <div class="cache-stages">
+          <div class="cache-stage">
+            <div class="cs__num">1</div>
+            <div>
+              <div class="cs__name">Exact Match</div>
+              <div class="cs__tech">Redis &middot; SHA-256</div>
+              <div class="cs__detail">질문 해시 기반 정확 일치. TTL 1시간</div>
+            </div>
+          </div>
+
+          <div class="cache-stage cache-stage--hero">
+            <div class="cs__num">2</div>
+            <div>
+              <div class="cs__name">Semantic Cache</div>
+              <div class="cs__tech">Chroma &middot; cosine &ge; 0.95</div>
+              <div class="cs__detail">"교육비 지원 금액?" &asymp; "교육비 한도?" 자동 매칭.<br>별도 cache_questions 컬렉션 활용</div>
+            </div>
+          </div>
+
+          <div class="cache-stage">
+            <div class="cs__num">3</div>
+            <div>
+              <div class="cs__name">Invalidation</div>
+              <div class="cs__tech">문서 변경 시 전체 삭제</div>
+              <div class="cs__detail">answerable=false 응답은 캐시 미저장</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="zombie-box">
+          <div class="zombie-box__title">좀비 캐시 방지 설계 (TS-008)</div>
+          <div class="zombie-box__desc">
+            "없다"는 답도 캐시에 들어가면, 문서 추가 후에도 계속 "없다"고 응답.<br>
+            &rarr; answerable=false 자체를 캐시에 넣지 않는 단순한 원칙으로 해결
+          </div>
+        </div>
+      </div>
+
+      <div class="right-col">
+        <!-- Screenshot: cache-miss.png + cache-hit.png 나란히 -->
+        <div class="screenshot-placeholder">
+          <span class="screenshot-placeholder__priority screenshot-placeholder__priority--must">MUST</span>
+          <span class="screenshot-placeholder__label">Screenshot #5</span>
+          <span class="screenshot-placeholder__desc">
+            cache-miss: 11,045ms 응답 화면<br>
+            (기존 eval/images/cache-miss.png 활용)
+          </span>
+        </div>
+        <div class="screenshot-placeholder">
+          <span class="screenshot-placeholder__priority screenshot-placeholder__priority--must">MUST</span>
+          <span class="screenshot-placeholder__label">Screenshot #6</span>
+          <span class="screenshot-placeholder__desc">
+            cache-hit: 154ms + "유사질문 99.7%" 표시<br>
+            (기존 eval/images/cache-hit.png 활용)
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="metrics-bar">
+      <div class="metrics-bar__item">캐시 미스 <span class="val val--slow">11,045ms</span></div>
+      <div class="metrics-bar__sep">&rarr;</div>
+      <div class="metrics-bar__item">캐시 히트 <span class="val val--fast">154ms</span></div>
+      <div class="metrics-bar__note">| threshold 0.95 &mdash; 경험적 값, 정량 튜닝은 다음 과제</div>
+    </div>
+  </div>
+</body>
+</html>

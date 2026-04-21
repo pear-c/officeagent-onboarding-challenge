@@ -7,6 +7,7 @@ from app.config import settings
 from app.embedding.embedder import Embedder
 from app.llm.claude_provider import ClaudeProvider
 from app.llm.codex_provider import CodexProvider
+from app.llm.ollama_provider import OllamaProvider
 from app.llm.provider import LLMProvider
 from app.services.cache_service import CacheService
 from app.services.ingest_service import IngestService
@@ -14,18 +15,26 @@ from app.services.rag_service import RAGService
 from app.vectorstore.chroma_store import ChromaStore
 
 
+def _create_provider(name: str) -> LLMProvider:
+    """이름으로 LLM provider 생성."""
+    if name == "claude":
+        return ClaudeProvider()
+    if name == "ollama":
+        return OllamaProvider(
+            base_url=settings.ollama_base_url,
+            model=settings.ollama_model,
+        )
+    return CodexProvider()
+
+
 def get_answer_llm() -> LLMProvider:
     """답변 생성용 LLM (정확도 우선)."""
-    if settings.llm_answer_provider == "claude":
-        return ClaudeProvider()
-    return CodexProvider()
+    return _create_provider(settings.llm_answer_provider)
 
 
 def get_auxiliary_llm() -> LLMProvider:
     """보조 작업용 LLM (속도 우선)."""
-    if settings.llm_auxiliary_provider == "codex":
-        return CodexProvider()
-    return ClaudeProvider()
+    return _create_provider(settings.llm_auxiliary_provider)
 
 
 def get_embedder(request: Request) -> Embedder:

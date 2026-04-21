@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 140px;
+      gap: 44px;
+    }
+
+    /* Comparison table */
+    .comparison {
+      max-width: 1400px;
+      width: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-lg);
+      border: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .comp-header {
+      display: grid;
+      grid-template-columns: 140px 1fr 1fr 1fr;
+      background: var(--accent);
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .comp-header > div {
+      padding: 16px 20px;
+    }
+
+    .comp-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 1fr 1fr;
+      background: var(--bg-card);
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+      font-size: 15px;
+    }
+
+    .comp-row:last-child { border-bottom: none; }
+    .comp-row > div { padding: 16px 20px; line-height: 1.5; }
+
+    .comp-row__label {
+      font-weight: 700;
+      color: var(--text);
+      background: rgba(0,0,0,0.02);
+      font-size: 14px;
+    }
+
+    .comp-row__oa { color: var(--text-secondary); }
+    .comp-row__poc { color: var(--text-secondary); }
+    .comp-row__gap { color: var(--text-secondary); font-size: 13px; }
+
+    .gap-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 8px;
+      border-radius: 10px;
+      display: inline-block;
+      margin-left: 6px;
+    }
+
+    .gap-badge--gap { background: rgba(220,38,38,0.08); color: var(--danger); }
+    .gap-badge--partial { background: rgba(217,119,6,0.08); color: var(--highlight); }
+    .gap-badge--ok { background: rgba(5,150,105,0.08); color: var(--success); }
+
+    /* Bottom positioning statement */
+    .positioning {
+      max-width: 1400px;
+      width: 100%;
+      padding: 24px 32px;
+      padding-left: 36px;
+      border-left: 3px solid var(--highlight);
+      background: transparent;
+    }
+
+    .positioning__text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .positioning__text .hl {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+
+    .positioning__text .acc {
+      color: var(--accent);
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part IV &middot; Next Lessons</span>
+    <span class="page-tag">10 / 12</span>
+
+    <div>
+      <div class="accent-bar"></div>
+      <h2 class="t-headline">OfficeAgent와의 비교</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">같은 문제, 다른 축 &mdash; 정직한 비교</p>
+    </div>
+
+    <div class="comparison">
+      <div class="comp-header">
+        <div>영역</div>
+        <div>OfficeAgent</div>
+        <div>본 PoC</div>
+        <div>격차 해소 방향</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-row__label">RAG 방식</div>
+        <div class="comp-row__oa">Agentic RAG</div>
+        <div class="comp-row__poc">Advanced 요소 일부 <span class="gap-badge gap-badge--partial">PARTIAL</span></div>
+        <div class="comp-row__gap">Query 의도 분류부터 단계적 도입</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-row__label">접근 제어</div>
+        <div class="comp-row__oa">RBAC</div>
+        <div class="comp-row__poc">미구현 <span class="gap-badge gap-badge--gap">GAP</span></div>
+        <div class="comp-row__gap">Vector DB 메타데이터 필터링</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-row__label">민감정보</div>
+        <div class="comp-row__oa">자동 마스킹</div>
+        <div class="comp-row__poc">미구현 <span class="gap-badge gap-badge--gap">GAP</span></div>
+        <div class="comp-row__gap">정규식 PoC &rarr; presidio 확장</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-row__label">배포</div>
+        <div class="comp-row__oa">SaaS / 온프렘</div>
+        <div class="comp-row__poc">로컬 PoC <span class="gap-badge gap-badge--partial">PARTIAL</span></div>
+        <div class="comp-row__gap">LLMProvider 추상화 기반 전환</div>
+      </div>
+      <div class="comp-row">
+        <div class="comp-row__label">평가 체계</div>
+        <div class="comp-row__oa">&mdash;</div>
+        <div class="comp-row__poc">50건 &times; 7메트릭 <span class="gap-badge gap-badge--ok">ASSET</span></div>
+        <div class="comp-row__gap">도메인별 수백 건 + blind A/B</div>
+      </div>
+    </div>
+
+    <div class="positioning">
+      <p class="positioning__text">
+        제 PoC와 OfficeAgent는 같은 문제 &mdash; <span class="hl">환각 억제된 사내 문서 Q&A</span> &mdash; 를 풉니다.<br>
+        저는 <span class="acc">파이프라인 정확성과 측정</span>에, OfficeAgent는 <span class="acc">제품화 전반</span>에 집중한 차이입니다.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

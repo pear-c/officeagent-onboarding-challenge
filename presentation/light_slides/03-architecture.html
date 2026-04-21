@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 120px;
+      gap: 44px;
+    }
+
+    .pipelines {
+      display: flex;
+      flex-direction: column;
+      gap: 40px;
+      width: 100%;
+    }
+
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+
+    .pipeline-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--text-white);
+      padding: 8px 20px;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      min-width: 110px;
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    .pipeline-label--ingest { background: var(--accent); }
+    .pipeline-label--query { background: var(--highlight); }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 16px 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      min-width: 120px;
+      text-align: center;
+    }
+
+    .step:last-child {
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+
+    .step--highlight {
+      border: 2px solid var(--highlight);
+      background: var(--highlight-light);
+    }
+
+    .step__icon { font-size: 22px; }
+
+    .step__name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .step__tech {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .arrow {
+      padding: 0 4px;
+      color: var(--text-muted);
+      font-size: 16px;
+    }
+
+    .points {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      width: 100%;
+    }
+
+    .point {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 28px 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .point__num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 800;
+      color: var(--text-white);
+      background: var(--accent);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .point__title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .point__desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .point__code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part II &middot; Implementation</span>
+    <span class="page-tag">03 / 12</span>
+
+    <div>
+      <div class="accent-bar"></div>
+      <h2 class="t-headline">시스템 한 장</h2>
+    </div>
+
+    <div class="pipelines">
+      <div class="pipeline">
+        <div class="pipeline-label pipeline-label--ingest">Ingest</div>
+        <div class="step">
+          <div class="step__icon">&#128196;</div>
+          <div class="step__name">Upload</div>
+          <div class="step__tech">PDF / TXT / MD</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step">
+          <div class="step__icon">&#128221;</div>
+          <div class="step__name">Extract</div>
+          <div class="step__tech">pypdf + md</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step">
+          <div class="step__icon">&#9986;&#65039;</div>
+          <div class="step__name">Chunk</div>
+          <div class="step__tech">타입별 분기</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step">
+          <div class="step__icon">&#129518;</div>
+          <div class="step__name">Embed</div>
+          <div class="step__tech">BGE-M3</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step">
+          <div class="step__icon">&#128190;</div>
+          <div class="step__name">Store</div>
+          <div class="step__tech">ChromaDB</div>
+        </div>
+      </div>
+
+      <div class="pipeline">
+        <div class="pipeline-label pipeline-label--query">Query</div>
+        <div class="step">
+          <div class="step__icon">&#10067;</div>
+          <div class="step__name">Question</div>
+          <div class="step__tech">user input</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step step--highlight">
+          <div class="step__icon">&#9889;</div>
+          <div class="step__name">Cache</div>
+          <div class="step__tech">3-stage</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step">
+          <div class="step__icon">&#128269;</div>
+          <div class="step__name">Retrieve</div>
+          <div class="step__tech">cosine sim</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step step--highlight">
+          <div class="step__icon">&#129302;</div>
+          <div class="step__name">LLM</div>
+          <div class="step__tech">+ Defense</div>
+        </div>
+        <div class="arrow">&rarr;</div>
+        <div class="step">
+          <div class="step__icon">&#128172;</div>
+          <div class="step__name">Answer</div>
+          <div class="step__tech">SSE stream</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="points">
+      <div class="point">
+        <div class="point__num">1</div>
+        <div>
+          <div class="point__title">LLMProvider 추상화</div>
+          <div class="point__desc">generate() / stream() 인터페이스.<br>모델 교체 시 어댑터만 추가</div>
+          <div class="point__code">app/llm/provider.py</div>
+        </div>
+      </div>
+      <div class="point">
+        <div class="point__num">2</div>
+        <div>
+          <div class="point__title">환각 이중 체크</div>
+          <div class="point__desc">프롬프트 + 서버 단 10종 패턴.<br>LLM 동의어 우회까지 포착</div>
+          <div class="point__code">app/services/rag_service.py</div>
+        </div>
+      </div>
+      <div class="point">
+        <div class="point__num">3</div>
+        <div>
+          <div class="point__title">문서 타입별 청킹</div>
+          <div class="point__desc">구조 보존 + 상위 헤더 경로<br>메타데이터 저장</div>
+          <div class="point__code">app/chunking/router.py</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

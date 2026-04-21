@@ -44,12 +44,12 @@
 
 | # | 작업 | 시간 | 설명 |
 |---|------|------|------|
-| **P0-A** | **rag-demo-presentation.md 허구 수정** | 1시간 | 위 6개 Slide 수정. 이걸 먼저 하지 않으면 아래 작업이 무의미 |
-| **P0-B** | **v3 수치로 평가 서사 업그레이드** | 30분 | "UX로 선택"에서 "v3 이후 모든 지표 우세 + UX"로 전환. [PROMPT_DESIGN.md:127](../PROMPT_DESIGN.md#L127) 표 그대로 슬라이드화 |
-| **P0-C** | **Semantic Cache 슬라이드화** | 1시간 | 3단계 캐시(정확 → 유사 → 무효화) + cosine 0.95 설계 근거 + 캐시 hit 0ms 수치 |
-| **P0-D** | **"이미 구현된 Advanced 요소" 슬라이드** | 1시간 | Parent header 경로 / answerable=false 미저장 / 7개 메트릭 / 청킹 하이브리드를 **한 장**에 묶어 "Naive RAG가 아니라 Advanced 일부 이미 도입" 재포지셔닝 |
-| **P0-E** | **기술 스택 "근거·한계·다음단계" 통합표** | 1-2시간 | 에이전트의 원래 P0-3. Claude·BGE-M3·Chroma·Redis·pypdf 각각 3칸 |
-| **P0-F** | **발표 스토리 재구성 (PoC + 자기검증)** | 2-3시간 | 에이전트 원래 P0-2. 단, v3/Semantic Cache 자산을 "자기검증 결과"로 프레이밍 |
+| **P0-A** | ~~**rag-demo-presentation.md 허구 수정**~~ | 1시간 | ✅ 완료 (2026-04-22) — Slide 3·5·8·11 + Q1·Q9·Q10 정정 |
+| **P0-B** | ~~**v3 수치로 평가 서사 업그레이드**~~ | 30분 | ✅ 완료 — Slide 5에 v2 vs v3 비교표 + 스크립트 재작성 |
+| **P0-C** | ~~**Semantic Cache 슬라이드화**~~ | 1시간 | ✅ 완료 — Slide 7에 코드 위치·실측 수치·좀비 캐시 설계 반영 |
+| **P0-D** | ~~**"이미 구현된 Advanced 요소" 슬라이드**~~ | 1시간 | ✅ 완료 — 새 Slide 9 추가 (상위 헤더·Semantic Cache·answerable=false·7메트릭) |
+| **P0-E** | ~~**기술 스택 "근거·한계·다음단계" 통합표**~~ | 1-2시간 | ✅ 완료 — 새 Slide 10 추가 (Claude·BGE-M3·Chroma·Redis·pypdf 각 3칸) |
+| **P0-F** | ~~**발표 스토리 재구성 (PoC + 자기검증)**~~ | 2-3시간 | ✅ 완료 — 오프닝 재작성 + 전체 13장 구성 + 허구 주장 0개 |
 
 **P0 총합: 약 6~9시간 (하루 안에 가능).**
 
@@ -153,10 +153,10 @@ Day 3: Q&A 연습 + 라이브 데모 녹화
 ## 5. 체크리스트
 
 ### 발표 전 72시간
-- [ ] `rag-demo-presentation.md` Slide 3·5·7·8·10 + Q9 **수정 완료**
-- [ ] v3 수치 표가 슬라이드에 반영됨
-- [ ] Semantic Cache가 "이미 구현, 측정값 = 0ms" 로 기술됨
-- [ ] 허구 주장 0개 (Ollama, PII 마스킹, Reranker 측정, Recall@K)
+- [x] `rag-demo-presentation.md` Slide 3·5·7·8·11 + Q9 **수정 완료** ✅ (2026-04-22)
+- [x] v3 수치 표가 슬라이드에 반영됨 (Slide 5에 v2 vs v3 비교표 추가) ✅
+- [x] Semantic Cache가 "이미 구현, 측정값 = 0ms" 로 기술됨 (Slide 7·9) ✅
+- [x] 허구 주장 0개 (Ollama·PII 마스킹·Reranker 측정·Recall@K 모두 "미구현/다음 단계"로 정정) ✅
 - [ ] P1 중 1개 선택 + 실측치 슬라이드 반영
 
 ### 발표 전 24시간

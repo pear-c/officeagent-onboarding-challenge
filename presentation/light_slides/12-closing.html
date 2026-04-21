@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      justify-content: space-between;
+      align-items: center;
+      text-align: center;
+      padding: 140px 160px 100px;
+    }
+
+    /* Top: Takeaways */
+    .takeaways {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      max-width: 1200px;
+      width: 100%;
+    }
+
+    .takeaway {
+      padding: 36px 28px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      text-align: left;
+    }
+
+    .takeaway__num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 40px;
+      font-weight: 800;
+      color: var(--accent);
+      opacity: 0.15;
+      line-height: 1;
+      margin-bottom: 16px;
+    }
+
+    .takeaway__text {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .takeaway__detail {
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      line-height: 1.5;
+    }
+
+    /* Center: Main closing message */
+    .closing-center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 24px;
+    }
+
+    .closing-bar {
+      width: 48px;
+      height: 4px;
+      background: var(--highlight);
+      border-radius: 2px;
+    }
+
+    .closing-message {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: -0.035em;
+      color: var(--text);
+      max-width: 800px;
+    }
+
+    .closing-message .em {
+      color: var(--accent);
+    }
+
+    /* Bottom: Presenter info */
+    .closing-meta {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .closing-name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .closing-date {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .closing-cta {
+      margin-top: 8px;
+      font-size: 18px;
+      color: var(--highlight);
+      font-weight: 600;
+    }
+
+    /* Glows */
+    .glow-left {
+      position: absolute;
+      left: -150px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: var(--accent);
+      filter: blur(180px);
+      opacity: 0.04;
+    }
+
+    .glow-right {
+      position: absolute;
+      right: -150px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: var(--highlight);
+      filter: blur(180px);
+      opacity: 0.03;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <div class="glow-left"></div>
+    <div class="glow-right"></div>
+    <span class="page-tag">12 / 12</span>
+
+    <div class="takeaways">
+      <div class="takeaway">
+        <div class="takeaway__num">01</div>
+        <div class="takeaway__text">v3 프롬프트 튜닝으로<br>Refusal 100% 달성</div>
+        <div class="takeaway__detail">50건 &times; 7메트릭 harness + LLMProvider ABC</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway__num">02</div>
+        <div class="takeaway__text">3단계 캐시 + 이중 방어<br>Naive RAG를 넘어선 설계</div>
+        <div class="takeaway__detail">Semantic Cache &middot; 좀비 캐시 방지 &middot; 서버 검증</div>
+      </div>
+      <div class="takeaway">
+        <div class="takeaway__num">03</div>
+        <div class="takeaway__text">한계와 다음 단계를<br>데이터로 정량화</div>
+        <div class="takeaway__detail">7가지 한계 우선순위 &middot; OfficeAgent 갭 분석</div>
+      </div>
+    </div>
+
+    <div class="closing-center">
+      <div class="closing-bar"></div>
+      <div class="closing-message">
+        측정 없이 <span class="em">진행하지 않는다</span>
+      </div>
+    </div>
+
+    <div class="closing-meta">
+      <div class="closing-name">배성환</div>
+      <div class="closing-date">2026.04.23</div>
+      <div class="closing-cta">감사합니다 &mdash; 질문 환영합니다</div>
+    </div>
+  </div>
+</body>
+</html>

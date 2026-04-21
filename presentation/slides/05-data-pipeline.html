@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Slide 05 · 고민 ② 데이터 파이프라인</title>
+  <title>Slide 05 · 고민 ② 임베딩 & 청킹</title>
   <link rel="preconnect" href="https://cdn.jsdelivr.net">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -119,7 +119,7 @@
 
     .eyebrow {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 500;
       color: var(--text-subtle);
       letter-spacing: 0.14em;
@@ -133,7 +133,7 @@
     }
 
     h1 {
-      font-size: 68px;
+      font-size: 60px;
       font-weight: 800;
       line-height: 1.05;
       letter-spacing: -0.04em;
@@ -154,7 +154,7 @@
       position: absolute;
       left: 152px;
       right: 120px;
-      top: 460px;
+      top: 400px;
       display: flex;
       align-items: stretch;
       gap: 18px;
@@ -175,20 +175,20 @@
 
     .stage-box .num {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: 0.18em;
     }
     .stage-box .label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 700;
       color: var(--ink);
       letter-spacing: 0.12em;
     }
     .stage-box .tech {
-      font-size: 17px;
+      font-size: 21px;
       font-weight: 700;
       color: var(--ink);
       line-height: 1.3;
@@ -198,13 +198,13 @@
       color: var(--accent);
     }
     .stage-box .detail {
-      font-size: 12.5px;
+      font-size: 15px;
       color: var(--text-muted);
       line-height: 1.45;
     }
     .stage-box .detail code {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 11px;
+      font-size: 13px;
       background: var(--code-bg);
       padding: 1px 4px;
       color: var(--accent);
@@ -214,7 +214,7 @@
       padding-top: 10px;
       border-top: 1px solid var(--rule-fine);
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 10.5px;
+      font-size: 13px;
       color: var(--text-subtle);
       letter-spacing: 0.02em;
       line-height: 1.4;
@@ -233,10 +233,10 @@
       position: absolute;
       left: 152px;
       right: 120px;
-      top: 740px;
+      top: 660px;
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 56px;
+      grid-template-columns: 1fr 1fr;
+      gap: 40px;
       z-index: 2;
     }
 
@@ -253,7 +253,7 @@
     }
     .block-label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: 0.18em;
@@ -267,7 +267,7 @@
     }
     .choice-list li {
       counter-increment: item;
-      font-size: 15.5px;
+      font-size: 17px;
       color: var(--text);
       line-height: 1.5;
       letter-spacing: -0.005em;
@@ -302,7 +302,7 @@
     }
     .anchor .a-label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 10px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: 0.2em;
@@ -315,13 +315,13 @@
     }
     .anchor .stat:last-of-type { border-bottom: none; padding-bottom: 4px; }
     .stat .what {
-      font-size: 12.5px;
+      font-size: 15px;
       color: var(--text-muted);
       margin-bottom: 3px;
       letter-spacing: -0.005em;
     }
     .stat .figure {
-      font-size: 15px;
+      font-size: 18px;
       font-weight: 700;
       color: var(--ink);
       letter-spacing: -0.005em;
@@ -333,7 +333,7 @@
     .stat .figure small {
       font-weight: 500;
       color: var(--text-subtle);
-      font-size: 12px;
+      font-size: 14px;
     }
     .anchor .xref {
       margin-top: 10px;
@@ -350,7 +350,7 @@
       position: absolute;
       left: 152px;
       right: 120px;
-      bottom: 60px;
+      bottom: 48px;
       padding-left: 40px;
       border-left: 1px solid var(--rule-fine);
       z-index: 2;
@@ -363,7 +363,7 @@
     }
     .footer-label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--highlight);
       letter-spacing: 0.2em;
@@ -371,7 +371,7 @@
       margin-bottom: 6px;
     }
     .footer-text {
-      font-size: 18px;
+      font-size: 21px;
       font-weight: 500;
       color: var(--text);
       letter-spacing: -0.005em;
@@ -393,7 +393,7 @@
           <span class="dot"></span>
           <span class="current">05</span>
           <span class="sep">/</span>
-          <span>13</span>
+          <span>14</span>
           <span class="section">Part I · Lessons I</span>
         </div>
         <div class="context-tag">
@@ -403,7 +403,7 @@
       </div>
 
       <div class="header">
-        <div class="eyebrow"><span class="num">02</span>고민 · 데이터 파이프라인</div>
+        <div class="eyebrow"><span class="num">02</span>고민 · 임베딩 & 청킹</div>
         <h1>문서를 어떻게 자르고,<br>어떻게 찾을까?</h1>
         <div class="subtitle">포맷은 다양하고(PDF · MD · TXT), 한국어·영어가 섞이고, 출처 추적까지 필요했습니다. 획일적 분할로는 품질이 무너집니다.</div>
       </div>
@@ -441,7 +441,7 @@
           <div class="num">04</div>
           <div class="label">STORE</div>
           <div class="tech"><span class="hl">Chroma</span> + 메타데이터</div>
-          <div class="detail">청크마다 <code>section_path</code>("상위 &gt; 하위") 보존 → 출처 정확도</div>
+          <div class="detail">청크마다 <code>section_path</code>("정책 안내 &gt; 교육비 지원") 보존 → 출처 정확도</div>
           <div class="file">app/vectorstore/<br>chroma_store.py</div>
         </div>
       </div>
@@ -449,12 +449,12 @@
       <!-- Decisions + Anchor -->
       <div class="body">
         <div class="block">
-          <div class="block-label">선택의 근거</div>
+          <div class="block-label">선택</div>
           <ol class="choice-list">
-            <li>포맷별 청킹 — .md는 <code>##</code> 헤더 기반, .pdf는 번호 헤더 → <code>##</code> 변환 후 같은 파이프라인</li>
-            <li>BGE-M3 — 한·영 혼재에 안정적, 8192 토큰으로 긴 섹션 커버, 온프렘 전환 가능</li>
-            <li>Chroma — PoC 속도 최우선, <code>VectorStore</code> 추상화 뒤로 빼서 Qdrant 이전 가능성 확보</li>
-            <li>청크마다 <code>section_path</code> 메타 보존 — LLM이 "어느 챕터의 어느 절"인지 참조 가능</li>
+            <li><strong>BGE-M3</strong> — 한·영 MTEB 상위, API 과금 없음, Dense+Sparse+8K 단일 모델</li>
+            <li>포맷별 청킹 분기 — MD는 헤더 기반, PDF는 번호 헤더→MD 변환 후 같은 파이프라인</li>
+            <li>상위 헤더 경로 메타 보존 — <code>section_path</code> <strong>"정책 안내 > 교육비 지원"</strong></li>
+            <li>한계: pypdf 표·레이아웃 약함, Dense only — Hybrid 전환 시 DB 이전 필요</li>
           </ol>
         </div>
 
@@ -482,9 +482,9 @@
 
       <!-- Footer -->
       <div class="footer-note">
-        <div class="footer-label">배운 것</div>
+        <div class="footer-label">배운 점</div>
         <div class="footer-text">
-          LlamaParse 실험에서 배운 것 — <span class="hl">더 많은 정보 ≠ 더 좋은 검색</span>. RAG는 추출 품질보다 검색 정밀도가 좌우합니다.
+          <span class="hl">더 많은 정보 ≠ 더 좋은 검색.</span> LlamaParse는 추출 품질은 올랐지만, 청크가 1.5배로 늘어 관련 청크가 top-5에서 밀렸습니다. RAG는 추출보다 <span class="hl">검색 정밀도</span>가 좌우합니다.
         </div>
       </div>
     </div>

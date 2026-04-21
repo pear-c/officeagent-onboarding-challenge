@@ -129,7 +129,7 @@
 
     .eyebrow {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 14px;
+      font-size: 17px;
       font-weight: 500;
       color: var(--text-subtle);
       letter-spacing: 0.14em;
@@ -143,7 +143,7 @@
     }
 
     h1 {
-      font-size: 72px;
+      font-size: 60px;
       font-weight: 800;
       line-height: 1.05;
       letter-spacing: -0.04em;
@@ -165,9 +165,10 @@
       position: absolute;
       left: 152px;
       right: 120px;
-      top: 520px;
+      top: 400px;
       display: grid;
       grid-template-columns: 1fr 1fr;
+      align-items: start;
       gap: 64px;
       z-index: 2;
     }
@@ -190,10 +191,19 @@
       left: -1px; top: 8px; bottom: 8px;
       width: 2px; background: var(--accent);
     }
+    .block.lesson::before {
+      background: var(--highlight);
+    }
+    .block.lesson .block-label {
+      color: var(--highlight);
+    }
+    .block.lesson .concern-text {
+      font-size: 21px;
+    }
 
     .block-label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 12px;
+      font-size: 15px;
       font-weight: 700;
       color: var(--accent);
       letter-spacing: 0.18em;
@@ -202,7 +212,7 @@
     }
 
     .concern-text {
-      font-size: 21px;
+      font-size: 23px;
       font-weight: 500;
       color: var(--text);
       line-height: 1.55;
@@ -219,7 +229,7 @@
     }
     .choice-list li {
       counter-increment: item;
-      font-size: 17px;
+      font-size: 19px;
       color: var(--text);
       line-height: 1.55;
       letter-spacing: -0.005em;
@@ -257,6 +267,7 @@
       display: flex;
       flex-direction: column;
       gap: 22px;
+      margin-top: -80px;
     }
 
     .file-label {
@@ -290,7 +301,7 @@
       border: 1px solid var(--code-border);
       padding: 24px 32px;
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 14px;
+      font-size: 15px;
       line-height: 1.7;
       color: var(--ink);
       overflow: hidden;
@@ -319,7 +330,7 @@
       align-items: center;
       gap: 12px;
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 14px;
+      font-size: 15px;
       padding: 6px 0;
     }
     .impl .marker {
@@ -391,7 +402,7 @@
       position: absolute;
       left: 152px;
       right: 120px;
-      bottom: 80px;
+      bottom: 48px;
       padding-left: 40px;
       border-left: 1px solid var(--rule-fine);
       z-index: 2;
@@ -404,7 +415,7 @@
     }
     .footer-label {
       font-family: 'JetBrains Mono', ui-monospace, monospace;
-      font-size: 11px;
+      font-size: 14px;
       font-weight: 700;
       color: var(--highlight);
       letter-spacing: 0.2em;
@@ -412,7 +423,7 @@
       margin-bottom: 6px;
     }
     .footer-text {
-      font-size: 19px;
+      font-size: 21px;
       font-weight: 500;
       color: var(--text);
       letter-spacing: -0.005em;
@@ -421,6 +432,64 @@
     .footer-text .hl {
       color: var(--highlight);
       font-weight: 700;
+    }
+
+    /* ---------- Metrics comparison ---------- */
+    .metrics {
+      border: 1px solid var(--rule);
+      padding: 20px 24px;
+      background: transparent;
+    }
+    .metrics .m-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .metrics .m-header {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--rule);
+      margin-bottom: 4px;
+    }
+    .metrics .m-header span {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .m-row {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr 1fr;
+      gap: 8px;
+      padding: 7px 0;
+      border-bottom: 1px solid var(--rule-fine);
+    }
+    .m-row:last-child { border-bottom: none; }
+    .m-row .m-metric {
+      font-size: 17px;
+      color: var(--text-muted);
+      letter-spacing: -0.005em;
+    }
+    .m-row .m-val {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+    }
+    .m-row .m-val.win {
+      color: var(--accent);
+    }
+    .m-row .m-val.lose {
+      color: var(--text-subtle);
+      font-weight: 500;
     }
 
     ::-webkit-scrollbar { display: none; }
@@ -435,7 +504,7 @@
           <span class="dot"></span>
           <span class="current">04</span>
           <span class="sep">/</span>
-          <span>13</span>
+          <span>14</span>
           <span class="section">Part I · Lessons I</span>
         </div>
         <div class="context-tag">
@@ -447,8 +516,8 @@
       <!-- Header -->
       <div class="header">
         <div class="eyebrow"><span class="num">01</span>고민 · LLM</div>
-        <h1>어떤 모델을,<br>어떤 근거로 고를까?</h1>
-        <div class="subtitle">SDK 택 1 조건 안에서, 온프렘까지 고려하면 답이 달라졌습니다.</div>
+        <h1>어떤 모델을,<br>어떤 근거로 선택?</h1>
+        <div class="subtitle">구독 기반 SDK 사용 조건 내에서, 최우선 목표를 '정확성'으로 잡았습니다.</div>
       </div>
 
       <!-- Body -->
@@ -458,18 +527,27 @@
           <div class="block">
             <div class="block-label">고민</div>
             <div class="concern-text">
-              과제는 Claude Code SDK나 Codex CLI 중 <strong>하나만 쓰라</strong>고 했습니다. 그런데 온프렘 환경에서는 구독 기반 SDK를 쓸 수 없으니, <strong>결국 로컬 LLM으로도 갈 수 있어야 한다</strong>고 봤습니다.
+              LLM 모델은 <strong>Claude Agent SDK</strong> 와 <strong>Codex SDK</strong> 를 고민했습니다. <br>
+              속도 · 비용 · 정확도 등 트레이드오프가 있었지만, 이번 과제의 핵심은 <strong>"정확한 근거 기반 답변"</strong>이라 판단하고 <strong>정확도를 최우선</strong>으로 선택했습니다. <br>
+              이를 측정하기 위해 <strong>50케이스 QA 데이터셋</strong>을 만들고자 하였습니다.
             </div>
           </div>
 
           <div class="block">
             <div class="block-label">선택</div>
             <ol class="choice-list">
-              <li><code>LLMProvider</code> ABC로 모델 호출을 추상화</li>
-              <li>Claude · Codex 두 어댑터 구현, <code>.env</code> 한 줄로 전환</li>
-              <li>50케이스 × 7메트릭 골든셋으로 두 모델 비교</li>
-              <li>Ollama 어댑터는 같은 인터페이스로 <span class="planned">구현 예정</span></li>
+              <li><code>LLMProvider</code> 인터페이스 — 모델 교체 가능성 고려</li>
+              <li>Claude · Codex 두 구현체로 <strong>50케이스 × 7메트릭</strong> 정량 비교</li>
+              <li>v2 → v3 프롬프트 튜닝 후 Claude Refusal <strong>83% → 100%</strong> 역전</li>
+              <li>속도 차이는 캐시로 보완 — 정확도 + 답변 구조화 UX로 Claude 채택</li>
             </ol>
+          </div>
+
+          <div class="block lesson">
+            <div class="block-label">배운 점</div>
+            <div class="concern-text">
+              트레이드오프 속에서 "어떤 모델이 더 좋다"는 인상론이 아니라, <strong>데이터 기반의 객관적인 판단</strong>을 하겠다는 원칙을 세웠습니다. 다만 <strong>50건 규모와 단일 평가자라는 한계</strong>도 인지하고 있습니다.
+            </div>
           </div>
         </div>
 
@@ -479,23 +557,12 @@
             <span class="path">app/llm/provider.py</span>
           </div>
           <div class="code-block"><span class="kw">class</span> <span class="cls">LLMProvider</span>(ABC):
-    <span class="str">"""LLM 호출 추상화. Claude/Codex 1줄 swap 가능."""</span>
-
-    <span class="dec">@property</span>
-    <span class="dec">@abstractmethod</span>
-    <span class="kw">def</span> model_name(self) -> <span class="cls">str</span>: ...
+    <span class="str">"""LLM 호출 추상화. Claude/Codex 1줄 swap."""</span>
 
     <span class="dec">@abstractmethod</span>
-    <span class="kw">async def</span> generate(
-        self, system: <span class="cls">str</span>, user: <span class="cls">str</span>,
-        max_tokens: <span class="cls">int</span> = 1024,
-        json_mode: <span class="cls">bool</span> = <span class="kw">False</span>,
-    ) -> <span class="cls">LLMResponse</span>: ...
-
+    <span class="kw">async def</span> generate(self, ...) -> <span class="cls">LLMResponse</span>: ...
     <span class="dec">@abstractmethod</span>
-    <span class="kw">async def</span> stream(
-        self, system: <span class="cls">str</span>, user: <span class="cls">str</span>,
-    ) -> <span class="cls">AsyncIterator</span>[<span class="cls">str</span>]: ...</div>
+    <span class="kw">async def</span> stream(self, ...) -> <span class="cls">AsyncIterator</span>[<span class="cls">str</span>]: ...</div>
 
           <div class="impls-wrap">
             <div class="impls">
@@ -512,30 +579,46 @@
                 <span class="name">CodexProvider</span>
                 <span class="note">Codex · GPT-5 mini</span>
               </div>
-              <div class="impl planned">
+              <!-- <div class="impl planned">
                 <span class="marker"></span>
                 <span class="name">OllamaProvider</span>
                 <span class="note">Qwen2.5-7B · planned</span>
-              </div>
+              </div> -->
             </div>
 
-            <div class="anchor">
-              <div class="label">Measured</div>
-              <div class="figure">50 cases<br>× 7 metrics</div>
-              <div class="sub">golden dataset</div>
-              <div class="xref">결과 → Slide 09<br>근거 → Decision 01</div>
+          </div>
+
+          <div class="metrics">
+            <div class="m-label">50 cases × 7 metrics · v3 prompt</div>
+            <div class="m-header">
+              <span>Metric</span>
+              <span>Claude</span>
+              <span>Codex</span>
+            </div>
+            <div class="m-row">
+              <span class="m-metric">Retrieval Hit Rate</span>
+              <span class="m-val win">97.73%</span>
+              <span class="m-val lose">90.91%</span>
+            </div>
+            <div class="m-row">
+              <span class="m-metric">Citation Accuracy</span>
+              <span class="m-val win">97.73%</span>
+              <span class="m-val lose">90.91%</span>
+            </div>
+            <div class="m-row">
+              <span class="m-metric">Refusal Accuracy</span>
+              <span class="m-val">100%</span>
+              <span class="m-val">100%</span>
+            </div>
+            <div class="m-row">
+              <span class="m-metric">Latency p50</span>
+              <span class="m-val lose">8,803ms</span>
+              <span class="m-val win">4,516ms</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Footer -->
-      <div class="footer-note">
-        <div class="footer-label">배운 것</div>
-        <div class="footer-text">
-          모델 선택은 인상론이 아니라 <span class="hl">측정</span>으로 — 추상화 + 평가 체계가 먼저여야 한다는 걸 배웠습니다
-        </div>
-      </div>
     </div>
   </div>
 </body>
