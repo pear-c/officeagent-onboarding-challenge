@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 12 · 자기 검증 트랙 3개</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--highlight); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* Header */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 148px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 12px; bottom: 12px;
+      width: 2px; background: var(--highlight);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .eyebrow .num {
+      color: var(--highlight);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+    h1 {
+      font-size: 72px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    .subtitle {
+      font-size: 21px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    /* Tracks */
+    .tracks {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 500px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 32px;
+      z-index: 2;
+    }
+
+    .track {
+      background: var(--bg);
+      border: 1px solid var(--code-border);
+      padding: 24px 26px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      position: relative;
+      min-height: 440px;
+    }
+
+    .t-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid var(--ink);
+    }
+    .t-num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .t-status {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .t-status.planned {
+      background: var(--code-bg);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+    .t-status.depends {
+      background: var(--code-bg);
+      color: var(--text-subtle);
+      border: 1px solid var(--text-subtle);
+    }
+
+    .t-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+    }
+    .t-title small {
+      display: block;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .t-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .t-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .t-value {
+      font-size: 14.5px;
+      color: var(--text);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .t-value strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .t-value code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      background: var(--code-bg);
+      padding: 1px 5px;
+      color: var(--accent);
+    }
+
+    .t-metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+    .t-metric-chip {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      background: var(--code-bg);
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+
+    /* Result placeholder */
+    .t-result {
+      margin-top: auto;
+      padding: 12px 14px;
+      border: 1px dashed var(--rule);
+      background: rgba(217, 119, 6, 0.04);
+    }
+    .t-result .r-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .t-result .r-placeholder {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+    }
+
+    .t-xref {
+      margin-top: 8px;
+      padding-top: 10px;
+      border-top: 1px solid var(--rule-fine);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+    }
+
+    /* Footer */
+    .footer-note {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 54px;
+      padding: 18px 26px;
+      border-left: 3px solid var(--highlight);
+      background: var(--code-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .footer-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-right: 20px;
+    }
+    .footer-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.005em;
+      flex: 1;
+    }
+    .footer-text .hl {
+      color: var(--highlight);
+      font-weight: 800;
+    }
+    .footer-ref {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">12</span>
+          <span class="sep">/</span>
+          <span>13</span>
+          <span class="section">Part IV · Next Lessons</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow"><span class="num">09</span>다음 학습 · 자기 검증 트랙</div>
+        <h1>빈 칸을 측정으로 메웁니다</h1>
+        <div class="subtitle">Slide 10의 "빈 칸"을 실측 수치로 바꾸기 위한 세 트랙입니다. 발표 당일 상태를 반영합니다.</div>
+      </div>
+
+      <div class="tracks">
+
+        <!-- Track 01 -->
+        <div class="track">
+          <div class="t-head">
+            <div class="t-num">Track · 01</div>
+            <div class="t-status planned">Planned · Foundation</div>
+          </div>
+
+          <div class="t-title">
+            Retrieval 분리 평가
+            <small>Separate retrieval eval</small>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">무엇을</div>
+            <div class="t-value">
+              50케이스 각 질문에 <strong>gold passage</strong>(필수 청크 1~3개)를 라벨링해서 검색 단독 품질을 측정합니다.
+            </div>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">측정 지표</div>
+            <div class="t-metrics">
+              <span class="t-metric-chip">Recall@5</span>
+              <span class="t-metric-chip">Recall@10</span>
+              <span class="t-metric-chip">MRR</span>
+              <span class="t-metric-chip">nDCG@10</span>
+            </div>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">왜</div>
+            <div class="t-value">
+              개선이 <strong>검색에서 왔는지 생성에서 왔는지</strong> 귀속이 가능해집니다.
+            </div>
+          </div>
+
+          <div class="t-result">
+            <div class="r-label">측정 예정</div>
+            <div class="r-placeholder">[ 실측 수치 — 발표 당일 삽입 ]</div>
+          </div>
+
+          <div class="t-xref">→ Slide 10 · Gap 01 해결 / Track 02의 전제조건</div>
+        </div>
+
+        <!-- Track 02 -->
+        <div class="track">
+          <div class="t-head">
+            <div class="t-num">Track · 02</div>
+            <div class="t-status depends">Depends on 01</div>
+          </div>
+
+          <div class="t-title">
+            Reranker 도입 효과
+            <small>Advanced RAG tier</small>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">무엇을</div>
+            <div class="t-value">
+              <code>bge-reranker-v2-m3</code>를 검색 결과 뒤에 삽입해 <strong>Dense-only vs Dense+Rerank</strong> 전후 비교.
+            </div>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">측정 지표</div>
+            <div class="t-metrics">
+              <span class="t-metric-chip">Recall@5 Δ</span>
+              <span class="t-metric-chip">MRR Δ</span>
+              <span class="t-metric-chip">p95 지연 Δ</span>
+              <span class="t-metric-chip">답변 품질 Δ</span>
+            </div>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">왜</div>
+            <div class="t-value">
+              BGE-M3 선택 근거를 완성합니다. 같은 모델 패밀리라 튜닝 부담이 적습니다.
+            </div>
+          </div>
+
+          <div class="t-result">
+            <div class="r-label">측정 예정</div>
+            <div class="r-placeholder">[ 실측 비교 표 — 발표 당일 삽입 ]</div>
+          </div>
+
+          <div class="t-xref">→ Slide 11 · RAG 방식 갭 일부 해소 / Advanced RAG 증명</div>
+        </div>
+
+        <!-- Track 03 -->
+        <div class="track">
+          <div class="t-head">
+            <div class="t-num">Track · 03</div>
+            <div class="t-status planned">Planned · Independent</div>
+          </div>
+
+          <div class="t-title">
+            Ollama 어댑터 실구현
+            <small>On-prem path</small>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">무엇을</div>
+            <div class="t-value">
+              <code>OllamaProvider</code>를 <code>LLMProvider</code> 위에 추가하고 <strong>Qwen2.5-7B</strong>로 동일 골든셋을 재측정.
+            </div>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">측정 지표</div>
+            <div class="t-metrics">
+              <span class="t-metric-chip">7메트릭 재측정</span>
+              <span class="t-metric-chip">프롬프트 준수율</span>
+              <span class="t-metric-chip">로딩·지연</span>
+            </div>
+          </div>
+
+          <div class="t-row">
+            <div class="t-label">왜</div>
+            <div class="t-value">
+              온프렘 배포 갭을 실체화. <strong>프롬프트 재튜닝이 얼마나 필요한지</strong>가 핵심 관찰 포인트.
+            </div>
+          </div>
+
+          <div class="t-result">
+            <div class="r-label">측정 예정</div>
+            <div class="r-placeholder">[ Provider 교체 시 지표 변화 — 당일 삽입 ]</div>
+          </div>
+
+          <div class="t-xref">→ Slide 11 · 배포 갭 해소 / Slide 04 Ollama 행 ✅로 전환</div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-note">
+        <div class="footer-label">Principle</div>
+        <div class="footer-text">
+          <span class="hl">측정 없이는 주장도 없다</span> — 세 트랙 모두 완료 여부보다 <strong>측정 설계의 정합성</strong>이 핵심입니다.
+        </div>
+        <div class="footer-ref">→ Slide 10 빈 칸 · Slide 11 갭</div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

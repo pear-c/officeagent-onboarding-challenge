@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 11 · 프로덕션 관점 — OfficeAgent와의 갭</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--accent); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* Header */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 140px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 10px; bottom: 10px;
+      width: 2px; background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .eyebrow .num {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+    h1 {
+      font-size: 60px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .subtitle {
+      font-size: 19px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    /* Shared framing banner */
+    .framing {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 380px;
+      padding: 14px 24px;
+      background: var(--code-bg);
+      border-left: 3px solid var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      z-index: 2;
+    }
+    .framing .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+    .framing .text {
+      font-size: 15.5px;
+      color: var(--text);
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+    }
+    .framing .text strong {
+      color: var(--ink);
+      font-weight: 700;
+    }
+
+    /* Comparison table */
+    .table-wrap {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 480px;
+      z-index: 2;
+    }
+
+    .cmp-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .cmp-table thead th {
+      text-align: left;
+      padding: 14px 20px;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid var(--ink);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    .cmp-table thead th.area { width: 19%; }
+    .cmp-table thead th.oa { width: 27%; color: var(--accent); }
+    .cmp-table thead th.mine { width: 27%; }
+    .cmp-table thead th.path { width: 27%; color: var(--highlight); }
+
+    .cmp-table tbody tr {
+      border-bottom: 1px solid var(--rule-fine);
+    }
+    .cmp-table tbody tr:last-child {
+      border-bottom: none;
+    }
+    .cmp-table tbody tr.mine-wins {
+      background: rgba(217, 119, 6, 0.05);
+    }
+
+    .cmp-table td {
+      padding: 16px 20px;
+      vertical-align: top;
+    }
+    .cmp-table td.area {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .cmp-table td.area .area-sub {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      letter-spacing: 0.04em;
+      margin-top: 2px;
+    }
+    .cmp-table td.oa {
+      font-size: 14px;
+      color: var(--text);
+      line-height: 1.5;
+      font-weight: 500;
+      letter-spacing: -0.005em;
+    }
+    .cmp-table td.oa strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .cmp-table td.mine {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+    }
+    .cmp-table td.mine .tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 6px;
+      background: var(--rule);
+      color: var(--text-subtle);
+      letter-spacing: 0.08em;
+      margin-right: 6px;
+      vertical-align: 2px;
+    }
+    .cmp-table tr.mine-wins td.mine {
+      color: var(--text);
+      font-weight: 600;
+    }
+    .cmp-table tr.mine-wins td.mine strong {
+      color: var(--highlight);
+      font-weight: 800;
+    }
+    .cmp-table tr.mine-wins td.mine .tag {
+      background: var(--highlight);
+      color: var(--bg);
+    }
+    .cmp-table tr.mine-wins td.oa {
+      color: var(--text-subtle);
+      font-weight: 400;
+    }
+    .cmp-table td.path {
+      font-size: 13.5px;
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+    }
+    .cmp-table td.path code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11.5px;
+      background: var(--code-bg);
+      padding: 1px 5px;
+      color: var(--accent);
+    }
+
+    /* Positioning statement (footer) */
+    .positioning {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 54px;
+      padding: 18px 26px;
+      border: 1.5px solid var(--highlight);
+      background: rgba(217, 119, 6, 0.04);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 28px;
+      align-items: center;
+      z-index: 2;
+    }
+    .positioning .p-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding-right: 24px;
+      border-right: 1px solid var(--rule);
+    }
+    .positioning .p-text {
+      font-size: 17px;
+      color: var(--text);
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+    }
+    .positioning .p-text strong {
+      color: var(--ink);
+      font-weight: 800;
+    }
+    .positioning .p-text .hl {
+      color: var(--highlight);
+      font-weight: 800;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">11</span>
+          <span class="sep">/</span>
+          <span>13</span>
+          <span class="section">Part III · Lessons II</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow"><span class="num">08</span>회고 · 프로덕션 관점</div>
+        <h1>같은 문제, 다른 축 — OfficeAgent와의 갭</h1>
+        <div class="subtitle">OfficeAgent는 제품화 전반을, 제 PoC는 파이프라인 정확성을 중심에 두었습니다. 그 사이의 갭과 확장 경로를 정리했습니다.</div>
+      </div>
+
+      <!-- Shared framing banner -->
+      <div class="framing">
+        <div class="label">Shared Frame</div>
+        <div class="text">
+          OfficeAgent 보도자료의 세 가지 과제 — <strong>환각 · 데이터 주권 · 도입 비용</strong> — 은 제 PoC도 같은 출발선에 두었던 문제입니다.
+        </div>
+      </div>
+
+      <!-- Comparison table -->
+      <div class="table-wrap">
+        <table class="cmp-table">
+          <thead>
+            <tr>
+              <th class="area">영역</th>
+              <th class="oa">OfficeAgent</th>
+              <th class="mine">제 PoC</th>
+              <th class="path">확장 경로</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr>
+              <td class="area">
+                RAG 방식
+                <span class="area-sub">Pipeline shape</span>
+              </td>
+              <td class="oa">
+                <strong>Agentic RAG</strong> — 질문 의도 분석 + 멀티스텝 검색 + 자가 검증
+              </td>
+              <td class="mine">
+                <span class="tag">Gap</span>Naive + 일부 Advanced (Semantic Cache)
+              </td>
+              <td class="path">
+                Query Router → Self-reflection → Multi-hop을 <code>rag_service.py</code>에 단계적 삽입
+              </td>
+            </tr>
+
+            <tr>
+              <td class="area">
+                접근 제어
+                <span class="area-sub">RBAC · Isolation</span>
+              </td>
+              <td class="oa">
+                <strong>RBAC + 워크스페이스 데이터 격리</strong> — 사용자/부서/역할별 권한
+              </td>
+              <td class="mine">
+                <span class="tag">Gap</span>단일 유저 가정 · 미구현
+              </td>
+              <td class="path">
+                <code>tenant_id</code> 주입 → Chroma 컬렉션 분리 + Redis 키 프리픽스
+              </td>
+            </tr>
+
+            <tr>
+              <td class="area">
+                민감정보
+                <span class="area-sub">PII Handling</span>
+              </td>
+              <td class="oa">
+                <strong>자동 마스킹</strong> — 주민번호/전화번호 감지 (준비 중)
+              </td>
+              <td class="mine">
+                <span class="tag">Gap</span>미구현
+              </td>
+              <td class="path">
+                정규식 1차 방어 → presidio 확장. Ingest + Query 양쪽 삽입
+              </td>
+            </tr>
+
+            <tr>
+              <td class="area">
+                배포 모델
+                <span class="area-sub">Deployment</span>
+              </td>
+              <td class="oa">
+                <strong>SaaS · 공공클라우드 · 온프렘</strong> — 규제 산업 대응
+              </td>
+              <td class="mine">
+                <span class="tag">Gap</span>로컬 Docker PoC · 구독 SDK 기반
+              </td>
+              <td class="path">
+                <code>LLMProvider</code> 어댑터 추가 → Ollama + Qwen2.5-7B로 온프렘 전환
+              </td>
+            </tr>
+
+            <tr class="mine-wins">
+              <td class="area">
+                평가·측정 체계
+                <span class="area-sub">Eval Harness</span>
+              </td>
+              <td class="oa">
+                공개 자료에 정량 평가 언급 없음
+              </td>
+              <td class="mine">
+                <span class="tag">Asset</span><strong>50 × 7 하네스</strong> · v3 튜닝 기록 · Provider swap 시 측정 재활용
+              </td>
+              <td class="path">
+                골든셋 수백 건으로 확장 + blind A/B + LLM-as-judge
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Positioning -->
+      <div class="positioning">
+        <div class="p-label">Positioning</div>
+        <div class="p-text">
+          <strong>OfficeAgent는 제품화 전반</strong>을 풀어냈고, <strong>제 PoC는 파이프라인 정확성 한 축</strong>을 깊게 검증했습니다. 제가 가져갈 수 있는 건 <span class="hl">평가 하네스와 v3 프롬프트 튜닝 자산</span>입니다.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

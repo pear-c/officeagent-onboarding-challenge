@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 08 · 라이브 데모</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--ink); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* Live tag */
+    .live-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 6px 14px;
+      background: var(--ink);
+      color: var(--bg);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+    .live-tag .dot {
+      width: 8px; height: 8px;
+      background: var(--highlight);
+      border-radius: 50%;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.3; }
+    }
+
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 148px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 12px; bottom: 12px;
+      width: 2px; background: var(--ink);
+    }
+
+    h1 {
+      font-size: 88px;
+      font-weight: 800;
+      line-height: 1.02;
+      letter-spacing: -0.045em;
+      color: var(--ink);
+      margin-bottom: 20px;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    /* Scenarios */
+    .scenarios {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 460px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 32px;
+      z-index: 2;
+    }
+
+    .scenario {
+      background: var(--bg);
+      border: 1px solid var(--code-border);
+      padding: 28px 30px 26px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      min-height: 380px;
+    }
+    .scenario.hero {
+      border-color: var(--highlight);
+      border-width: 1.5px;
+    }
+
+    .s-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .s-num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 36px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .scenario.hero .s-num { color: var(--highlight); }
+
+    .s-tag {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border: 1px solid var(--rule);
+    }
+    .scenario.hero .s-tag {
+      color: var(--highlight);
+      border-color: var(--highlight);
+    }
+
+    .s-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .s-quote {
+      background: var(--code-bg);
+      border-left: 3px solid var(--accent);
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--ink);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+    }
+    .scenario.hero .s-quote {
+      border-left-color: var(--highlight);
+    }
+    .s-quote::before {
+      content: 'Q · ';
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-weight: 700;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.1em;
+    }
+
+    .s-expected {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      margin-bottom: 18px;
+      flex: 1;
+    }
+    .s-expected strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .s-proves {
+      padding-top: 14px;
+      border-top: 1px solid var(--rule-fine);
+    }
+    .s-proves-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .scenario.hero .s-proves-label { color: var(--highlight); }
+    .s-proves-text {
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+
+    .s-source {
+      position: absolute;
+      bottom: -8px;
+      right: 20px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      color: var(--text-subtle);
+      background: var(--bg);
+      padding: 0 8px;
+      letter-spacing: 0.02em;
+    }
+
+    /* Demo info bar */
+    .demo-bar {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 150px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 32px;
+      z-index: 2;
+    }
+
+    .demo-item {
+      padding-left: 24px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+    }
+    .demo-item::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 4px; bottom: 4px;
+      width: 2px; background: var(--accent);
+    }
+    .demo-item.backup::before {
+      background: var(--highlight);
+    }
+    .demo-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .demo-item.backup .demo-label { color: var(--highlight); }
+    .demo-value {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 4px;
+    }
+    .demo-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Bonus */
+    .bonus {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 54px;
+      padding: 14px 20px;
+      background: var(--code-bg);
+      border-left: 3px solid var(--highlight);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 2;
+    }
+    .bonus-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .bonus-tag {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .bonus-text {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.005em;
+    }
+    .bonus-text .hl {
+      color: var(--highlight);
+      font-weight: 800;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+    }
+    .bonus-ref {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">08</span>
+          <span class="sep">/</span>
+          <span>13</span>
+          <span class="section">Part II · Implementation</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="live-tag"><span class="dot"></span>Live Demo</div>
+        <h1>실제로 동작하는지,<br>세 가지로 보여드립니다</h1>
+        <div class="subtitle">단일 문서 질의 · 복합 질의 · 답 없는 질의. 마지막 시나리오가 환각 억제의 핵심입니다.</div>
+      </div>
+
+      <!-- Scenarios -->
+      <div class="scenarios">
+
+        <!-- Scenario 01 -->
+        <div class="scenario">
+          <div class="s-head">
+            <div class="s-num">01</div>
+            <div class="s-tag">Basic</div>
+          </div>
+          <div class="s-title">단일 문서 질의</div>
+          <div class="s-quote">교육비 지원 한도는 얼마인가요?</div>
+          <div class="s-expected">
+            <strong>company-policy.txt</strong>의 단일 청크에 답이 있는 표준 케이스. 답변과 함께 <strong>출처(파일 + chunk_id)</strong>가 같이 반환됩니다.
+          </div>
+          <div class="s-proves">
+            <div class="s-proves-label">Proves</div>
+            <div class="s-proves-text">RAG 파이프라인 기본 흐름 + 출처 추적</div>
+          </div>
+          <div class="s-source">sample-docs/company-policy.txt</div>
+        </div>
+
+        <!-- Scenario 02 -->
+        <div class="scenario">
+          <div class="s-head">
+            <div class="s-num">02</div>
+            <div class="s-tag">Multi-doc</div>
+          </div>
+          <div class="s-title">복합 질의</div>
+          <div class="s-quote">보안 사고 발생 시 대응 절차와 담당자는 누구인가요?</div>
+          <div class="s-expected">
+            <strong>it-security-compliance.md</strong>와 <strong>security-policy.pdf</strong>에서 <strong>여러 청크</strong>를 가져와 LLM이 종합합니다. SSE로 출처가 먼저, 답변이 스트리밍됩니다.
+          </div>
+          <div class="s-proves">
+            <div class="s-proves-label">Proves</div>
+            <div class="s-proves-text">top-K retrieve + LLM 종합 + SSE 스트리밍</div>
+          </div>
+          <div class="s-source">sample-docs/ 다중</div>
+        </div>
+
+        <!-- Scenario 03 — HERO -->
+        <div class="scenario hero">
+          <div class="s-head">
+            <div class="s-num">03</div>
+            <div class="s-tag">Refusal ★</div>
+          </div>
+          <div class="s-title">답 없는 질의</div>
+          <div class="s-quote">스톡옵션 정책은 어떻게 되나요?</div>
+          <div class="s-expected">
+            업로드된 어떤 문서에도 답이 <strong>없는 질문</strong>. LLM이 억지 답을 만들지 않고 <strong>"제공된 문서에서 해당 내용을 찾을 수 없습니다"</strong>로 거절합니다.
+          </div>
+          <div class="s-proves">
+            <div class="s-proves-label">Proves · Hero</div>
+            <div class="s-proves-text">환각 억제 · 이중 방어 작동 · "모른다"고 말할 수 있는 능력</div>
+          </div>
+          <div class="s-source">answerable = false</div>
+        </div>
+
+      </div>
+
+      <!-- Demo info bar -->
+      <div class="demo-bar">
+        <div class="demo-item">
+          <div class="demo-label">Demo URL</div>
+          <div class="demo-value">http://localhost:8000</div>
+          <div class="demo-sub">문서 드래그 앤 드롭 업로드 · 질문 입력 · SSE 스트리밍 답변</div>
+        </div>
+
+        <div class="demo-item">
+          <div class="demo-label">Run</div>
+          <div class="demo-value">./start.sh</div>
+          <div class="demo-sub">CLI 자동 감지 · .env 자동 생성 · 샘플 2개 자동 업로드</div>
+        </div>
+
+        <div class="demo-item backup">
+          <div class="demo-label">Backup</div>
+          <div class="demo-value">eval/images/</div>
+          <div class="demo-sub">라이브 실패 시 · Claude/Codex 응답 스크린샷 20장 + cache-hit/miss</div>
+        </div>
+      </div>
+
+      <!-- Bonus: cache hit -->
+      <div class="bonus">
+        <div class="bonus-left">
+          <div class="bonus-tag">+ Bonus</div>
+          <div class="bonus-text">
+            시나리오 01 질문을 <strong>한 번 더</strong> 실행 → 캐시 히트 <span class="hl">13.6s → 0ms</span>
+          </div>
+        </div>
+        <div class="bonus-ref">
+          cache-hit.png · cache-miss.png · ARCHITECTURE §9.3
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

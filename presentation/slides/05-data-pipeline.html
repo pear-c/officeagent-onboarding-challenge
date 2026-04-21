@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 05 · 고민 ② 데이터 파이프라인</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--accent); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 148px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 12px; bottom: 12px;
+      width: 2px; background: var(--accent);
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .eyebrow .num {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+
+    h1 {
+      font-size: 68px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+
+    .subtitle {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    .pipeline {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 460px;
+      display: flex;
+      align-items: stretch;
+      gap: 18px;
+      z-index: 2;
+    }
+
+    .stage-box {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--code-border);
+      padding: 20px 22px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+      min-height: 200px;
+    }
+
+    .stage-box .num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+    }
+    .stage-box .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: 0.12em;
+    }
+    .stage-box .tech {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+    }
+    .stage-box .tech .hl {
+      color: var(--accent);
+    }
+    .stage-box .detail {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .stage-box .detail code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      background: var(--code-bg);
+      padding: 1px 4px;
+      color: var(--accent);
+    }
+    .stage-box .file {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--rule-fine);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10.5px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      line-height: 1.4;
+    }
+
+    .arrow {
+      display: flex;
+      align-items: center;
+      color: var(--text-subtle);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 20px;
+      font-weight: 400;
+    }
+
+    .body {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 740px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 56px;
+      z-index: 2;
+    }
+
+    .block {
+      padding-left: 32px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+    }
+    .block::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 4px; bottom: 4px;
+      width: 2px; background: var(--accent);
+    }
+    .block-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .choice-list {
+      list-style: none;
+      counter-reset: item;
+    }
+    .choice-list li {
+      counter-increment: item;
+      font-size: 15.5px;
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      padding: 7px 0 7px 32px;
+      position: relative;
+      border-bottom: 1px solid var(--rule-fine);
+    }
+    .choice-list li:last-child { border-bottom: none; }
+    .choice-list li::before {
+      content: counter(item, decimal-leading-zero);
+      position: absolute;
+      left: 0; top: 8px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.04em;
+    }
+    .choice-list code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .anchor {
+      border: 1px solid var(--rule);
+      padding: 16px 20px;
+      background: transparent;
+    }
+    .anchor .a-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .anchor .stat {
+      padding: 8px 0;
+      border-bottom: 1px solid var(--rule-fine);
+    }
+    .anchor .stat:last-of-type { border-bottom: none; padding-bottom: 4px; }
+    .stat .what {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+      letter-spacing: -0.005em;
+    }
+    .stat .figure {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      line-height: 1.3;
+    }
+    .stat .figure .plus { color: var(--highlight); }
+    .stat .figure .minus { color: var(--accent); }
+    .stat .figure .drop { color: var(--highlight); font-weight: 800; }
+    .stat .figure small {
+      font-weight: 500;
+      color: var(--text-subtle);
+      font-size: 12px;
+    }
+    .anchor .xref {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--rule-fine);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+    }
+
+    .footer-note {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 60px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .footer-note::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 4px; bottom: 4px;
+      width: 2px; background: var(--highlight);
+    }
+    .footer-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .footer-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.005em;
+      line-height: 1.4;
+    }
+    .footer-text .hl {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">05</span>
+          <span class="sep">/</span>
+          <span>13</span>
+          <span class="section">Part I · Lessons I</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow"><span class="num">02</span>고민 · 데이터 파이프라인</div>
+        <h1>문서를 어떻게 자르고,<br>어떻게 찾을까?</h1>
+        <div class="subtitle">포맷은 다양하고(PDF · MD · TXT), 한국어·영어가 섞이고, 출처 추적까지 필요했습니다. 획일적 분할로는 품질이 무너집니다.</div>
+      </div>
+
+      <!-- Pipeline -->
+      <div class="pipeline">
+        <div class="stage-box">
+          <div class="num">01</div>
+          <div class="label">EXTRACT</div>
+          <div class="tech"><span class="hl">pypdf</span> + MD 변환</div>
+          <div class="detail">PDF의 번호 헤더 <code>1. 제목</code>을 <code>##</code>로 치환 → .md 파이프라인 재활용</div>
+          <div class="file">app/extraction/<br>text_extractor.py</div>
+        </div>
+        <div class="arrow">→</div>
+
+        <div class="stage-box">
+          <div class="num">02</div>
+          <div class="label">CHUNK</div>
+          <div class="tech">포맷별 <span class="hl">하이브리드</span></div>
+          <div class="detail">.md → 헤더 기반 + <code>section_path</code> 보존<br>chunk 400자, overlap 80자</div>
+          <div class="file">app/chunking/<br>router.py · markdown.py</div>
+        </div>
+        <div class="arrow">→</div>
+
+        <div class="stage-box">
+          <div class="num">03</div>
+          <div class="label">EMBED</div>
+          <div class="tech"><span class="hl">BAAI/bge-m3</span></div>
+          <div class="detail">1024차원 · 8192 토큰 입력 · 한·영 다국어 · 오픈소스 (Apache-2.0)</div>
+          <div class="file">app/embedding/<br>embedder.py</div>
+        </div>
+        <div class="arrow">→</div>
+
+        <div class="stage-box">
+          <div class="num">04</div>
+          <div class="label">STORE</div>
+          <div class="tech"><span class="hl">Chroma</span> + 메타데이터</div>
+          <div class="detail">청크마다 <code>section_path</code>("상위 &gt; 하위") 보존 → 출처 정확도</div>
+          <div class="file">app/vectorstore/<br>chroma_store.py</div>
+        </div>
+      </div>
+
+      <!-- Decisions + Anchor -->
+      <div class="body">
+        <div class="block">
+          <div class="block-label">선택의 근거</div>
+          <ol class="choice-list">
+            <li>포맷별 청킹 — .md는 <code>##</code> 헤더 기반, .pdf는 번호 헤더 → <code>##</code> 변환 후 같은 파이프라인</li>
+            <li>BGE-M3 — 한·영 혼재에 안정적, 8192 토큰으로 긴 섹션 커버, 온프렘 전환 가능</li>
+            <li>Chroma — PoC 속도 최우선, <code>VectorStore</code> 추상화 뒤로 빼서 Qdrant 이전 가능성 확보</li>
+            <li>청크마다 <code>section_path</code> 메타 보존 — LLM이 "어느 챕터의 어느 절"인지 참조 가능</li>
+          </ol>
+        </div>
+
+        <div class="anchor">
+          <div class="a-label">Measured · 자체 실험 기록</div>
+
+          <div class="stat">
+            <div class="what">PDF 청킹 개선 (번호 헤더 → MD 변환)</div>
+            <div class="figure">응답속도 <span class="minus">−22%</span> <small>(8.0s → 6.2s)</small>, 정답률 5/5 유지</div>
+          </div>
+
+          <div class="stat">
+            <div class="what">MD 짧은 섹션 양방향 병합 (&lt; 100자)</div>
+            <div class="figure">28 → 21 청크 · <span class="plus">+33%</span> 평균크기 <small>(156→208자)</small></div>
+          </div>
+
+          <div class="stat">
+            <div class="what">LlamaParse 대안 실험 — 별도 브랜치</div>
+            <div class="figure">정답률 100% → <span class="drop">80% 하락</span> <small>(청크 1.5×, 업로드 16× 느림)</small></div>
+          </div>
+
+          <div class="xref">→ TS-002 · TS-006 · TASK 05-pdf-llamaparse D38</div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-note">
+        <div class="footer-label">배운 것</div>
+        <div class="footer-text">
+          LlamaParse 실험에서 배운 것 — <span class="hl">더 많은 정보 ≠ 더 좋은 검색</span>. RAG는 추출 품질보다 검색 정밀도가 좌우합니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

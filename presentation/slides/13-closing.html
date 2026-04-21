@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 13 · 마무리</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--highlight); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* Header */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 140px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 10px; bottom: 10px;
+      width: 2px; background: var(--highlight);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+    .eyebrow .num {
+      color: var(--highlight);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+    h1 {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 14px;
+    }
+    .subtitle {
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    /* Takeaways */
+    .takeaways {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 380px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 36px;
+      z-index: 2;
+    }
+
+    .takeaway {
+      padding-left: 28px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .takeaway::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 4px; bottom: 4px;
+      width: 2px; background: var(--accent);
+    }
+
+    .tk-head {
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+    }
+    .tk-num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 46px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .tk-phase {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .tk-lesson {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+    }
+    .tk-lesson .hl {
+      color: var(--accent);
+    }
+
+    .tk-evidence {
+      margin-top: auto;
+      padding-top: 14px;
+      border-top: 1px solid var(--rule-fine);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+    }
+    .tk-evidence code {
+      font-size: 11px;
+      background: var(--code-bg);
+      padding: 1px 5px;
+      color: var(--accent);
+    }
+
+    /* What's next */
+    .whats-next {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 720px;
+      padding: 18px 26px;
+      background: var(--code-bg);
+      border-left: 3px solid var(--highlight);
+      z-index: 2;
+    }
+    .wn-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 12px;
+    }
+    .wn-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+    }
+    .wn-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .wn-items {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 28px;
+    }
+    .wn-item {
+      padding-left: 18px;
+      border-left: 1px solid var(--rule);
+    }
+    .wn-item .i-name {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      margin-bottom: 4px;
+    }
+    .wn-item .i-desc {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11.5px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+      line-height: 1.5;
+    }
+
+    /* Closing */
+    .closing {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      z-index: 2;
+    }
+    .closing-main {
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+    }
+    .closing-main::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 6px; bottom: 6px;
+      width: 2px; background: var(--ink);
+    }
+    .thanks-ko {
+      font-size: 72px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.04em;
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+    .thanks-en {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      color: var(--text-subtle);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+
+    .closing-meta {
+      text-align: right;
+    }
+    .cm-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .cm-main {
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 8px;
+    }
+    .cm-sub {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">13</span>
+          <span class="sep">/</span>
+          <span>13</span>
+          <span class="section">Part IV · Closing</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow"><span class="num">10</span>마무리 · Takeaways &amp; Thanks</div>
+        <h1>배운 세 가지, 그리고 다음에</h1>
+        <div class="subtitle">13장의 여정에서 얻은 핵심 교훈 세 가지와, 앞으로 더 배우고 싶은 방향입니다.</div>
+      </div>
+
+      <!-- Takeaways -->
+      <div class="takeaways">
+
+        <div class="takeaway">
+          <div class="tk-head">
+            <div class="tk-num">01</div>
+            <div class="tk-phase">Part I · II</div>
+          </div>
+          <div class="tk-lesson">
+            <span class="hl">측정 체계</span>가 먼저 있으면<br>모델 교체가 쉬워진다
+          </div>
+          <div class="tk-evidence">
+            <code>LLMProvider</code> ABC + 50 × 7 하네스<br>→ Claude · Codex 비교 · Ollama 경로 확보
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <div class="tk-head">
+            <div class="tk-num">02</div>
+            <div class="tk-phase">Part II</div>
+          </div>
+          <div class="tk-lesson">
+            LLM 지시는 <span class="hl">확률적 제어</span>,<br>형식은 코드로 재검증한다
+          </div>
+          <div class="tk-evidence">
+            프롬프트 v3 + 서버 <code>_REFUSAL_PATTERNS</code> 이중 방어<br>→ Refusal 83% → 100%
+          </div>
+        </div>
+
+        <div class="takeaway">
+          <div class="tk-head">
+            <div class="tk-num">03</div>
+            <div class="tk-phase">Part III · IV</div>
+          </div>
+          <div class="tk-lesson">
+            한 것만큼 <span class="hl">안 한 것</span>을<br>정직하게 아는 것이 중요하다
+          </div>
+          <div class="tk-evidence">
+            과소평가한 자산 재발견 + 3 검증 트랙 설계<br>→ 갭이 보이면 확장 경로가 따라온다
+          </div>
+        </div>
+
+      </div>
+
+      <!-- What's Next -->
+      <div class="whats-next">
+        <div class="wn-header">
+          <div class="wn-label">Next Lessons</div>
+          <div class="wn-title">앞으로 더 공부하고 싶은 방향</div>
+        </div>
+        <div class="wn-items">
+          <div class="wn-item">
+            <div class="i-name">Agentic RAG 심화</div>
+            <div class="i-desc">Query Router · Self-RAG · CRAG · LangGraph 기반 멀티스텝 실험</div>
+          </div>
+          <div class="wn-item">
+            <div class="i-name">Eval Science</div>
+            <div class="i-desc">LLM-as-judge · RAGAS · blind A/B · 오프라인 평가 파이프라인</div>
+          </div>
+          <div class="wn-item">
+            <div class="i-name">한국어 LLM 운영</div>
+            <div class="i-desc">Qwen2.5 · EEVE · vLLM 서빙 · 온프렘 인프라 · 프롬프트 이식성</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Closing -->
+      <div class="closing">
+        <div class="closing-main">
+          <div class="thanks-ko">감사합니다</div>
+          <div class="thanks-en">Thank you · Questions welcome</div>
+        </div>
+        <div class="closing-meta">
+          <div class="cm-label">Presented by</div>
+          <div class="cm-main">배성환</div>
+          <div class="cm-sub">2026.04.23 · OfficeAgent Interview</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 09 · 튜닝 궤적 + 실측 결과</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+      --win: #0F4C5C;
+      --loss: #A0A0A0;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--ink); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* Header */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 132px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 10px; bottom: 10px;
+      width: 2px; background: var(--ink);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .eyebrow .num {
+      color: var(--ink);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+    h1 {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.035em;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+    .subtitle {
+      font-size: 19px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    /* Timeline */
+    .timeline {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 340px;
+      z-index: 2;
+    }
+    .timeline-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .timeline-label::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .timeline-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule-fine);
+    }
+
+    .versions {
+      display: flex;
+      align-items: stretch;
+      gap: 20px;
+    }
+    .version {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--code-border);
+      padding: 16px 20px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      position: relative;
+    }
+    .version.final {
+      border-color: var(--highlight);
+      border-width: 1.5px;
+    }
+    .v-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .v-tag {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+    }
+    .version.final .v-tag { color: var(--highlight); }
+    .v-note {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border: 1px solid var(--rule);
+    }
+    .version.final .v-note {
+      color: var(--highlight);
+      border-color: var(--highlight);
+    }
+    .v-change {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+    }
+    .v-detail {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .v-detail code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11.5px;
+      background: var(--code-bg);
+      padding: 1px 5px;
+      color: var(--accent);
+    }
+    .v-result {
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--rule-fine);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+    }
+    .v-result .highlight {
+      color: var(--highlight);
+      font-weight: 800;
+      font-size: 13px;
+    }
+
+    .v-arrow {
+      display: flex;
+      align-items: center;
+      color: var(--text-subtle);
+      font-size: 20px;
+      padding: 0 4px;
+    }
+
+    /* Comparison table */
+    .table-wrap {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 580px;
+      z-index: 2;
+    }
+    .table-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .table-label::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .table-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule-fine);
+    }
+    .table-label .sub {
+      color: var(--text-subtle);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      font-size: 11px;
+    }
+
+    .metrics-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: 'Pretendard Variable', sans-serif;
+    }
+    .metrics-table thead th {
+      text-align: left;
+      padding: 12px 18px;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text-subtle);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1.5px solid var(--ink);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+    .metrics-table thead th.num { text-align: right; }
+    .metrics-table thead .claude-v3 {
+      color: var(--highlight);
+    }
+    .metrics-table tbody td {
+      padding: 11px 18px;
+      font-size: 14.5px;
+      border-bottom: 1px solid var(--rule-fine);
+      font-variant-numeric: tabular-nums;
+    }
+    .metrics-table tbody tr:last-child td { border-bottom: none; }
+    .metrics-table tbody tr.hero { background: rgba(217, 119, 6, 0.06); }
+    .metrics-table td.metric {
+      font-weight: 600;
+      color: var(--ink);
+    }
+    .metrics-table td.num {
+      text-align: right;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+    }
+    .metrics-table td.v2 { color: var(--text-muted); }
+    .metrics-table td.v3 {
+      color: var(--ink);
+      font-weight: 700;
+    }
+    .metrics-table td.v3.win { color: var(--win); }
+    .metrics-table td.codex { color: var(--text); }
+    .metrics-table td.codex.win { color: var(--win); font-weight: 700; }
+    .metrics-table td.delta {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+    .metrics-table td.delta.neg { color: var(--text-subtle); font-weight: 500; }
+    .metrics-table td.delta.same { color: var(--text-subtle); font-weight: 500; }
+    .metrics-table tbody tr.hero td.delta {
+      color: var(--highlight);
+      font-weight: 800;
+    }
+
+    /* Decision bar */
+    .decision {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 54px;
+      display: grid;
+      grid-template-columns: auto 1fr 1fr 1fr;
+      gap: 28px;
+      align-items: center;
+      padding: 18px 24px;
+      border: 1px solid var(--highlight);
+      background: rgba(217, 119, 6, 0.04);
+      z-index: 2;
+    }
+    .d-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding-right: 20px;
+      border-right: 1px solid var(--rule);
+    }
+    .d-item-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 10px;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .d-item-value {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      line-height: 1.35;
+    }
+    .d-item-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">09</span>
+          <span class="sep">/</span>
+          <span>13</span>
+          <span class="section">Part II · Implementation</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow"><span class="num">06</span>구현 · Tuning &amp; Measurement</div>
+        <h1>v1 → v2 → v3, 그리고 측정</h1>
+        <div class="subtitle">프롬프트를 세 번 다듬은 궤적과, 50케이스 × 7메트릭으로 측정한 결과입니다.</div>
+      </div>
+
+      <!-- Timeline: 3 versions -->
+      <div class="timeline">
+        <div class="timeline-label">Prompt Tuning — 3단계 궤적</div>
+        <div class="versions">
+
+          <div class="version">
+            <div class="v-head">
+              <div class="v-tag">v1</div>
+              <div class="v-note">Initial</div>
+            </div>
+            <div class="v-change">초기 SYSTEM_PROMPT</div>
+            <div class="v-detail">JSON 출력 지시를 한 프롬프트에서 처리. 스트리밍 케이스에서 원시 JSON이 UI에 노출되는 <code>TS-004</code> 발견.</div>
+            <div class="v-result">→ 스트리밍 버그 · 거절 동의어 오탐</div>
+          </div>
+
+          <div class="v-arrow">→</div>
+
+          <div class="version">
+            <div class="v-head">
+              <div class="v-tag">v2</div>
+              <div class="v-note">Split</div>
+            </div>
+            <div class="v-change">SYSTEM_PROMPT &middot; SYSTEM_PROMPT_STREAM 분리 (D27)</div>
+            <div class="v-detail">JSON 전용 / 자연어 스트리밍 전용으로 프롬프트를 나눔. 스트리밍 정상화.</div>
+            <div class="v-result">→ Refusal 83.33% · Retrieval 93.18%</div>
+          </div>
+
+          <div class="v-arrow">→</div>
+
+          <div class="version final">
+            <div class="v-head">
+              <div class="v-tag">v3</div>
+              <div class="v-note">★ Hardened</div>
+            </div>
+            <div class="v-change">Few-shot 2개 + 동의어 금지 + 서버 이중 방어</div>
+            <div class="v-detail">답변 가능 / 불가 예시 각 1개 주입. 서버 <code>_REFUSAL_PATTERNS</code> 9종 매칭으로 <code>TS-009</code> 해결.</div>
+            <div class="v-result">→ Refusal <span class="highlight">100%</span> · Retrieval 97.73%</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Comparison table -->
+      <div class="table-wrap">
+        <div class="table-label">
+          Measured · 50 cases × 7 metrics
+          <span class="sub">(Claude v2 · Claude v3 · Codex)</span>
+        </div>
+
+        <table class="metrics-table">
+          <thead>
+            <tr>
+              <th>Metric</th>
+              <th class="num">Claude v2</th>
+              <th class="num claude-v3">Claude v3 ★</th>
+              <th class="num">Codex</th>
+              <th class="num">v2 → v3</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="metric">Retrieval Hit Rate</td>
+              <td class="num v2">93.18%</td>
+              <td class="num v3 win">97.73%</td>
+              <td class="num codex">90.91%</td>
+              <td class="num delta">+4.55%p</td>
+            </tr>
+            <tr>
+              <td class="metric">Citation Accuracy</td>
+              <td class="num v2">93.18%</td>
+              <td class="num v3 win">97.73%</td>
+              <td class="num codex">90.91%</td>
+              <td class="num delta">+4.55%p</td>
+            </tr>
+            <tr class="hero">
+              <td class="metric">Refusal Accuracy ★</td>
+              <td class="num v2">83.33%</td>
+              <td class="num v3 win">100.00%</td>
+              <td class="num codex win">100.00%</td>
+              <td class="num delta">+16.67%p</td>
+            </tr>
+            <tr>
+              <td class="metric">Keyword Hit Rate</td>
+              <td class="num v2">90.91%</td>
+              <td class="num v3">88.64%</td>
+              <td class="num codex win">90.91%</td>
+              <td class="num delta neg">−2.27%p</td>
+            </tr>
+            <tr>
+              <td class="metric">JSON Parse Rate</td>
+              <td class="num v2">100.00%</td>
+              <td class="num v3">100.00%</td>
+              <td class="num codex">100.00%</td>
+              <td class="num delta same">=</td>
+            </tr>
+            <tr>
+              <td class="metric">Latency p50</td>
+              <td class="num v2">10,773ms</td>
+              <td class="num v3">8,803ms</td>
+              <td class="num codex win">4,516ms</td>
+              <td class="num delta">−18%</td>
+            </tr>
+            <tr>
+              <td class="metric">Latency p95</td>
+              <td class="num v2">16,892ms</td>
+              <td class="num v3">15,731ms</td>
+              <td class="num codex win">10,557ms</td>
+              <td class="num delta">−7%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Decision -->
+      <div class="decision">
+        <div class="d-label">Decision</div>
+        <div>
+          <div class="d-item-label">기본 모델</div>
+          <div class="d-item-value">Claude Sonnet 4.6 (v3)</div>
+          <div class="d-item-sub">Retrieval · Citation · Refusal 모두 우세 + UX</div>
+        </div>
+        <div>
+          <div class="d-item-label">대안 옵션</div>
+          <div class="d-item-value">Codex GPT-5 mini</div>
+          <div class="d-item-sub">.env 한 줄로 전환 · 속도 2.4× 빠름</div>
+        </div>
+        <div>
+          <div class="d-item-label">속도 보완</div>
+          <div class="d-item-value">SSE · 3단계 캐시</div>
+          <div class="d-item-sub">miss ~9s → hit 0ms · §9.3 실측</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>
