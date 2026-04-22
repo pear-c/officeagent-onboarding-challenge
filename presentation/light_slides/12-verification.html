@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 160px;
+      gap: 44px;
+    }
+
+    .tracks {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px;
+      max-width: 1600px;
+      width: 100%;
+    }
+
+    .track {
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      min-height: 460px;
+    }
+
+    .track__head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid var(--text);
+    }
+
+    .track__num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .track__status {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      border-radius: 10px;
+    }
+
+    .track__status--planned {
+      background: var(--accent-light);
+      color: var(--accent);
+      border: 1px solid var(--accent);
+    }
+
+    .track__status--depends {
+      background: rgba(0,0,0,0.04);
+      color: var(--text-muted);
+      border: 1px solid var(--text-muted);
+    }
+
+    .track__title {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.015em;
+      line-height: 1.25;
+    }
+
+    .track__title small {
+      display: block;
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .track__row {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .track__label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .track__value {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+
+    .track__value strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .track__value code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      background: var(--bg-code);
+      padding: 2px 6px;
+      color: var(--accent);
+      border-radius: 3px;
+    }
+
+    .track__chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .chip {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      background: var(--bg-code);
+      color: var(--accent);
+      letter-spacing: 0.04em;
+      border-radius: 4px;
+    }
+
+    .track__xref {
+      margin-top: auto;
+      padding-top: 12px;
+      border-top: 1px solid rgba(0,0,0,0.06);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 0.02em;
+    }
+
+    .footer-note {
+      max-width: 1600px;
+      width: 100%;
+      padding: 20px 28px;
+      padding-left: 32px;
+      border-left: 4px solid var(--highlight);
+      background: var(--highlight-light);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      display: flex;
+      align-items: baseline;
+      gap: 24px;
+    }
+
+    .footer-note__label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    .footer-note__text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .footer-note__text .hl {
+      color: var(--highlight);
+      font-weight: 800;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part III &middot; 프로덕션 관점 보완점</span>
+    <span class="page-tag">12 / 13</span>
+
+    <div>
+      <div class="accent-bar accent-bar--highlight"></div>
+      <h2 class="t-headline">빈 칸을 측정으로 메웁니다</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">슬라이드 11의 한계를 실측 수치로 바꾸기 위한 <span class="highlight"><strong>세 가지 검증 트랙</strong></span></p>
+    </div>
+
+    <div class="tracks">
+
+      <!-- Track 01 -->
+      <div class="track">
+        <div class="track__head">
+          <div class="track__num">Track &middot; 01</div>
+          <div class="track__status track__status--planned">Foundation</div>
+        </div>
+
+        <div class="track__title">
+          Retrieval 분리 평가
+          <small>Separate retrieval eval</small>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">무엇을</div>
+          <div class="track__value">
+            50케이스 각 질문에 <strong>gold passage</strong>를 라벨링해서 검색 단독 품질 측정
+          </div>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">측정 지표</div>
+          <div class="track__chips">
+            <span class="chip">Recall@5</span>
+            <span class="chip">Recall@10</span>
+            <span class="chip">MRR</span>
+            <span class="chip">nDCG@10</span>
+          </div>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">왜</div>
+          <div class="track__value">
+            개선이 <strong>검색에서 왔는지 생성에서 왔는지</strong> 귀속 가능
+          </div>
+        </div>
+
+        <div class="track__xref">&rarr; Slide 11 · 한계 #1 해소 / Track 02의 전제조건</div>
+      </div>
+
+      <!-- Track 02 -->
+      <div class="track">
+        <div class="track__head">
+          <div class="track__num">Track &middot; 02</div>
+          <div class="track__status track__status--depends">Depends on 01</div>
+        </div>
+
+        <div class="track__title">
+          Reranker 도입 효과
+          <small>Advanced RAG tier</small>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">무엇을</div>
+          <div class="track__value">
+            <code>bge-reranker-v2-m3</code> 삽입 &mdash; <strong>Dense-only vs Dense+Rerank</strong> 비교
+          </div>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">측정 지표</div>
+          <div class="track__chips">
+            <span class="chip">Recall@5 &Delta;</span>
+            <span class="chip">MRR &Delta;</span>
+            <span class="chip">p95 지연 &Delta;</span>
+            <span class="chip">답변 품질 &Delta;</span>
+          </div>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">왜</div>
+          <div class="track__value">
+            BGE-M3 패밀리 선택 근거 완성 &mdash; 같은 모델군이라 튜닝 부담 적음
+          </div>
+        </div>
+
+        <div class="track__xref">&rarr; Slide 11 · RAG 방식 갭 일부 해소</div>
+      </div>
+
+      <!-- Track 03 -->
+      <div class="track">
+        <div class="track__head">
+          <div class="track__num">Track &middot; 03</div>
+          <div class="track__status track__status--planned">Independent</div>
+        </div>
+
+        <div class="track__title">
+          Ollama 어댑터 실구현
+          <small>On-prem path</small>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">무엇을</div>
+          <div class="track__value">
+            <code>OllamaProvider</code>를 <code>LLMProvider</code>에 추가 &mdash; <strong>Qwen2.5-7B</strong>로 동일 골든셋 재측정
+          </div>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">측정 지표</div>
+          <div class="track__chips">
+            <span class="chip">7메트릭 재측정</span>
+            <span class="chip">프롬프트 준수율</span>
+            <span class="chip">로딩&middot;지연</span>
+          </div>
+        </div>
+
+        <div class="track__row">
+          <div class="track__label">왜</div>
+          <div class="track__value">
+            온프렘 배포 갭 실체화 &mdash; <strong>프롬프트 재튜닝 정도</strong>가 핵심 관찰 포인트
+          </div>
+        </div>
+
+        <div class="track__xref">&rarr; Slide 11 · 배포 갭 해소</div>
+      </div>
+
+    </div>
+
+    <div class="footer-note">
+      <div class="footer-note__label">Principle</div>
+      <p class="footer-note__text">
+        <span class="hl">측정 없이는 주장도 없다</span> &mdash; 세 트랙 모두 완료 여부보다 <strong>측정 설계의 정합성</strong>이 핵심입니다.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
