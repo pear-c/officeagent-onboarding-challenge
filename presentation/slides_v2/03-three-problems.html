@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 03 · RAG 핵심 분석 — 네 가지</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    /* subtle dot-grid */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ---------- Top meta strip ---------- */
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+
+    .page-indicator {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .page-indicator .dot {
+      width: 9px;
+      height: 9px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .page-indicator .current {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px;
+      padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .context-tag {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: 0.04em;
+    }
+    .context-tag .bar {
+      width: 24px;
+      height: 1px;
+      background: var(--text-subtle);
+      opacity: 0.6;
+    }
+
+    /* ---------- Header ---------- */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 168px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: var(--accent);
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 64px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1050px;
+    }
+
+    /* ---------- Three problems ---------- */
+    .problems {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 600px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 40px;
+      z-index: 2;
+    }
+
+    .problem {
+      padding-left: 32px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+    }
+    .problem::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--accent);
+    }
+
+    .num-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+    }
+    .num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+    .num-rule {
+      flex: 0 0 24px;
+      height: 1px;
+      background: var(--accent);
+      opacity: 0.6;
+    }
+    .topic {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+    }
+
+    .question {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.025em;
+      line-height: 1.22;
+      margin-bottom: 20px;
+      min-height: 100px;
+    }
+
+    .rule {
+      width: 48px;
+      height: 1px;
+      background: var(--text-subtle);
+      opacity: 0.5;
+      margin-bottom: 24px;
+    }
+
+    .constraint {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.8;
+    }
+    .constraint div {
+      padding-left: 18px;
+      position: relative;
+    }
+    .constraint div::before {
+      content: '—';
+      position: absolute;
+      left: 0;
+      color: var(--text-subtle);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+    }
+
+    /* ---------- Footer ---------- */
+    .footer-note {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 88px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .footer-note::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 6px;
+      bottom: 6px;
+      width: 2px;
+      background: var(--highlight);
+    }
+    .footer-text {
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: -0.005em;
+    }
+    .footer-text .hl {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <!-- Top meta strip -->
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">03</span>
+          <span class="sep">/</span>
+          <span>14</span>
+          <span class="section">Part I · Lessons I</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="header">
+        <div class="eyebrow">구현하며 배운 것</div>
+        <h1>RAG 핵심 분석<br>네 가지</h1>
+        <!-- <div class="subtitle">LLM · 임베딩 & 청킹 · 벡터 DB & 캐시 · 할루시네이션</div> -->
+      </div>
+
+      <!-- Three Problems -->
+      <div class="problems">
+        <!-- Problem 01 -->
+        <div class="problem">
+          <div class="num-row">
+            <span class="num">01</span>
+            <span class="num-rule"></span>
+            <span class="topic">LLM</span>
+          </div>
+          <div class="question">어떤 모델을,<br>어떤 근거로 고를까?</div>
+          <div class="rule"></div>
+          <div class="constraint">
+            <div>구독 기반 SDK 사용 조건</div>
+            <div>모델 교체 가능성 열기</div>
+            <div>구독형 SDK의 호출 구조 이해</div>
+          </div>
+        </div>
+
+        <!-- Problem 02 -->
+        <div class="problem">
+          <div class="num-row">
+            <span class="num">02</span>
+            <span class="num-rule"></span>
+            <span class="topic">임베딩 & 청킹</span>
+          </div>
+          <div class="question">문서를 어떻게 자르고,<br>어떻게 찾을까?</div>
+          <div class="rule"></div>
+          <div class="constraint">
+            <div>2개 이상의 포맷 지원</div>
+            <div>한국어 · 영어 혼재</div>
+            <div>출처 추적이 필수</div>
+          </div>
+        </div>
+
+        <!-- Problem 03 -->
+        <div class="problem">
+          <div class="num-row">
+            <span class="num">03</span>
+            <span class="num-rule"></span>
+            <span class="topic">벡터 DB & 캐시</span>
+          </div>
+          <div class="question">어디에 저장하고,<br>같은 질문은 어떻게?</div>
+          <div class="rule"></div>
+          <div class="constraint">
+            <div>유사 질문 캐시 설계</div>
+            <div>문서 변경 시 무효화</div>
+            <div>캐시 히트 여부 응답 포함</div>
+          </div>
+        </div>
+
+        <!-- Problem 04 -->
+        <div class="problem">
+          <div class="num-row">
+            <span class="num">04</span>
+            <span class="num-rule"></span>
+            <span class="topic">할루시네이션</span>
+          </div>
+          <div class="question">"모른다" 라고<br>말하게 하려면?</div>
+          <div class="rule"></div>
+          <div class="constraint">
+            <div>근거 없으면 거절</div>
+            <div>거절 판정의 정확도</div>
+            <div>프롬프트만으론 부족할 때</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer note -->
+      <!-- <div class="footer-note">
+        <div class="footer-text">
+          다음 3장에서 각 축의 <span class="hl">고민과 선택</span>을 하나씩 짚어봅니다
+        </div>
+      </div> -->
+    </div>
+  </div>
+</body>
+</html>

@@ -505,7 +505,7 @@
           <span class="current">04</span>
           <span class="sep">/</span>
           <span>14</span>
-          <span class="section">Part I · Lessons I</span>
+          <span class="section">Part I · 구현하며 배운 것</span>
         </div>
         <div class="context-tag">
           <span class="bar"></span>
@@ -525,29 +525,13 @@
         <!-- Narrative -->
         <div class="narrative">
           <div class="block">
-            <div class="block-label">고민</div>
-            <div class="concern-text">
-              LLM 모델은 <strong>Claude Agent SDK</strong> 와 <strong>Codex SDK</strong> 를 고민했습니다. <br>
-              속도 · 비용 · 정확도 등 트레이드오프가 있었지만, 이번 과제의 핵심은 <strong>"정확한 근거 기반 답변"</strong>이라 판단하고 <strong>정확도를 최우선</strong>으로 선택했습니다. <br>
-              이를 측정하기 위해 <strong>50케이스 QA 데이터셋</strong>을 만들고자 하였습니다.
-            </div>
-          </div>
-
-          <div class="block">
             <div class="block-label">선택</div>
             <ol class="choice-list">
-              <li><code>LLMProvider</code> 인터페이스 — 모델 교체 가능성 고려</li>
-              <li>Claude · Codex 두 구현체로 <strong>50케이스 × 7메트릭</strong> 정량 비교</li>
-              <li>v2 → v3 프롬프트 튜닝 후 Claude Refusal <strong>83% → 100%</strong> 역전</li>
-              <li>속도 차이는 캐시로 보완 — 정확도 + 답변 구조화 UX로 Claude 채택</li>
+              <li><code>LLMProvider</code> ABC — 모델 교체 시 어댑터만 추가</li>
+              <li>Claude · Codex · <strong>Ollama(Qwen3)</strong> 3개 Provider 구현</li>
+              <li><strong>50케이스 × 7메트릭</strong> 정량 비교로 Claude 채택</li>
+              <li>속도 차이(p50 16s vs 7s)는 <strong>3단계 캐시</strong>로 보완</li>
             </ol>
-          </div>
-
-          <div class="block lesson">
-            <div class="block-label">배운 점</div>
-            <div class="concern-text">
-              트레이드오프 속에서 "어떤 모델이 더 좋다"는 인상론이 아니라, <strong>데이터 기반의 객관적인 판단</strong>을 하겠다는 원칙을 세웠습니다. 다만 <strong>50건 규모와 단일 평가자라는 한계</strong>도 인지하고 있습니다.
-            </div>
           </div>
         </div>
 

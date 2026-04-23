@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 140px 140px 80px;
+      gap: 32px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 3fr 2fr;
+      gap: 40px;
+      max-width: 1500px;
+      width: 100%;
+    }
+
+    /* Left: Design → Measure → Choose flow */
+    .flow-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .flow-step {
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      padding: 18px 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .flow-step--hero {
+      border: 2px solid var(--accent);
+      background: var(--accent-light);
+    }
+
+    .fs__num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--text-white);
+      background: var(--accent);
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .flow-step--hero .fs__num {
+      background: var(--highlight);
+    }
+
+    .fs__title {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .fs__desc {
+      font-size: 15px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    .fs__code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--accent);
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+
+    .flow-arrow {
+      display: none;
+    }
+
+    /* Right: Key numbers */
+    .numbers {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .num-card {
+      padding: 24px 28px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .num-card--hero {
+      border: 2px solid var(--highlight);
+      background: var(--highlight-light);
+    }
+
+    .num-card__value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1;
+      min-width: 100px;
+    }
+
+    .num-card__value--accent { color: var(--accent); }
+    .num-card__value--highlight { color: var(--highlight); }
+
+    .num-card__label {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .num-card__sub {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .providers {
+      padding: 16px 24px;
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .providers__title {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+
+    .providers__list {
+      display: flex;
+      gap: 10px;
+    }
+
+    .provider-tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 12px;
+      border-radius: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .provider-tag--active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .provider-tag--impl {
+      background: rgba(5,150,105,0.08);
+      color: var(--success);
+      border: 1px solid rgba(5,150,105,0.3);
+    }
+
+    /* Screenshot evidence */
+    .evidence {
+      max-width: 1500px;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .evidence .screenshot-placeholder {
+      min-height: 90px;
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part I &middot; 구현하며 배운 것</span>
+    <span class="page-tag">04 / 19</span>
+
+    <div>
+      <div class="accent-bar"></div>
+      <h2 class="t-headline">고민 &#9312; LLM 선택</h2>
+      <div class="sp-8"></div>
+      <p class="t-body">인터페이스로 교체하고, 데이터로 선택했다</p>
+    </div>
+
+    <div class="content">
+      <div class="flow-steps">
+        <div class="flow-step">
+          <div class="fs__num">1</div>
+          <div>
+            <div class="fs__title">LLMProvider ABC 설계</div>
+            <div class="fs__desc">generate() / stream() 인터페이스.<br>모델 교체 시 어댑터만 추가</div>
+            <div class="fs__code">app/llm/provider.py</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">&darr;</div>
+
+        <div class="flow-step">
+          <div class="fs__num">2</div>
+          <div>
+            <div class="fs__title">3개 Provider 구현</div>
+            <div class="fs__desc">Claude &middot; Codex &middot; Ollama+Qwen2.5<br>동일 인터페이스로 교체하며 비교</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">&darr;</div>
+
+        <div class="flow-step">
+          <div class="fs__num">3</div>
+          <div>
+            <div class="fs__title">50케이스 &times; 7메트릭 정량 비교</div>
+            <div class="fs__desc">Golden Test Set으로 동일 조건 평가<br>인상론 배제, 수치로 판단</div>
+          </div>
+        </div>
+
+        <div class="flow-arrow">&darr;</div>
+
+        <div class="flow-step flow-step--hero">
+          <div class="fs__num">4</div>
+          <div>
+            <div class="fs__title">Claude 채택</div>
+            <div class="fs__desc">정확도 우위 &mdash; 속도 차이는 캐시로 보완</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="numbers">
+        <div class="num-card num-card--hero">
+          <div class="num-card__value num-card__value--accent">97.7%</div>
+          <div>
+            <div class="num-card__label">Retrieval Hit Rate</div>
+            <div class="num-card__sub">Codex 90.91% 대비 +6.8%p</div>
+          </div>
+        </div>
+
+        <div class="num-card">
+          <div class="num-card__value num-card__value--accent">97.7%</div>
+          <div>
+            <div class="num-card__label">Citation Accuracy</div>
+            <div class="num-card__sub">출처 포함 정확도</div>
+          </div>
+        </div>
+
+        <div class="num-card">
+          <div class="num-card__value num-card__value--accent">50<span style="font-size:18px;color:var(--text-muted);margin-left:4px;">건</span></div>
+          <div>
+            <div class="num-card__label">Golden Test Set</div>
+            <div class="num-card__sub">6유형 &times; 7메트릭 정량 비교</div>
+          </div>
+        </div>
+
+        <div class="providers">
+          <div class="providers__title">LLMPROVIDER IMPLEMENTATIONS</div>
+          <div class="providers__list">
+            <span class="provider-tag provider-tag--active">Claude Sonnet 4.6</span>
+            <span class="provider-tag provider-tag--impl">Codex CLI</span>
+            <span class="provider-tag provider-tag--impl">Ollama Qwen2.5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Evidence: Provider 코드 + eval 결과 -->
+    <div class="evidence">
+      <div class="screenshot-placeholder">
+        <span class="screenshot-placeholder__priority screenshot-placeholder__priority--must">MUST</span>
+        <span class="screenshot-placeholder__label">Screenshot — Provider 코드</span>
+        <span class="screenshot-placeholder__desc">LLMProvider ABC + 3개 어댑터 구조<br>IDE 캡처 (provider.py / claude_provider.py / ollama_provider.py)</span>
+      </div>
+      <div class="screenshot-placeholder">
+        <span class="screenshot-placeholder__priority screenshot-placeholder__priority--must">MUST</span>
+        <span class="screenshot-placeholder__label">Screenshot — Eval 결과</span>
+        <span class="screenshot-placeholder__desc">터미널: 50건 eval 하네스 실행 결과<br>7메트릭 요약 수치 출력 화면</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

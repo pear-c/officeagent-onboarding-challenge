@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--compact">
+    <span class="section-tag">PHASE I &mdash; 04 환각</span>
+    <span class="page-tag">14 / 18</span>
+
+    <div class="accent-bar accent-bar--highlight"></div>
+    <p class="t-label t-label--mb t-label--highlight"><span class="accent">환각</span> &mdash; 트러블슈팅</p>
+    <h2 class="t-headline">TS-009 &mdash; 동의어 우회</h2>
+    <div class="sp-32"></div>
+
+    <div class="quote-box">
+      <p class="t-label muted">LLM 실제 출력</p>
+      <div class="sp-8"></div>
+      <p class="t-subhead">&ldquo;해당 정보는 <strong class="highlight">확인할 수 없습니다</strong>&rdquo;</p>
+      <div class="sp-8"></div>
+      <p class="t-detail muted">&rarr; 서버가 거절로 인식 못함 &rarr; answerable=true 오판정</p>
+    </div>
+
+    <div class="sp-32"></div>
+
+    <div class="grid-2">
+      <div style="text-align: center;">
+        <p class="t-label">Refusal v2</p>
+        <p class="metric-hero danger">83%</p>
+      </div>
+      <div style="text-align: center;">
+        <p class="t-label">Refusal v3</p>
+        <p class="metric-hero success">100%</p>
+      </div>
+    </div>
+
+    <div class="sp-24"></div>
+    <p class="t-body muted">아직 빈 칸 &mdash; 2차 체크의 발동률&middot;적중률은 미측정. 다음 우선과제.</p>
+
+    <!-- TODO: 스크린샷 교체 -->
+    <div class="sp-16"></div>
+    <div class="screenshot-placeholder">
+      <span class="screenshot-placeholder__priority screenshot-placeholder__priority--must">MUST</span>
+      <span class="screenshot-placeholder__label">동의어 우회 실제 로그</span>
+      <span class="screenshot-placeholder__desc">v2에서 "확인할 수 없습니다" 응답 → v3에서 정확한 거절 문구 출력 비교 캡처</span>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 10 · 제출하고 보니</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--accent); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* Header */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 148px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 12px; bottom: 12px;
+      width: 2px; background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .eyebrow .num {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+
+    h1 {
+      font-size: 76px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+
+    .subtitle {
+      font-size: 21px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    /* Columns */
+    .columns {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 500px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 36px;
+      z-index: 2;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .col-head {
+      padding-bottom: 12px;
+      border-bottom: 1.5px solid var(--ink);
+      margin-bottom: 6px;
+    }
+    .col-head .col-num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .col.orange .col-head .col-num { color: var(--highlight); }
+    .col-head .col-title {
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+    .col-head .col-sub {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    .card {
+      padding-left: 22px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 6px; bottom: 6px;
+      width: 2px; background: var(--accent);
+    }
+    .col.orange .card::before { background: var(--highlight); }
+
+    .card-observation {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--ink);
+      line-height: 1.35;
+      letter-spacing: -0.01em;
+      margin-bottom: 6px;
+    }
+    .card-observation code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      background: var(--code-bg);
+      padding: 1px 6px;
+      color: var(--accent);
+      font-weight: 500;
+    }
+    .col.orange .card-observation code {
+      color: var(--highlight);
+    }
+
+    .card-note {
+      font-size: 13.5px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .card-note .say {
+      display: block;
+      margin-top: 4px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+    }
+    .card-note .say strong {
+      color: var(--accent);
+      font-weight: 700;
+    }
+    .col.orange .card-note .say strong { color: var(--highlight); }
+
+    /* Footer */
+    .footer-note {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 60px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .footer-note::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 4px; bottom: 4px;
+      width: 2px; background: var(--highlight);
+    }
+    .footer-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .footer-text {
+      font-size: 19px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.005em;
+      line-height: 1.45;
+    }
+    .footer-text .hl {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">11</span>
+          <span class="sep">/</span>
+          <span>14</span>
+          <span class="section">Part III · 프로덕션 관점</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow"><span class="num">08</span>프로덕션 · 자기 회고</div>
+        <h1>제출하고 보니,<br>세 가지가 보였습니다</h1>
+        <div class="subtitle">측정 못 한 빈 칸, 갖고 있으면서 약하게 말한 자산, 프레임을 다시 잡아야 할 이야기.</div>
+      </div>
+
+      <div class="columns">
+
+        <!-- Column 01: Gaps -->
+        <div class="col">
+          <div class="col-head">
+            <div class="col-num">01</div>
+            <div class="col-title">빈 칸</div>
+            <div class="col-sub">Gaps · 측정 못 한 것</div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">Retrieval 분리 평가를 못했습니다</div>
+            <div class="card-note">
+              end-to-end만 측정. 개선이 검색에서 왔는지 생성에서 왔는지 귀속이 어렵습니다.
+              <span class="say">→ <strong>Recall@K / MRR 라벨링이 자기 검증 트랙 01</strong></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">서버 2차 방어의 효과를 계측 못 했습니다</div>
+            <div class="card-note">
+              <code>_REFUSAL_PATTERNS</code>가 얼마나 발동했고, 그 중 실제 환각이 몇 %인지 모릅니다.
+              <span class="say">→ <strong>false positive / false negative 분리 측정 필요</strong></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">유사 질문 캐시 threshold 0.95는 경험값입니다</div>
+            <div class="card-note">
+              hit rate와 false hit를 threshold별로 측정하는 튜닝 작업을 아직 안 했습니다.
+              <span class="say">→ <strong>threshold 0.85 / 0.90 / 0.95 / 0.99 비교</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 02: Underestimated -->
+        <div class="col orange">
+          <div class="col-head">
+            <div class="col-num">02</div>
+            <div class="col-title">과소평가</div>
+            <div class="col-sub">Under-estimated · 있는데 약하게 말한</div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">Semantic Cache는 이미 구현됐습니다</div>
+            <div class="card-note">
+              Chroma <code>cache_questions</code> 컬렉션 + cosine 0.95로 의미 유사까지 잡습니다.
+              <span class="say">→ "정확 일치만"이 아니라 <strong>"3단계 캐시 이미 작동"</strong></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">v3 프롬프트의 Claude Refusal은 100%입니다</div>
+            <div class="card-note">
+              v2(83%) 기준으로 "UX로 골랐다"고 하면 약해집니다. v3 기준으로는 지표에서도 대부분 우세.
+              <span class="say">→ <strong>"UX + 지표 이중 축"으로 프레임</strong></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation"><code>section_path</code> 메타데이터는 이미 보존합니다</div>
+            <div class="card-note">
+              "상위 &gt; 하위" 계층 경로가 모든 청크에 붙어 있어, 출처 추적 정확도가 먼저 잡힌 상태입니다.
+              <span class="say">→ <strong>Parent-doc retrieval 도입 시 기반 이미 마련</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Column 03: Wrong Framing -->
+        <div class="col">
+          <div class="col-head">
+            <div class="col-num">03</div>
+            <div class="col-title">잘못 본 프레임</div>
+            <div class="col-sub">Wrong Framing · 고쳐 말해야 할</div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">"비용 vs 성능"은 BGE-M3에 맞지 않습니다</div>
+            <div class="card-note">
+              오픈소스 셀프 호스팅이라 API 과금이 없습니다. 진짜 트레이드오프는 <strong>인프라 비용 vs 검색 품질</strong>.
+              <span class="say">→ <strong>"온프렘 + 확장성"으로 프레이밍</strong></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">"UX로 골랐다"는 방어가 약합니다</div>
+            <div class="card-note">
+              v3 이후 Retrieval · Citation · Refusal 모두 우세인데, UX 단일 축으로 설명하면 면접관 반박 여지.
+              <span class="say">→ <strong>"지표 동률~우세 + UX 가산점"</strong></span>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-observation">"Agentic RAG 안 함"이 아니라 "안 한 이유가 있다"입니다</div>
+            <div class="card-note">
+              측정 없이 복잡도 추가하면 PoC 신뢰도가 오히려 흔들립니다. Query Router부터 단계적 도입이 다음.
+              <span class="say">→ <strong>의도적 범위 밖 + 단계적 로드맵</strong></span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-note">
+        <div class="footer-label">다음 슬라이드로</div>
+        <div class="footer-text">
+          개인 회고 다음은 <span class="hl">프로덕션 관점</span> — OfficeAgent가 푼 영역과 제가 아직 안 푼 영역을 정직하게 비교합니다.
+        </div>
+      </div>
+
+    </div>
+  </div>
+</body>
+</html>

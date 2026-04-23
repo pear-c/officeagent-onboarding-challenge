@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--compact">
+    <span class="section-tag">PHASE I &mdash; 01 LLM</span>
+    <span class="page-tag">05 / 18</span>
+
+    <div class="accent-bar accent-bar--highlight"></div>
+    <p class="t-label t-label--mb t-label--highlight"><span class="accent">LLM</span> &mdash; 트러블슈팅</p>
+    <h2 class="t-headline">v2 &rarr; v3,<br>같은 모델이 달라졌다</h2>
+    <div class="sp-32"></div>
+
+    <div class="grid-2">
+      <div class="card">
+        <p class="t-label">V2 — 문제</p>
+        <div class="sp-8"></div>
+        <p class="t-body">Refusal 정확도 <strong class="danger">83%</strong></p>
+        <div class="sp-8"></div>
+        <p class="t-detail">Claude가 '확인할 수 없습니다' 같은 동의어로 지시를 우회</p>
+      </div>
+
+      <div class="card card--highlight">
+        <p class="t-label t-label--highlight">V3 — 해결</p>
+        <div class="sp-8"></div>
+        <p class="t-body">Refusal 정확도 <strong class="highlight">100%</strong></p>
+        <div class="sp-8"></div>
+        <p class="t-detail">① Few-shot 예시 2개 추가</p>
+        <p class="t-detail">② 동의어 사용 명시적 금지</p>
+        <p class="t-detail">③ 서버 단 10종 거절 패턴 매칭</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

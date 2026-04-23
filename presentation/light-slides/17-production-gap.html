@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--compact">
+    <span class="section-tag">PHASE III &middot; 프로덕션 관점</span>
+    <span class="page-tag">17 / 18</span>
+
+    <div class="accent-bar accent-bar--highlight"></div>
+    <h2 class="t-headline">PoC에서 프로덕션으로</h2>
+    <p class="t-subhead t-subhead--mt">인지하고 있는 갭</p>
+    <div class="sp-32"></div>
+
+    <div class="chain">
+      <div class="chain-item">
+        <div class="chain-num">01</div>
+        <div>
+          <div class="chain-title">보안</div>
+          <div class="chain-desc">고객 데이터 외부 유출 불가 &rarr; 구독형 SDK 사용 불가</div>
+        </div>
+      </div>
+      <div class="chain-arrow">&darr;</div>
+      <div class="chain-item">
+        <div class="chain-num">02</div>
+        <div>
+          <div class="chain-title">온프렘 LLM</div>
+          <div class="chain-desc">Ollama + Qwen2.5 전환 &rarr; 정확도 하락 예상</div>
+        </div>
+      </div>
+      <div class="chain-arrow">&darr;</div>
+      <div class="chain-item">
+        <div class="chain-num">03</div>
+        <div>
+          <div class="chain-title">검색 보완</div>
+          <div class="chain-desc">Hybrid Search + Reranker로 LLM 부담 감소</div>
+        </div>
+      </div>
+      <div class="chain-arrow">&darr;</div>
+      <div class="chain-item">
+        <div class="chain-num">04</div>
+        <div>
+          <div class="chain-title">인프라</div>
+          <div class="chain-desc">ChromaDB &rarr; Qdrant 이전 (Sparse 지원) &middot; pypdf &rarr; Docling</div>
+        </div>
+      </div>
+      <div class="chain-arrow">&darr;</div>
+      <div class="chain-item">
+        <div class="chain-num">05</div>
+        <div>
+          <div class="chain-title">접근 제어</div>
+          <div class="chain-desc">RBAC 메타데이터 필터링 &middot; 민감정보 마스킹 (presidio)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

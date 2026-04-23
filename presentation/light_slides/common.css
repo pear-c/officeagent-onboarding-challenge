@@ -404,3 +404,11 @@ html, body {
 .slide--dark .screenshot-placeholder__desc {
   color: rgba(250, 250, 248, 0.4);
 }
+
+/* ── Accent bar center variant ────────────── */
+.accent-bar--center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* END OF DESIGN SYSTEM — slide-specific styles live in each HTML file */

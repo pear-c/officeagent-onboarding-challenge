@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 06 · 고민 ③ 환각</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --code-bg: #F0EEE6;
+      --code-border: #DDD9CC;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage-root {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* Top meta */
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot {
+      width: 9px; height: 9px;
+      background: var(--accent); border-radius: 50%;
+    }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .page-indicator .section {
+      margin-left: 14px; padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar {
+      width: 24px; height: 1px;
+      background: var(--text-subtle); opacity: 0.6;
+    }
+
+    /* Header */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 148px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 12px; bottom: 12px;
+      width: 2px; background: var(--accent);
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 17px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+    .eyebrow .num {
+      color: var(--accent);
+      font-weight: 700;
+      margin-right: 10px;
+    }
+
+    h1 {
+      font-size: 60px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+
+    .subtitle {
+      font-size: 21px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 1200px;
+    }
+
+    /* Body grid */
+    .body {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 400px;
+      bottom: 180px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      z-index: 2;
+    }
+
+    /* Narrative (left) */
+    .narrative {
+      display: flex;
+      flex-direction: column;
+      gap: 26px;
+    }
+
+    .block {
+      padding-left: 32px;
+      border-left: 1px solid var(--rule-fine);
+      position: relative;
+    }
+    .block::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 6px; bottom: 6px;
+      width: 2px; background: var(--accent);
+    }
+    .block-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .block-text {
+      font-size: 21px;
+      color: var(--text);
+      line-height: 1.55;
+      letter-spacing: -0.005em;
+    }
+    .block-text strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .quote {
+      margin-top: 12px;
+      padding: 14px 20px;
+      background: var(--code-bg);
+      border-left: 3px solid var(--highlight);
+      font-size: 17px;
+      color: var(--ink);
+      font-weight: 500;
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+    }
+    .quote .prompt-tag {
+      display: block;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .quote .deviation {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+
+    /* Tech column (right) */
+    .tech {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .tech-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .tech-label::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent);
+    }
+    .tech-label .path { color: var(--text); font-weight: 500; }
+    .tech-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule-fine);
+    }
+
+    .layer {
+      background: var(--bg);
+      border: 1px solid var(--code-border);
+      padding: 16px 22px 18px;
+      position: relative;
+    }
+    .layer .lnum {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      margin-bottom: 4px;
+    }
+    .layer .lname {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--ink);
+      letter-spacing: -0.015em;
+      margin-bottom: 12px;
+    }
+    .layer .lname small {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-muted);
+      letter-spacing: 0;
+      margin-left: 6px;
+    }
+    .layer .ldetail {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+    .layer code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      background: var(--code-bg);
+      padding: 2px 6px;
+      color: var(--accent);
+    }
+    .layer pre {
+      margin-top: 8px;
+      background: var(--code-bg);
+      padding: 10px 14px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      line-height: 1.65;
+      color: var(--ink);
+      overflow: hidden;
+      white-space: pre;
+    }
+    .layer pre .kw { color: var(--accent); font-weight: 700; }
+    .layer pre .str { color: #6B6B6B; font-style: italic; }
+
+    .layer-arrow {
+      text-align: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      padding: 2px 0 0;
+      letter-spacing: 0.02em;
+    }
+    .layer-arrow .arrow {
+      display: inline-block;
+      color: var(--highlight);
+      font-size: 16px;
+      margin-right: 6px;
+      vertical-align: -2px;
+    }
+
+    /* Footer */
+    .footer-note {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 48px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .footer-note::before {
+      content: '';
+      position: absolute;
+      left: -1px; top: 4px; bottom: 4px;
+      width: 2px; background: var(--highlight);
+    }
+    .footer-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .footer-text {
+      font-size: 21px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.005em;
+      line-height: 1.45;
+    }
+    .footer-text .hl {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+    .footer-xref {
+      margin-top: 6px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage-root">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">07</span>
+          <span class="sep">/</span>
+          <span>14</span>
+          <span class="section">Part I · 구현하며 배운 것</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow"><span class="num">04</span>고민 · 할루시네이션</div>
+        <h1>"모른다" 라고<br>말하게 하려면?</h1>
+        <div class="subtitle">"문서에 없으면 모른다고 답해" — 해당 지시를 얼마나 잘 따르는지 체크</div>
+      </div>
+
+      <div class="body">
+        <!-- Narrative (left) -->
+        <div class="narrative">
+          <div class="block">
+            <div class="block-label">발견 (TS-009)</div>
+            <div class="block-text">
+              프롬프트에 <strong>"찾을 수 없습니다"로 답하라</strong>고 명시했지만, LLM은 <strong>동의어로 우회</strong>했습니다.
+            </div>
+            <div class="quote">
+              <span class="prompt-tag">LLM 실제 출력</span>
+              "해당 정보는 <span class="deviation">확인할 수 없습니다</span>"
+              <span style="display:block; margin-top:6px; font-size:13px; color:var(--text-subtle); font-weight:500; font-style:italic;">→ 서버가 거절로 인식 못 함 → <code style="font-family:'JetBrains Mono'; font-size:11px; background:rgba(217,119,6,0.1); padding:1px 4px; color:var(--highlight);">answerable=true</code> 오판정</span>
+            </div>
+          </div>
+
+          <div class="block">
+            <div class="block-label">선택 — 이중 방어</div>
+            <ol class="choice-list">
+              <li>프롬프트 1차 방어 — 거절 문구 고정 + 동의어 금지 + Few-shot 2개</li>
+              <li>서버 2차 방어 — <code>_REFUSAL_PATTERNS</code> 10종 패턴 매칭</li>
+              <li>거절 판정 시 출처 차단 + <strong>캐시 미저장</strong></li>
+            </ol>
+          </div>
+        </div>
+
+        <!-- Tech (right) -->
+        <div class="tech">
+          <div class="tech-label">
+            <span class="path">이중 방어 — Built</span>
+          </div>
+
+          <!-- Layer 1 -->
+          <div class="layer">
+            <div class="lnum">LAYER 01</div>
+            <div class="lname">프롬프트 <small>1차 방어 · 확률적 제어</small></div>
+            <div class="ldetail">
+              SYSTEM_PROMPT에 거절 문구 고정 + 동의어 사용 금지 명시 +<br>
+              Few-shot 예시 2개 (답변 가능/불가 각 1개) + JSON 스키마 강제
+              <code>output_format</code> (D22)
+            </div>
+          </div>
+
+          <div class="layer-arrow"><span class="arrow">↓</span> LLM이 벗어나면</div>
+
+          <!-- Layer 2 -->
+          <div class="layer">
+            <div class="lnum">LAYER 02</div>
+            <div class="lname">서버 패턴 매칭 <small>2차 방어 · 결정론적</small></div>
+            <div class="ldetail">
+              <code>_REFUSAL_PATTERNS</code> <strong>10종</strong>으로 답변 텍스트 검증 → 동의어 포함 시 <code>answerable=false</code> 재판정<br>
+              거절 판정 시 출처 반환 차단 + 캐시 미저장 (좀비 캐시 방지)
+            </div>
+            <pre><span class="kw">_REFUSAL_PATTERNS</span> = (
+    <span class="str">"찾을 수 없습니다"</span>, <span class="str">"확인할 수 없"</span>,
+    <span class="str">"답변할 수 없"</span>, <span class="str">"답변하기 어려"</span>,
+    <span class="str">"정보가 없"</span>, <span class="str">"제공되지 않"</span>,
+    <span class="str">"포함되어 있지 않"</span>, ...
+)</pre>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="footer-note">
+        <div class="footer-label">배운 점</div>
+        <div class="footer-text">
+          "이렇게 답해"라고 써도 LLM은 <span class="hl">100% 지키지 않습니다.</span> 그래서 코드로 한 번 더 잡아야 했습니다. 아직 이 2차 체크가 <span class="hl">실제로 얼마나 발동하는지는 측정 못 했고</span>, 이게 다음 우선과제입니다.
+        </div>
+        <div class="footer-xref">
+          → 실제 코드 : app/services/rag_service.py:19 · TS-004 · TS-009 · D22 · D27 &nbsp;|&nbsp; 결과 (Refusal 83 → 100%) : Slide 09
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

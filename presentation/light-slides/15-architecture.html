@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--tight">
+    <span class="section-tag">PHASE II &middot; 시연</span>
+    <span class="page-tag">15 / 18</span>
+
+    <div class="accent-bar"></div>
+    <h2 class="t-headline">시스템 한 장</h2>
+    <div class="sp-32"></div>
+
+    <div class="pipeline-row">
+      <div class="t-label">INGEST</div>
+      <div class="flow">
+        <div class="flow-step">
+          <span class="flow-step__label">01</span>
+          <span class="flow-step__name">Upload</span>
+          <span class="flow-step__tech">PDF / MD / TXT</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">02</span>
+          <span class="flow-step__name">Extract</span>
+          <span class="flow-step__tech">pypdf + md</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">03</span>
+          <span class="flow-step__name">Chunk</span>
+          <span class="flow-step__tech">타입 분기</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">04</span>
+          <span class="flow-step__name">Embed</span>
+          <span class="flow-step__tech">BGE-M3</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">05</span>
+          <span class="flow-step__name">Store</span>
+          <span class="flow-step__tech">ChromaDB</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sp-32"></div>
+
+    <div class="pipeline-row">
+      <div class="t-label">QUERY</div>
+      <div class="flow">
+        <div class="flow-step">
+          <span class="flow-step__label">01</span>
+          <span class="flow-step__name">Question</span>
+          <span class="flow-step__tech">user input</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">02</span>
+          <span class="flow-step__name">Cache</span>
+          <span class="flow-step__tech">3단계</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">03</span>
+          <span class="flow-step__name">Retrieve</span>
+          <span class="flow-step__tech">cosine</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">04</span>
+          <span class="flow-step__name">LLM</span>
+          <span class="flow-step__tech">환각 방어</span>
+        </div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-step">
+          <span class="flow-step__label">05</span>
+          <span class="flow-step__name">Stream</span>
+          <span class="flow-step__tech">SSE</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="sp-32"></div>
+
+    <div class="highlights">
+      <div class="highlight-item">
+        <div class="highlight-item__title">LLMProvider 추상화</div>
+        <div class="highlight-item__desc">모델 교체 가능</div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-item__title">환각 이중 방어</div>
+        <div class="highlight-item__desc">프롬프트 + 서버</div>
+      </div>
+      <div class="highlight-item">
+        <div class="highlight-item__title">타입별 청킹</div>
+        <div class="highlight-item__desc">헤더 경로 메타데이터</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--compact">
+    <span class="section-tag">PHASE I &mdash; 02 임베딩 &amp; 청킹</span>
+    <span class="page-tag">07 / 18</span>
+
+    <div class="accent-bar"></div>
+    <p class="t-label t-label--mb"><span class="accent">임베딩 &amp; 청킹</span> &mdash; 선택+근거</p>
+    <h2 class="t-headline">BGE-M3 + 타입별 청킹</h2>
+    <div class="sp-32"></div>
+
+    <div class="grid-2">
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="card card--accent card--compact">
+          <p class="t-label">임베딩</p>
+          <div class="sp-8"></div>
+          <p class="item-title">BGE-M3</p>
+          <p class="item-desc">한·영 MTEB 상위 &middot; 과금 없음 &middot; Dense+Sparse+8K</p>
+        </div>
+
+        <div class="card card--accent card--compact">
+          <p class="t-label">청킹</p>
+          <div class="sp-8"></div>
+          <p class="item-title">포맷별 분기</p>
+          <p class="item-desc">MD &rarr; 헤더 기반 &middot; PDF &rarr; MD 변환 후 같은 파이프라인</p>
+        </div>
+
+        <div class="card card--accent card--compact">
+          <p class="t-label">메타데이터</p>
+          <div class="sp-8"></div>
+          <p class="item-title">section_path 보존</p>
+          <p class="item-desc"><span class="t-mono">"정책 안내 &gt; 교육비 지원"</span></p>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="t-label">확장 경로</p>
+        <div class="sp-16"></div>
+        <p class="t-detail">bge-reranker-v2-m3와의 자연스러운 2-stage retrieval</p>
+        <div class="sp-24"></div>
+        <p class="t-label">인정한 한계</p>
+        <div class="sp-8"></div>
+        <p class="limit-line">&mdash; Dense only (Sparse 미활용)</p>
+        <p class="limit-line">&mdash; Retrieval 단독 평가 미수행</p>
+        <p class="limit-line">&mdash; pypdf 표·레이아웃 보존 약함</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

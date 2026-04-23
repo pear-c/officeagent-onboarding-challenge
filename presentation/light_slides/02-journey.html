@@ -83,6 +83,13 @@
 
     .phase--production .phase__label { color: var(--highlight); }
     .phase--impl .phase__label { color: var(--text); font-weight: 800; }
+    .phase--future .phase__label { color: var(--success); }
+
+    .phase__badge--future {
+      background: var(--bg);
+      border: 2px solid var(--success);
+      color: var(--success);
+    }
 
     .phase__title {
       font-size: 30px;
@@ -135,7 +142,7 @@
 <body>
   <div class="slide">
     <span class="section-tag">Overview</span>
-    <span class="page-tag">02 / 13</span>
+    <span class="page-tag">02 / 19</span>
 
     <div>
       <div class="accent-bar"></div>
@@ -156,8 +163,8 @@
       <div class="phase phase--impl">
         <div class="phase__badge phase__badge--impl">II</div>
         <div class="phase__label">Implementation</div>
-        <div class="phase__title">구현<br>(시연)</div>
-        <div class="phase__desc">아키텍처 한 장과<br>라이브 데모</div>
+        <div class="phase__title">구현<br></div>
+        <div class="phase__desc">아키텍처<br>라이브 데모</div>
         <div class="phase__slides">slides 07-08</div>
       </div>
 
@@ -167,6 +174,14 @@
         <div class="phase__title">프로덕션 관점<br>보완점</div>
         <div class="phase__desc">재발견 → OfficeAgent 비교<br>→ 한계 → 검증 트랙</div>
         <div class="phase__slides">slides 09-12</div>
+      </div>
+
+      <div class="phase phase--future">
+        <div class="phase__badge phase__badge--future">IV</div>
+        <div class="phase__label">Next Steps</div>
+        <div class="phase__title">향후 과제</div>
+        <div class="phase__desc">입사 후 90일 로드맵<br>측정 습관을 팀의 기준으로</div>
+        <div class="phase__slides">slide 13</div>
       </div>
     </div>
 

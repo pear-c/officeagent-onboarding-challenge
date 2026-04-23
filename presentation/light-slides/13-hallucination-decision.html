@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--compact">
+    <span class="section-tag">PHASE I &mdash; 04 환각</span>
+    <span class="page-tag">13 / 18</span>
+
+    <div class="accent-bar"></div>
+    <p class="t-label t-label--mb"><span class="accent">환각</span> &mdash; 선택+근거</p>
+    <h2 class="t-headline">이중 방어</h2>
+    <p class="t-subhead t-subhead--mt">LLM 지시는 확률적, 검증은 결정론적</p>
+    <div class="sp-32"></div>
+
+    <div class="grid-2">
+      <div class="card card--accent card--sm">
+        <p class="t-label">Layer 1 &mdash; 프롬프트</p>
+        <div class="sp-16"></div>
+        <div class="t-detail-list">
+          거절 문구 고정 (정확한 한 문장)<br>
+          동의어 사용 금지 (v3)<br>
+          Few-shot 예시 2개<br>
+          JSON schema 출력 강제
+        </div>
+      </div>
+
+      <div class="card card--accent card--sm">
+        <p class="t-label">Layer 2 &mdash; 서버 검증</p>
+        <div class="sp-16"></div>
+        <div class="t-detail-list">
+          _REFUSAL_PATTERNS 10종 매칭<br>
+          동의어 거절도 포착<br>
+          answerable=false &rarr; 출처 차단 + 캐시 미저장
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

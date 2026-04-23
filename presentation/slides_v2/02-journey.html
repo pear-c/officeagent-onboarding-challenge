@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 02 · 여정의 4단계</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule: #D8D5CB;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    /* subtle dot-grid */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    /* ---------- Top meta strip ---------- */
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+
+    .page-indicator {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .page-indicator .dot {
+      width: 9px;
+      height: 9px;
+      background: var(--accent);
+      border-radius: 50%;
+    }
+    .page-indicator .current {
+      color: var(--text);
+      font-weight: 500;
+    }
+    .page-indicator .sep {
+      opacity: 0.5;
+    }
+    .page-indicator .section {
+      margin-left: 14px;
+      padding-left: 14px;
+      border-left: 1px solid var(--rule);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+
+    .context-tag {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      letter-spacing: 0.04em;
+    }
+    .context-tag .bar {
+      width: 24px;
+      height: 1px;
+      background: var(--text-subtle);
+      opacity: 0.6;
+    }
+
+    /* ---------- Header ---------- */
+    .header {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 168px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 12px;
+      bottom: 12px;
+      width: 2px;
+      background: var(--accent);
+    }
+
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 88px;
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+
+    .subtitle {
+      font-size: 22px;
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+      max-width: 900px;
+    }
+
+    /* ---------- Timeline ---------- */
+    .timeline {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      top: 560px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 2;
+    }
+
+    .track {
+      position: absolute;
+      top: 28px;
+      left: 40px;
+      right: 40px;
+      height: 1px;
+      background: var(--rule);
+      z-index: 0;
+    }
+
+    .track::before,
+    .track::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--text-subtle);
+      opacity: 0.4;
+    }
+    .track::before { left: -4px; }
+    .track::after { right: -4px; }
+
+    .node {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      width: 360px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 36px;
+      background: var(--bg);
+      border: 1.5px solid var(--accent);
+      color: var(--accent);
+      position: relative;
+    }
+    /* Implementation part: filled, different visual */
+    .node.impl .badge {
+      background: var(--ink);
+      border-color: var(--ink);
+      color: var(--bg);
+    }
+    /* Next Lessons: highlight orange */
+    .node.next .badge {
+      border-color: var(--highlight);
+      color: var(--highlight);
+    }
+
+    .part-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-subtle);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+    .node.impl .part-label { color: var(--ink); }
+    .node.next .part-label { color: var(--highlight); }
+
+    .part-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin-bottom: 24px;
+      min-height: 67px;
+    }
+
+    .part-key {
+      font-size: 16px;
+      color: var(--text-muted);
+      line-height: 1.55;
+      letter-spacing: -0.003em;
+      margin-bottom: 24px;
+      max-width: 280px;
+      min-height: 50px;
+    }
+
+    .part-meta {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-subtle);
+      letter-spacing: 0.08em;
+      padding-top: 16px;
+      border-top: 1px solid var(--rule-fine);
+      width: 80%;
+    }
+
+    /* ---------- Bottom note ---------- */
+    .footer-note {
+      position: absolute;
+      left: 152px;
+      right: 120px;
+      bottom: 88px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      z-index: 2;
+    }
+
+    .footer-note::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 8px;
+      bottom: 8px;
+      width: 2px;
+      background: var(--highlight);
+    }
+
+    .footer-text {
+      font-size: 18px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.005em;
+    }
+    .footer-text .hl {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+
+    .footer-meta {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      letter-spacing: 0.06em;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <!-- Top meta strip -->
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">02</span>
+          <span class="sep">/</span>
+          <span>14</span>
+          <span class="section">Overview</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>OfficeAgent Interview · 2026.04.23</span>
+        </div>
+      </div>
+
+      <!-- Header -->
+      <div class="header">
+        <div class="eyebrow">Lessons &amp; Learns from building a RAG</div>
+        <h1>목차</h1>
+      </div>
+
+      <!-- Timeline -->
+      <div class="timeline">
+        <div class="track"></div>
+
+        <!-- Part I -->
+        <div class="node">
+          <div class="badge">I</div>
+          <div class="part-label">구현하며 배운 것</div>
+          <div class="part-title">네 가지 고민과<br>선택</div>
+          <div class="part-key">LLM · 임베딩&청킹<br>캐시 · 환각 방어</div>
+        </div>
+
+        <!-- Part II -->
+        <div class="node impl">
+          <div class="badge">II</div>
+          <div class="part-label">구현</div>
+          <div class="part-title">아키텍처 · 데모<br>트러블슈팅</div>
+          <div class="part-key">시스템 한 장 · 라이브 데모<br>v1→v3 튜닝 + Reranker</div>
+        </div>
+
+        <!-- Part III -->
+        <div class="node">
+          <div class="badge">III</div>
+          <div class="part-label">프로덕션 관점</div>
+          <div class="part-title">회고와<br>갭 분석</div>
+          <div class="part-key">자기 회고 · OfficeAgent 비교</div>
+        </div>
+
+        <!-- Part IV -->
+        <div class="node next">
+          <div class="badge">IV</div>
+          <div class="part-label">향후 계획</div>
+          <div class="part-title">더 공부하고<br>싶은 방향</div>
+          <div class="part-key">Agentic RAG · 평가 고도화<br>온프렘 LLM 운영</div>
+        </div>
+      </div>
+
+      <!-- Footer note -->
+      <div class="footer-note">
+        <div class="footer-text">
+          과제를 받은 시점에서부터 <br>지금까지의 <span class="hl">고민들을</span> 기록합니다.
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

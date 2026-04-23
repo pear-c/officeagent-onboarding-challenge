@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 160px;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .points {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-top: 48px;
+      max-width: 1100px;
+    }
+
+    .point {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+    }
+
+    .point__marker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 24px;
+    }
+
+    .point__text {
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .point__text strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part I &middot; 구현하며 배운 것</span>
+    <span class="page-tag">09 / 19</span>
+
+    <div class="accent-bar accent-bar--highlight"></div>
+    <p class="t-label" style="margin-bottom: 16px;"><span class="accent">환각</span> &mdash; 고민</p>
+    <h1 class="t-hero">&ldquo;모른다&rdquo;고<br>말하게 하려면?</h1>
+
+    <div class="points">
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">프롬프트에 <strong>&lsquo;이렇게 답해&rsquo;</strong>라고 써도</span>
+      </div>
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">LLM은 <strong class="highlight">100% 지키지 않는다</strong></span>
+      </div>
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">그러면 <strong>코드로 한 번 더</strong> 잡아야 한다</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

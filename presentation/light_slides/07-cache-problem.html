@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 160px;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .points {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-top: 48px;
+      max-width: 1100px;
+    }
+
+    .point {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+    }
+
+    .point__marker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 24px;
+    }
+
+    .point__text {
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .point__text strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part I &middot; 구현하며 배운 것</span>
+    <span class="page-tag">07 / 19</span>
+
+    <div class="accent-bar accent-bar--highlight"></div>
+    <p class="t-label" style="margin-bottom: 16px;"><span class="accent">캐시</span> &mdash; 고민</p>
+    <h1 class="t-hero">같은 질문을<br>매번 LLM에 보낼 건가?</h1>
+
+    <div class="points">
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">Exact match만으론 <strong>유사 질문</strong>을 못 잡는다</span>
+      </div>
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">문서가 바뀌면 캐시를 <strong>무효화</strong>해야 한다</span>
+      </div>
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">캐시 히트 여부를 <strong>응답에 포함</strong>해야 한다</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

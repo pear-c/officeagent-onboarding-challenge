@@ -1,0 +1,867 @@
+{
+  "provider": "claude",
+  "model": "claude-sonnet-4-6",
+  "timestamp": "2026-04-23T05:11:35.960649",
+  "total_cases": 50,
+  "metrics": {
+    "retrieval_hit_rate": 1.0,
+    "citation_accuracy": 1.0,
+    "refusal_accuracy": 1.0,
+    "keyword_hit_rate": 0.9091,
+    "json_parse_rate": 1.0,
+    "latency_p50_ms": 16473,
+    "latency_p95_ms": 23102
+  },
+  "cases": [
+    {
+      "id": "Q01",
+      "question": "교육비 지원 한도는 얼마인가요?",
+      "answer": "임직원 1인당 연간 최대 200만원까지 직무 관련 교육비를 지원받을 수 있습니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 17463,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q02",
+      "question": "재택근무는 주 몇 회까지 가능한가요?",
+      "answer": "재택근무는 주 2회까지 가능합니다. 단, 재택근무일은 팀장 승인 후 전사 캘린더에 등록해야 하며, 고객 미팅이 있는 날은 재택근무가 불가합니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15444,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q03",
+      "question": "입사 1년 미만 직원의 연차는 어떻게 발생하나요?",
+      "answer": "입사 1년 미만 직원의 연차는 매월 1일씩 발생합니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 13820,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q04",
+      "question": "입사 3년차 직원의 연차는 며칠인가요?",
+      "answer": "입사 3년차 직원은 연차가 16일입니다. 입사 1년 이상 기준으로 기본 연 15일이 부여되며, 근속 2년마다 1일이 추가됩니다. 3년차는 2년 근속을 초과했으므로 1일이 추가되어 총 16일입니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        },
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 16475,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q05",
+      "question": "건강검진 당일은 어떻게 처리되나요?",
+      "answer": "건강검진 당일은 유급 휴가로 처리됩니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 14128,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q06",
+      "question": "배우자 건강검진비 지원 비율은?",
+      "answer": "배우자 검진비의 50%를 추가 지원합니다 (연 1회).",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 14749,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q07",
+      "question": "결혼 시 특별휴가는 며칠인가요?",
+      "answer": "결혼 시 특별휴가는 5일입니다. 또한 축의금 20만원도 함께 지원됩니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 16993,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q08",
+      "question": "PR 리뷰어는 첫 리뷰를 언제까지 완료해야 하나요?",
+      "answer": "PR 리뷰어는 PR 생성 후 24시간 이내에 첫 리뷰를 완료해야 합니다.",
+      "sources": [
+        {
+          "file": "development-guide.md",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 18872,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q09",
+      "question": "브랜치 전략에서 긴급 버그 수정은 어떤 브랜치를 사용하나요?",
+      "answer": "긴급 버그 수정은 `hotfix/*` 브랜치를 사용합니다.",
+      "sources": [
+        {
+          "file": "development-guide.md",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 18245,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q10",
+      "question": "프로덕션 배포 후 모니터링은 최소 얼마나 해야 하나요?",
+      "answer": "프로덕션 배포 후 모니터링은 최소 1시간 해야 합니다.",
+      "sources": [
+        {
+          "file": "development-guide.md",
+          "chunk_id": 2
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 16473,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q11",
+      "question": "P1 장애의 대응 시간은?",
+      "answer": "P1 장애의 대응 시간은 다음과 같습니다.\n\n**초기 대응**: 즉시 (15분 이내)\n**경영진 보고**: 즉시\n**원인 파악**: 30분 내\n\n**에스컬레이션 체계**:\n- 담당 엔지니어 → 팀장 (15분) → CTO (30분) → CEO (1시간)",
+      "sources": [
+        {
+          "file": "development-guide.md",
+          "chunk_id": 3
+        },
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 12
+        },
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 13
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 17741,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q12",
+      "question": "교육비 신청 마감일은 언제인가요?",
+      "answer": "교육비 신청 마감일은 매월 15일입니다. HR팀에 신청서를 제출해야 하며, 승인 후 비용이 환급됩니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15099,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q13",
+      "question": "회사의 화성 지사 주소는 어디인가요?",
+      "answer": "제공된 문서에서 해당 내용을 찾을 수 없습니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 2
+        },
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 1
+        },
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 22
+        }
+      ],
+      "answerable": false,
+      "latency_ms": 15265,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q14",
+      "question": "사내 식당 메뉴는 어떻게 확인하나요?",
+      "answer": "제공된 문서에서 해당 내용을 찾을 수 없습니다.",
+      "sources": [
+        {
+          "file": "security-policy.pdf",
+          "chunk_id": 1
+        },
+        {
+          "file": "security-policy.pdf",
+          "chunk_id": 3
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 11
+        }
+      ],
+      "answerable": false,
+      "latency_ms": 16407,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q15",
+      "question": "회사의 연봉 테이블을 알려주세요.",
+      "answer": "제공된 문서에서 해당 내용을 찾을 수 없습니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 10
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 2
+        }
+      ],
+      "answerable": false,
+      "latency_ms": 15823,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q16",
+      "question": "우리 회사 CEO는 누구인가요?",
+      "answer": "제공된 문서에서 해당 내용을 찾을 수 없습니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 2
+        },
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 13
+        },
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 10
+        }
+      ],
+      "answerable": false,
+      "latency_ms": 15295,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q17",
+      "question": "다른 회사의 재택근무 정책은 어떤가요?",
+      "answer": "제공된 문서에서 해당 내용을 찾을 수 없습니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 16
+        },
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 5
+        }
+      ],
+      "answerable": false,
+      "latency_ms": 13869,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q18",
+      "question": "재택근무가 가능한가요?",
+      "answer": "네, 재택근무가 가능합니다. 주 2회까지 재택근무가 허용되며, 재택근무일은 팀장 승인 후 전사 캘린더에 등록해야 합니다. 단, 고객 미팅이 있는 날은 재택근무가 불가합니다. 또한 재택근무 시 VPN(WireGuard, 사내 인증서 + TOTP) 사용이 필수입니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 0
+        },
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 16
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 19536,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q19",
+      "question": "미사용 연차는 이월되나요?",
+      "answer": "미사용 연차는 이월되지 않습니다. 연차는 당해 연도 내 사용이 원칙입니다.",
+      "sources": [
+        {
+          "file": "company-policy.txt",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 14518,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q20",
+      "question": "코드 리뷰에서 꼭 확인해야 하는 항목은?",
+      "answer": "코드 리뷰 시 꼭 확인해야 하는 항목은 다음과 같습니다:\n1. 기능이 요구사항을 충족하는가\n2. 테스트 코드가 포함되어 있는가\n3. 보안 취약점이 없는가\n4. 코드 스타일 가이드를 따르는가\n\n또한, 모든 PR은 최소 1명의 리뷰어 승인을 받아야 머지할 수 있으며, 리뷰어는 PR 생성 후 24시간 이내에 첫 리뷰를 완료해야 합니다.",
+      "sources": [
+        {
+          "file": "development-guide.md",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 17995,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q21",
+      "question": "기밀(Confidential) 등급 문서를 외부에 전송하려면 누구의 승인이 필요한가요?",
+      "answer": "기밀(Confidential, C) 등급 문서의 외부 전송에는 **보안팀 승인**이 필요합니다. 다만, security-policy.pdf에 따르면 기밀 등급 문서의 전송은 \"사내 보안 메일만 허용\"으로 명시되어 있어, 외부 전송 자체가 원칙적으로 제한될 수 있습니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 1
+        },
+        {
+          "file": "security-policy.pdf",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 19338,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q22",
+      "question": "비밀번호 최소 길이는 몇 자인가요? 관리자 계정은?",
+      "answer": "두 문서에 서로 다른 기준이 명시되어 있습니다.\n\n• **it-security-compliance.md** 기준:\n  - 일반 계정 최소 길이: **14자**\n  - 관리자 계정 최소 길이: **20자**\n\n• **security-policy.pdf** 기준:\n  - 일반 계정 최소 길이: **12자** (영문 대소문자 + 숫자 + 특수문자 조합)\n  - 관리자 계정에 대한 별도 기준은 언급되지 않음\n\n두 문서 간 기준이 상이하므로, 정확한 적용 기준은 담당 보안팀에 확인하시기 바랍니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 3
+        },
+        {
+          "file": "security-policy.pdf",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 17172,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q23",
+      "question": "프로덕션 DB에 긴급 접근(Break Glass) 시 최대 접근 시간과 사후 보고 기한은?",
+      "answer": "프로덕션 DB 긴급 접근(Break Glass) 절차에 따르면:\n- **최대 접근 시간**: 최대 2시간 접근 권한 부여, 작업 완료 즉시 권한 자동 회수\n- **사후 보고 기한**: 작업 완료 후 48시간 이내 사후 보고서 제출 (CISO 검토)",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 7
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 16384,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q24",
+      "question": "CVSS 9.0 이상 취약점 발견 시 패치 기한은?",
+      "answer": "CVSS 9.0 이상 취약점 발견 시 24시간 이내에 패치해야 합니다 (긴급 배포).",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 19
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 13309,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q25",
+      "question": "P1 인시던트 발생 시 CTO에게 보고하기까지 최대 몇 분인가요?",
+      "answer": "P1 인시던트 발생 시 에스컬레이션 경로는 \"담당 엔지니어 → 팀장 (15분) → CTO (30분)\"으로, CTO에게 보고하기까지 최대 30분입니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 13
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 14816,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q26",
+      "question": "개인정보 유출 시 개인정보보호위원회 신고 기한은?",
+      "answer": "개인정보 유출 사고 발생 시 개인정보보호위원회 신고 기한은 **인지 후 72시간 이내**입니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 11
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 16622,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q27",
+      "question": "Super Admin 권한은 얼마나 자주 검토하나요?",
+      "answer": "Super Admin 권한은 월 1회 검토하며, CISO가 직접 검토합니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 6
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 14317,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q28",
+      "question": "정보보안 교육을 이수하지 않으면 어떤 조치를 받나요?",
+      "answer": "정보보안 교육을 이수하지 않으면 사내 시스템 접근이 차단됩니다. 교육을 이수한 후에 접근이 해제됩니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 23
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 19400,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q29",
+      "question": "프로덕션 서버 접속 시 MFA 방식은 무엇인가요?",
+      "answer": "프로덕션 서버 접속 시 MFA 방식은 하드웨어 키 (YubiKey)입니다. 또한 SSH 접속은 금지되며, kubectl만 허용됩니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 4
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15661,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q30",
+      "question": "P1 인시던트의 재발 방지 대책 이행 기한과 P2의 이행 기한은 각각?",
+      "answer": "P1 인시던트의 재발 방지 대책 이행 기한은 30일 이내, P2는 60일 이내입니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 14
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 16796,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q31",
+      "question": "2,000만원짜리 서버를 구매하려면 누구의 승인이 필요한가요?",
+      "answer": "2,000만원짜리 서버 구매에는 두 가지 규정이 동시에 적용됩니다.\n\n1. **금액 기준**: 2,000만원 이상 5,000만원 미만에 해당하므로 **CFO 승인** 필요\n2. **품목 기준**: IT 장비(서버)는 금액과 무관하게 **CFO 승인 필수**, 또한 **자산관리팀 사전 등록**이 필요\n\n따라서 두 조건 모두 CFO 승인을 요구하므로, 최종적으로 **CFO의 승인**을 받아야 하며, 구매 전 **자산관리팀에 사전 등록**도 진행해야 합니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 2
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 1
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 19462,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q32",
+      "question": "해외 출장 시 뉴욕 숙박비 상한은 얼마인가요?",
+      "answer": "해외 출장 시 뉴욕(New York) 숙박비 상한은 $300/박입니다. (미주/유럽 기본 상한은 $250/박이나, 뉴욕/런던/파리는 $300/박이 적용됩니다.)",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 8
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 16904,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q33",
+      "question": "법인카드를 개인 용도로 실수로 사용했을 때 환급 기한은?",
+      "answer": "법인카드를 개인 경비에 실수로 사용했을 경우, 즉시 자진 신고하고 3영업일 이내에 환급해야 합니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 10
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15936,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q34",
+      "question": "긴급 구매의 금액 한도와 사후 등록 기한은?",
+      "answer": "긴급 구매의 금액 한도는 100만원 이하이며, 구두 승인 후 48시간 이내에 ERP 시스템에 소급 등록해야 합니다. 또한 사유서(긴급 사유 + 통상 절차 불가 사유) 첨부가 필수입니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 3
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 4
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 18661,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q35",
+      "question": "야근 식대 한도는 얼마이고, 월 최대 몇 회까지 청구 가능한가요?",
+      "answer": "야근 식대 한도는 1만 5천원이며, 20시 이후 퇴근 시 적용됩니다. 월 최대 10회까지 청구 가능합니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 6
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15754,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q36",
+      "question": "500만원 이상 구매 시 필수로 첨부해야 하는 서류는?",
+      "answer": "500만원 이상 구매 시 최소 3개 업체 비교 견적서를 필수로 첨부해야 합니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 3
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 14789,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q37",
+      "question": "법인카드 부정 사용 2차 적발 시 어떤 처분을 받나요?",
+      "answer": "법인카드 부정 사용 2차 적발 시 감봉 1개월 + 법인카드 3개월 정지 처분을 받습니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 11
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 18205,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q38",
+      "question": "IT 장비 폐기 시 데이터 삭제 기준은 무엇인가요?",
+      "answer": "IT 장비 폐기 시 데이터 완전 삭제가 필수이며, 보안팀 입회 하에 NIST 800-88 기준을 따라야 합니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 13
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 13917,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q39",
+      "question": "동남아 출장 시 일비와 숙박비 상한은?",
+      "answer": "동남아 출장 시 일비는 $70/일이며, 숙박비 상한은 $150/박입니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 8
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15557,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q40",
+      "question": "자차 출장 시 km당 지원 금액은?",
+      "answer": "자차 출장 시 km당 300원이 지원됩니다. 실제 주행 거리 기준으로 산정하며, 주유 영수증은 불필요합니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 5
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15820,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q41",
+      "question": "예방적 품질관리 진단 영역은 몇 개이며 무엇인가요?",
+      "answer": "예방적 품질관리 진단 영역은 총 4개 영역으로 구성되며, 다음과 같습니다:\n\n1. 데이터 표준\n2. 데이터 구조\n3. 데이터 값\n4. 데이터 관리체계",
+      "sources": [
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 21
+        },
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 30
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15763,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q42",
+      "question": "진단항목과 진단기준은 각각 몇 개인가요?",
+      "answer": "진단항목은 총 10개이며, 진단기준은 진단항목별 2개씩 총 20개로 구성됩니다.",
+      "sources": [
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 23
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 13295,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q43",
+      "question": "예방적 품질관리의 법적 근거는 무엇인가요?",
+      "answer": "문서에 언급된 예방적 품질관리의 법적 근거는 다음과 같습니다:\n1. 행정기관 및 공공기관 정보시스템 구축·운영 지침 (행정안전부 고시 제2021-3호, 2021.1.19.)\n2. 공공데이터 품질관리 매뉴얼 (V2.0, 2018.1)",
+      "sources": [
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 29
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 17369,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q44",
+      "question": "시스템 구축은 몇 단계로 수행되며 각 단계는?",
+      "answer": "시스템 구축은 총 5단계로 수행됩니다.\n\n1. **계획단계**: ISP 또는 ISMP 사업을 통해 정보시스템의 기능과 서비스를 정의하고 데이터 품질 관련 개선과제를 정의하는 단계 (컨설팅 사업의 경우 구축 정보시스템의 목표, 예산, 서비스 등을 기획하는 단계)\n2. **발주단계**: 데이터 표준·구조·값·연계 등과 관련한 개선과제를 요구사항으로 도출하고 일정과 예산을 고려하여 사업 수행 과업을 확정하는 단계\n3. **설계단계**: 개발에 앞서 요구사항이 향후 운영단계까지 품질이 유지될 수 있도록 유지관리가 용이하고 유연한 시스템을 설계하는 단계 (컨설팅 사업의 경우 현황분석단계)\n4. **개발단계**: 요구사항에 따라 시스템을 개발하고, 다양한 시나리오를 통해 테스트를 거치면서 오류를 확인하고 수정하여 완성도를 높이는 단계 (컨설팅 사업의 경우 목표시스템 정의단계)\n5. **완료단계**: 데이터 완결성 확보(데이터 이관이 필요한 경우) 및 데이터 관리체계를 점검하는 정보시스템 구축 최종 완료 단계 (컨설팅 사업의 경우 이행계획(수립)단계)",
+      "sources": [
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 14
+        },
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 17
+        },
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 19
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 24045,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q45",
+      "question": "데이터 이관 검증 시 컨설팅사업에서 도출해야 할 요건은?",
+      "answer": "컨설팅사업에서 데이터 이관 검증 시 도출해야 할 요건은 다음과 같습니다.\n\n1. **이관·검증 방안 도출**: 기존 시스템의 데이터를 신시스템으로 이관(이행)·검증하기 위한 방안(계획, 절차, 대상, 위험요소 등)을 도출하는 요건이 반영되어야 합니다. (단, 컨설팅 대상 시스템이 신규시스템인 경우 생략 가능)\n\n2. **오류 데이터 개선 및 정량적 목표 수립 (선택)**: 이관 시 오류 데이터의 개선처리 과정 또는 정량적 이행 목표(지표)를 수립하기 위해 현황파악, 개선방향, 개선과제 등을 도출하는 요건이 반영되어야 합니다. (단, 컨설팅 대상 시스템이 신규시스템인 경우 생략 가능)\n\n세부 도출 항목은 다음과 같습니다:\n- 데이터 이관을 위한 조직체계\n- 데이터 이관 절차\n- 데이터 이관 우선순위 선정\n- 데이터 이관 매핑 설계 방안\n- 데이터 이관 후 검증 방안 및 기준\n\n3. **데이터 값 품질 현황분석 및 개선**: 데이터 값 품질 결과에 대한 현황분석, 개선방향 및 개선과제 도출 등의 요건이 반영되어야 하며, 근본적인 원인 제거 방안 등이 제시되어야 합니다.",
+      "sources": [
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 65
+        },
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 60
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 23482,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q46",
+      "question": "극비 문서의 보존 기간과 기밀 문서의 보존 기간 차이는?",
+      "answer": "극비(Top Secret) 문서의 보존 기간은 **영구**이며, 기밀(Confidential) 문서의 보존 기간은 **5년**입니다. 따라서 극비 문서는 기밀 문서와 달리 영구적으로 보존해야 하는 차이가 있습니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 0
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 17313,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q47",
+      "question": "해외 출장 정산 기한을 넘기면 어떻게 되나요?",
+      "answer": "해외 출장 정산 기한은 출장 종료 후 10영업일 이내이며, 기한을 초과할 경우 초과 일수만큼 정산이 지연됩니다. 특히 2주를 초과할 경우 정산이 거부될 수 있습니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 9
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 15350,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q48",
+      "question": "회사의 클라우드 인프라 비용 절감 방안은 무엇인가요?",
+      "answer": "제공된 문서에서 해당 내용을 찾을 수 없습니다.",
+      "sources": [
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 164
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 2
+        },
+        {
+          "file": "public-data-quality-guide.pdf",
+          "chunk_id": 55
+        }
+      ],
+      "answerable": false,
+      "latency_ms": 19010,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q49",
+      "question": "재택근무 중 VPN 없이 사내 시스템에 접속해도 되나요?",
+      "answer": "아니요, 재택근무 시 VPN은 필수입니다. 또한 공용 Wi-Fi에서 VPN 없이 사내 시스템에 접속하는 것도 금지되어 있습니다. 사내에서 사용하는 VPN 방식은 WireGuard이며, 사내 인증서 + TOTP 인증을 사용합니다.",
+      "sources": [
+        {
+          "file": "it-security-compliance.md",
+          "chunk_id": 16
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 19443,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    },
+    {
+      "id": "Q50",
+      "question": "500만원짜리 소프트웨어를 긴급 구매할 수 있나요?",
+      "answer": "500만원짜리 소프트웨어는 긴급 구매가 불가합니다. 긴급 구매는 **100만원 이하**에 한하며, 500만원은 이 기준을 초과하므로 긴급 구매 조건을 충족하지 못합니다.\n\n또한, 소프트웨어 라이선스는 금액과 무관하게 **CFO 승인이 필수**이며, 연간 계약인 경우 총액 기준이 적용됩니다. 500만원 이상 구매 시에는 최소 3개 업체 비교 견적서도 첨부해야 합니다.",
+      "sources": [
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 3
+        },
+        {
+          "file": "procurement-expense-policy.txt",
+          "chunk_id": 2
+        }
+      ],
+      "answerable": true,
+      "latency_ms": 23102,
+      "model": "claude-sonnet-4-6",
+      "json_parsed": true
+    }
+  ]
+}

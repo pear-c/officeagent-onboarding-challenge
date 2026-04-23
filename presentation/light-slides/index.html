@@ -159,7 +159,7 @@
     <div class="ctrl-counter">
       <span class="current" id="counter-current">01</span>
       <span class="sep">/</span>
-      <span class="total" id="counter-total">12</span>
+      <span class="total" id="counter-total">18</span>
       <span class="title" id="counter-title">Title</span>
     </div>
     <button class="ctrl-btn" id="btn-next" title="→ 다음">&#8250;</button>
@@ -173,25 +173,24 @@
 
   <script>
     const slides = [
-      { file: '01-title.html',                title: '타이틀',                  part: 'Cover' },
-      { file: '02-journey.html',              title: '목차',                    part: 'Overview' },
-      { file: '03-llm-problem.html',          title: 'LLM — 고민',             part: 'Part I · 구현하며 배운 것' },
-      { file: '04-llm-decision.html',         title: 'LLM — 선택+근거',        part: 'Part I · 구현하며 배운 것' },
-      { file: '05-embed-problem.html',        title: '임베딩&청킹 — 고민',      part: 'Part I · 구현하며 배운 것' },
-      { file: '06-embed-decision.html',       title: '임베딩&청킹 — 선택+근거', part: 'Part I · 구현하며 배운 것' },
-      { file: '07-cache-problem.html',        title: '캐시 — 고민',            part: 'Part I · 구현하며 배운 것' },
-      { file: '08-cache-decision.html',       title: '캐시 — 선택+근거',       part: 'Part I · 구현하며 배운 것' },
-      { file: '09-hallucination-problem.html', title: '환각 — 고민',           part: 'Part I · 구현하며 배운 것' },
-      { file: '10-hallucination-decision.html', title: '환각 — 선택+근거',     part: 'Part I · 구현하며 배운 것' },
-      { file: '11-summary.html',              title: '네 가지 고민 요약',       part: 'Part I · 구현하며 배운 것' },
-      { file: '12-architecture.html',         title: '시스템 한 장',            part: 'Part II · 구현(시연)' },
-      { file: '13-demo.html',                 title: '라이브 데모',             part: 'Part II · 구현(시연)' },
-      { file: '14-advanced.html',             title: 'Naive RAG가 아닌 이유',  part: 'Part III · 프로덕션 관점' },
-      { file: '15-officeagent.html',          title: 'OfficeAgent 비교',       part: 'Part III · 프로덕션 관점' },
-      { file: '16-limits.html',               title: '한계 & 다음 단계',        part: 'Part III · 프로덕션 관점' },
-      { file: '17-verification.html',         title: '검증 트랙 3개',           part: 'Part III · 프로덕션 관점' },
-      { file: '18-future.html',               title: '향후 과제 — 90일 로드맵', part: 'Part IV · 향후 과제' },
-      { file: '19-closing.html',              title: '마무리',                  part: 'Closing' },
+      { file: '01-title.html',                   title: '타이틀',                part: 'Cover' },
+      { file: '02-journey.html',                  title: '목차',                 part: 'Overview' },
+      { file: '03-llm-problem.html',              title: 'LLM — 고민',          part: 'Phase I' },
+      { file: '04-llm-decision.html',             title: 'LLM — 선택+근거',     part: 'Phase I' },
+      { file: '05-llm-troubleshoot.html',         title: 'LLM — 트러블슈팅',    part: 'Phase I' },
+      { file: '06-embedding-problem.html',        title: '임베딩&청킹 — 고민',   part: 'Phase I' },
+      { file: '07-embedding-decision.html',       title: '임베딩&청킹 — 선택+근거', part: 'Phase I' },
+      { file: '08-embedding-troubleshoot.html',   title: '임베딩&청킹 — 트러블슈팅', part: 'Phase I' },
+      { file: '09-cache-problem.html',            title: '캐시 — 고민',          part: 'Phase I' },
+      { file: '10-cache-decision.html',           title: '캐시 — 선택+근거',     part: 'Phase I' },
+      { file: '11-cache-troubleshoot.html',       title: '캐시 — 트러블슈팅',    part: 'Phase I' },
+      { file: '12-hallucination-problem.html',    title: '환각 — 고민',          part: 'Phase I' },
+      { file: '13-hallucination-decision.html',   title: '환각 — 선택+근거',     part: 'Phase I' },
+      { file: '14-hallucination-troubleshoot.html', title: '환각 — 트러블슈팅',  part: 'Phase I' },
+      { file: '15-architecture.html',             title: '아키텍처 한 장',       part: 'Phase II' },
+      { file: '16-demo.html',                     title: '라이브 데모',          part: 'Phase II' },
+      { file: '17-production-gap.html',           title: 'PoC → 프로덕션',      part: 'Phase III' },
+      { file: '18-closing.html',                  title: '마무리',               part: 'Closing' },
     ];
 
     let idx = 0, uiHidden = false;

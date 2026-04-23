@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--compact">
+    <span class="section-tag">PHASE I &mdash; 01 LLM</span>
+    <span class="page-tag">04 / 18</span>
+
+    <div class="accent-bar"></div>
+    <p class="t-label t-label--mb"><span class="accent">LLM</span> &mdash; 선택+근거</p>
+    <h2 class="t-headline">50케이스 &times; 7메트릭,<br>데이터가 답했다</h2>
+    <div class="sp-32"></div>
+
+    <table class="comparison">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Claude v3</th>
+          <th>Codex</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="metric-name">Retrieval Hit Rate</td>
+          <td class="val-win">97.73%</td>
+          <td class="val-lose">90.91%</td>
+        </tr>
+        <tr>
+          <td class="metric-name">Citation Accuracy</td>
+          <td class="val-win">97.73%</td>
+          <td class="val-lose">90.91%</td>
+        </tr>
+        <tr>
+          <td class="metric-name">Refusal Accuracy</td>
+          <td class="val-win">100%</td>
+          <td class="val-win">100%</td>
+        </tr>
+        <tr>
+          <td class="metric-name">Latency p50</td>
+          <td class="val-lose">8,803ms</td>
+          <td class="val-win">4,516ms</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="sp-24"></div>
+    <p class="t-body">속도 차이는 캐시로 보완 — 정확도 + 답변 구조화 UX로 <strong>Claude 채택</strong></p>
+
+    <!-- TODO: 스크린샷 교체 -->
+    <div class="sp-16"></div>
+    <div class="screenshot-placeholder">
+      <span class="screenshot-placeholder__priority screenshot-placeholder__priority--must">MUST</span>
+      <span class="screenshot-placeholder__label">eval 벤치마크 결과</span>
+      <span class="screenshot-placeholder__desc">pytest 50케이스 실행 결과 터미널 캡처 또는 eval summary JSON</span>
+    </div>
+  </div>
+</body>
+</html>

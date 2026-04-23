@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="common.css">
+  <style>
+    .slide {
+      padding: 100px 160px;
+      justify-content: center;
+      gap: 0;
+    }
+
+    .points {
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      margin-top: 48px;
+      max-width: 1100px;
+    }
+
+    .point {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+    }
+
+    .point__marker {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+      width: 24px;
+    }
+
+    .point__text {
+      font-size: 28px;
+      font-weight: 400;
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    .point__text strong {
+      font-weight: 700;
+      color: var(--text);
+    }
+  </style>
+</head>
+<body>
+  <div class="slide">
+    <span class="section-tag">Part I &middot; 구현하며 배운 것</span>
+    <span class="page-tag">03 / 19</span>
+
+    <div class="accent-bar"></div>
+    <p class="t-label" style="margin-bottom: 16px;"><span class="accent">LLM</span> &mdash; 고민</p>
+    <h1 class="t-hero">어떤 모델을,<br>어떤 근거로?</h1>
+
+    <div class="points">
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">SDK 택 1 조건 <strong>(Claude Code SDK vs Codex CLI)</strong></span>
+      </div>
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">정확도 vs 속도 &mdash; <strong class="highlight">어디에 기준을 세울 것인가</strong></span>
+      </div>
+      <div class="point">
+        <span class="point__marker">&mdash;</span>
+        <span class="point__text">인상론이 아닌 <strong>데이터로 판단</strong>하겠다는 원칙</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

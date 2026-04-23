@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="../light_slides/common.css">
+</head>
+<body>
+  <div class="slide slide--compact">
+    <span class="section-tag">PHASE I &mdash; 03 캐시</span>
+    <span class="page-tag">10 / 18</span>
+
+    <div class="accent-bar"></div>
+    <p class="t-label t-label--mb"><span class="accent">캐시</span> &mdash; 선택+근거</p>
+    <h2 class="t-headline">3단계 캐시</h2>
+    <div class="sp-32"></div>
+
+    <div class="cache-cards">
+      <div class="card card--accent card--md">
+        <div class="cache-row">
+          <span class="num-badge num-badge--square">L1</span>
+          <div>
+            <div class="cache-title">정확 일치 &mdash; Redis</div>
+            <div class="cache-desc">SHA-256(question) &rarr; cache:exact:{hash} &middot; TTL 1시간</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card--md" style="border-left: 4px solid var(--highlight);">
+        <div class="cache-row">
+          <span class="num-badge num-badge--square num-badge--highlight">L2</span>
+          <div>
+            <div class="cache-title">Semantic Cache &mdash; Chroma</div>
+            <div class="cache-desc">cache_questions 컬렉션 &middot; cosine &ge; 0.95 히트 &middot; TTL 1시간</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card card--md">
+        <div class="cache-row">
+          <span class="num-badge num-badge--square num-badge--muted">L3</span>
+          <div>
+            <div class="cache-title">무효화 &mdash; 전체 삭제</div>
+            <div class="cache-desc">문서 업로드 시 QA 캐시 전체 삭제 &middot; answerable=false 미저장</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sp-24"></div>
+    <p class="metric-display">miss ~13.6s &rarr; hit <span class="highlight metric-display__hit">0ms</span></p>
+  </div>
+</body>
+</html>
