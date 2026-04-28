@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 09 · 환각 억제</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule-mid: #D4D2C9;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --warn: #B91C1C;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text); background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+    }
+    .stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .slide {
+      width: 1920px; height: 1080px; flex-shrink: 0; background: var(--bg);
+      position: relative; overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px; pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute; top: 56px; left: 120px; right: 120px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px; color: var(--text-subtle); letter-spacing: 0.02em; z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar { width: 24px; height: 1px; background: var(--text-subtle); opacity: 0.6; }
+
+    .header {
+      position: absolute; top: 140px; left: 152px; right: 120px;
+      padding-left: 40px; border-left: 1px solid var(--rule-fine); z-index: 2;
+    }
+    .header::before {
+      content: ''; position: absolute; left: -1px; top: 8%; bottom: 8%;
+      width: 2px; background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px; font-weight: 500; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 88px; font-weight: 800; line-height: 1.0;
+      letter-spacing: -0.04em; color: var(--ink); margin-bottom: 18px;
+    }
+    h1 .hl { color: var(--highlight); }
+    .subtitle {
+      font-size: 28px; color: var(--text-muted); letter-spacing: -0.005em;
+    }
+
+    /* ---------- Layers ---------- */
+    .layers-section {
+      position: absolute;
+      top: 400px;
+      left: 152px;
+      right: 120px;
+      z-index: 2;
+    }
+
+    .col-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .col-label::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--text-subtle);
+    }
+
+    .layers {
+      display: grid;
+      grid-template-columns: 1fr 32px 1fr 32px 1fr;
+      align-items: stretch;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+    .layer {
+      background: var(--bg);
+      border: 1px solid var(--rule-mid);
+      padding: 22px 24px;
+      position: relative;
+    }
+    .layer.l1 { border-top: 3px solid var(--accent); }
+    .layer.l2 { border-top: 3px solid var(--highlight); }
+    .layer.l3 { border-top: 3px solid var(--accent); }
+    .layer .num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .layer .ttl {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      margin-bottom: 14px;
+    }
+    .layer.l1 .ttl .pin { color: var(--accent); }
+    .layer.l2 .ttl .pin { color: var(--highlight); }
+    .layer.l3 .ttl .pin { color: var(--accent); }
+    .layer .body {
+      font-size: 15px;
+      color: var(--text-muted);
+      letter-spacing: -0.003em;
+      line-height: 1.5;
+    }
+    .layer .body code {
+      display: block;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--accent);
+      background: rgba(15, 76, 92, 0.06);
+      padding: 8px 10px;
+      border-radius: 3px;
+      margin-top: 8px;
+      letter-spacing: 0.01em;
+      line-height: 1.45;
+    }
+    .layer .body .quote {
+      display: block;
+      font-style: normal;
+      color: var(--ink);
+      font-weight: 500;
+      margin: 8px 0;
+      padding-left: 12px;
+      border-left: 2px solid var(--rule-mid);
+    }
+
+    .arrow-cell {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--highlight);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    /* ---------- TS box ---------- */
+    .ts-section {
+      position: absolute;
+      bottom: 220px;
+      left: 152px;
+      right: 120px;
+      z-index: 2;
+    }
+    .ts-box {
+      padding: 22px 30px;
+      background: rgba(185, 28, 28, 0.04);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+      border-left: 3px solid var(--warn);
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .ts-left {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ts-tag {
+      display: inline-block;
+      width: fit-content;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--warn);
+      background: rgba(185, 28, 28, 0.08);
+      padding: 4px 10px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+    }
+    .ts-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      line-height: 1.25;
+    }
+    .ts-rows {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+    }
+    .ts-row .lbl {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--warn);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .ts-row .body {
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.45;
+      letter-spacing: -0.003em;
+    }
+    .ts-row .body .em { color: var(--warn); font-weight: 700; }
+    .ts-row .body .ok { color: var(--accent); font-weight: 700; }
+
+    /* Bottom message */
+    .bottom-note {
+      position: absolute; bottom: 88px; left: 152px; right: 120px;
+      padding: 22px 32px;
+      background: rgba(217, 119, 6, 0.07);
+      border-left: 3px solid var(--highlight); z-index: 2;
+    }
+    .bottom-note .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--highlight);
+      text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 6px;
+    }
+    .bottom-note .text {
+      font-size: 22px; font-weight: 500; color: var(--text); letter-spacing: -0.005em;
+    }
+    .bottom-note .text .hl { color: var(--highlight); font-weight: 700; }
+
+    .corner-mark {
+      position: absolute; bottom: 56px; right: 120px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--text-subtle);
+      letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; z-index: 2;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">09</span>
+          <span class="sep">/</span>
+          <span>13</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>Part 4 · RAG 파이프라인 — 환각 억제</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow">Part 4 · Hallucination Defense</div>
+        <h1>거절도 <span class="hl">답이다</span></h1>
+        <div class="subtitle">프롬프트 + 서버 검증 + few-shot 다층 방어</div>
+      </div>
+
+      <div class="layers-section">
+        <div class="col-label">3단계 방어선</div>
+        <div class="layers">
+          <div class="layer l1">
+            <div class="num">Layer 1</div>
+            <div class="ttl"><span class="pin">●</span> 프롬프트</div>
+            <div class="body">
+              거절 문구 명시 · 동의어 사용 금지
+              <span class="quote">"제공된 문서에서 해당 내용을 찾을 수 없습니다."</span>
+            </div>
+          </div>
+
+          <div class="arrow-cell">›</div>
+
+          <div class="layer l2">
+            <div class="num">Layer 2</div>
+            <div class="ttl"><span class="pin">●</span> 서버 검증</div>
+            <div class="body">
+              거절 패턴 동의어 매칭 — 프롬프트 우회 차단
+              <code>_REFUSAL_PATTERNS = (
+  "찾을 수 없", "확인할 수 없",
+  "답변할 수 없", "정보가 없", ...
+)</code>
+            </div>
+          </div>
+
+          <div class="arrow-cell">›</div>
+
+          <div class="layer l3">
+            <div class="num">Layer 3</div>
+            <div class="ttl"><span class="pin">●</span> Few-shot</div>
+            <div class="body">
+              예제 2개로 거절 행동 학습
+              <span class="quote">"이런 질문엔 이렇게 거절한다"</span>
+              결과 — Claude refusal 답변률 <strong style="color:var(--accent)">↑</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ts-section">
+        <div class="ts-box">
+          <div class="ts-left">
+            <span class="ts-tag">TS-009 · Synonym Bypass</span>
+            <div class="ts-title">"확인할 수 없습니다"가<br>좀비 캐시를 만들었다</div>
+          </div>
+          <div class="ts-rows">
+            <div class="ts-row">
+              <div class="lbl">증상</div>
+              <div class="body">프롬프트 지시 무시하고 <span class="em">동의어로 거절</span> → answerable=true 오판정</div>
+            </div>
+            <div class="ts-row">
+              <div class="lbl">원인</div>
+              <div class="body">단일 패턴 매칭(<code style="font-family:monospace;font-size:14px">"찾을 수 없"</code>)에 의존 — LLM은 100% 지시를 따르지 않음</div>
+            </div>
+            <div class="ts-row">
+              <div class="lbl">해결</div>
+              <div class="body"><span class="ok">패턴 리스트 매칭</span>으로 이중 방어 — 프롬프트 + 서버 검증</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-note">
+        <div class="label">Key Takeaway</div>
+        <div class="text">
+          LLM은 프롬프트 지시를 100% 따르지 않는다 — <span class="hl">형식이 중요한 판정은 이중화</span>
+        </div>
+      </div>
+
+      <div class="corner-mark">part 4 · hallucination</div>
+    </div>
+  </div>
+</body>
+</html>

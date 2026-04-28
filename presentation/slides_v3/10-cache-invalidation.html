@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 10 · 캐시 무효화</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule-mid: #D4D2C9;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --warn: #B91C1C;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text); background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+    }
+    .stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .slide {
+      width: 1920px; height: 1080px; flex-shrink: 0; background: var(--bg);
+      position: relative; overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px; pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute; top: 56px; left: 120px; right: 120px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px; color: var(--text-subtle); letter-spacing: 0.02em; z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar { width: 24px; height: 1px; background: var(--text-subtle); opacity: 0.6; }
+
+    .header {
+      position: absolute; top: 140px; left: 152px; right: 120px;
+      padding-left: 40px; border-left: 1px solid var(--rule-fine); z-index: 2;
+    }
+    .header::before {
+      content: ''; position: absolute; left: -1px; top: 8%; bottom: 8%;
+      width: 2px; background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px; font-weight: 500; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 88px; font-weight: 800; line-height: 1.0;
+      letter-spacing: -0.04em; color: var(--ink); margin-bottom: 18px;
+    }
+    h1 .hl { color: var(--highlight); }
+    .subtitle {
+      font-size: 28px; color: var(--text-muted); letter-spacing: -0.005em;
+    }
+
+    /* ---------- Before/After ---------- */
+    .ba-section {
+      position: absolute;
+      top: 400px;
+      left: 152px;
+      right: 120px;
+      z-index: 2;
+    }
+    .col-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .col-label::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--text-subtle);
+    }
+
+    .ba-grid {
+      display: grid;
+      grid-template-columns: 1fr 60px 1fr;
+      gap: 0;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+
+    .ba-card {
+      padding: 24px 28px;
+      background: var(--bg);
+      border: 1px solid var(--rule-mid);
+    }
+    .ba-card.before {
+      border-left: 3px solid var(--warn);
+      background: rgba(185, 28, 28, 0.03);
+    }
+    .ba-card.after {
+      border-left: 3px solid var(--highlight);
+      background: rgba(217, 119, 6, 0.05);
+    }
+    .ba-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.16em;
+      padding: 4px 10px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+    .ba-card.before .ba-tag { color: var(--warn); background: rgba(185, 28, 28, 0.08); }
+    .ba-card.after .ba-tag { color: var(--highlight); background: rgba(217, 119, 6, 0.12); }
+    .ba-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+    .ba-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .ba-item {
+      display: grid;
+      grid-template-columns: 22px 1fr;
+      gap: 12px;
+      font-size: 16px;
+      color: var(--text);
+      line-height: 1.45;
+      letter-spacing: -0.003em;
+    }
+    .ba-item .marker {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-weight: 700;
+      flex-shrink: 0;
+      padding-top: 2px;
+    }
+    .ba-card.before .ba-item .marker { color: var(--warn); }
+    .ba-card.after .ba-item .marker { color: var(--accent); }
+    .ba-item .em-warn { color: var(--warn); font-weight: 700; }
+    .ba-item .em-ok { color: var(--accent); font-weight: 700; }
+    .ba-item code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      background: rgba(15, 76, 92, 0.08);
+      color: var(--accent);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    .ba-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--highlight);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    /* ---------- Reasons ---------- */
+    .reasons {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .reason {
+      padding: 18px 20px;
+      background: rgba(15, 76, 92, 0.04);
+      border: 1px solid var(--rule-fine);
+      border-left: 3px solid var(--accent);
+    }
+    .reason .num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .reason .ttl {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      margin-bottom: 4px;
+    }
+    .reason .desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      letter-spacing: -0.003em;
+    }
+    .reason .desc code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      background: rgba(15, 76, 92, 0.08);
+      color: var(--accent);
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* Bottom message */
+    .bottom-note {
+      position: absolute; bottom: 88px; left: 152px; right: 120px;
+      padding: 22px 32px;
+      background: rgba(217, 119, 6, 0.07);
+      border-left: 3px solid var(--highlight); z-index: 2;
+    }
+    .bottom-note .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--highlight);
+      text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 6px;
+    }
+    .bottom-note .text {
+      font-size: 22px; font-weight: 500; color: var(--text); letter-spacing: -0.005em;
+    }
+    .bottom-note .text .hl { color: var(--highlight); font-weight: 700; }
+
+    .corner-mark {
+      position: absolute; bottom: 56px; right: 120px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--text-subtle);
+      letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; z-index: 2;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">10</span>
+          <span class="sep">/</span>
+          <span>13</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>Part 4 · RAG 파이프라인 — 캐시 무효화</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow">Part 4 · Cache Invalidation</div>
+        <h1>단순함이 <span class="hl">안전함</span></h1>
+        <div class="subtitle">부분 무효화의 함정과 전체 무효화로의 회귀</div>
+      </div>
+
+      <div class="ba-section">
+        <div class="col-label">TS-008 · Zombie Cache</div>
+
+        <div class="ba-grid">
+          <div class="ba-card before">
+            <span class="ba-tag">Before · 부분 무효화</span>
+            <div class="ba-title">source_files 의존성으로<br>캐시를 추적했지만…</div>
+            <div class="ba-list">
+              <div class="ba-item">
+                <span class="marker">·</span>
+                <span><code>answerable=false</code> 응답은 <span class="em-warn">source_files=[]</span></span>
+              </div>
+              <div class="ba-item">
+                <span class="marker">·</span>
+                <span>어떤 문서와도 연관 없음 → <span class="em-warn">추적 불가능</span></span>
+              </div>
+              <div class="ba-item">
+                <span class="marker">·</span>
+                <span>새 문서 업로드해도 "찾을 수 없음" 캐시가 <span class="em-warn">영구 잔존</span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="ba-arrow">→</div>
+
+          <div class="ba-card after">
+            <span class="ba-tag">After · 전체 무효화</span>
+            <div class="ba-title">문서 변경 시<br><code style="font-family:'JetBrains Mono',monospace;font-size:18px;background:rgba(217,119,6,0.15);color:var(--highlight);padding:2px 8px;border-radius:3px">invalidate_all()</code></div>
+            <div class="ba-list">
+              <div class="ba-item">
+                <span class="marker">·</span>
+                <span><code>answerable=false</code>는 <span class="em-ok">캐시 저장 skip</span></span>
+              </div>
+              <div class="ba-item">
+                <span class="marker">·</span>
+                <span>문서 업로드 시 <span class="em-ok">모든 QA 캐시 삭제</span></span>
+              </div>
+              <div class="ba-item">
+                <span class="marker">·</span>
+                <span>단순 + 엣지 케이스 <span class="em-ok">0</span></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="reasons">
+          <div class="reason">
+            <div class="num">01 · 빈도 기반</div>
+            <div class="ttl">업로드 ≪ 질의</div>
+            <div class="desc">전체 재빌드 비용이 낮음 — 도메인 특성에 부합</div>
+          </div>
+          <div class="reason">
+            <div class="num">02 · 신뢰성</div>
+            <div class="ttl">추적 누락 0</div>
+            <div class="desc">파일별 추적보다 확실 — 좀비 캐시 원천 차단</div>
+          </div>
+          <div class="reason">
+            <div class="num">03 · 확장</div>
+            <div class="ttl">향후 옵션</div>
+            <div class="desc">빈도 증가 시 <code>corpus:version</code> 기반 lazy invalidation으로 전환 가능</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-note">
+        <div class="label">Key Takeaway</div>
+        <div class="text">
+          캐시 키의 의존성이 모호하면 좀비가 된다 — <span class="hl">단순한 전체 무효화가 더 안전</span>
+        </div>
+      </div>
+
+      <div class="corner-mark">part 4 · cache invalidation</div>
+    </div>
+  </div>
+</body>
+</html>

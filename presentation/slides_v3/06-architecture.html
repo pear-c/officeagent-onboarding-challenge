@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 06 · 아키텍처</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule-mid: #D4D2C9;
+      --accent: #0F4C5C;
+      --accent-soft: rgba(15, 76, 92, 0.08);
+      --highlight: #D97706;
+      --highlight-soft: rgba(217, 119, 6, 0.1);
+      --ingest: #5B7553;
+      --ingest-soft: rgba(91, 117, 83, 0.1);
+      --query: #6B4F3A;
+      --query-soft: rgba(107, 79, 58, 0.1);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text); background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+    }
+    .stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .slide {
+      width: 1920px; height: 1080px; flex-shrink: 0; background: var(--bg);
+      position: relative; overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px; pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute; top: 56px; left: 120px; right: 120px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px; color: var(--text-subtle); letter-spacing: 0.02em; z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar { width: 24px; height: 1px; background: var(--text-subtle); opacity: 0.6; }
+
+    .header {
+      position: absolute; top: 130px; left: 152px; right: 120px;
+      padding-left: 40px; border-left: 1px solid var(--rule-fine); z-index: 2;
+    }
+    .header::before {
+      content: ''; position: absolute; left: -1px; top: 8%; bottom: 8%;
+      width: 2px; background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px; font-weight: 500; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 14px;
+    }
+    h1 {
+      font-size: 64px; font-weight: 800; line-height: 1.0;
+      letter-spacing: -0.035em; color: var(--ink); margin-bottom: 12px;
+    }
+    h1 .hl { color: var(--highlight); }
+    .subtitle {
+      font-size: 22px; color: var(--text-muted); letter-spacing: -0.005em;
+    }
+
+    /* ---------- Diagram ---------- */
+    .diagram {
+      position: absolute;
+      top: 320px;
+      left: 152px;
+      right: 120px;
+      bottom: 200px;
+      z-index: 2;
+    }
+
+    .row-client {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .client {
+      padding: 10px 24px;
+      background: var(--bg);
+      border: 1px solid var(--rule-mid);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+
+    .arrow-down {
+      width: 1px;
+      height: 18px;
+      background: var(--text-subtle);
+      margin: 0 auto;
+      position: relative;
+    }
+    .arrow-down::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      border-left: 4px solid transparent;
+      border-right: 4px solid transparent;
+      border-top: 6px solid var(--text-subtle);
+    }
+
+    .api {
+      padding: 14px 0;
+      background: var(--accent-soft);
+      border: 1px solid var(--accent);
+      border-left-width: 3px;
+      text-align: center;
+      margin-bottom: 18px;
+      position: relative;
+    }
+    .api .name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+    }
+    .api .endpoints {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .pipelines {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      margin-bottom: 22px;
+    }
+    .pipe {
+      border: 1px solid var(--rule-mid);
+      padding: 18px 22px;
+      background: var(--bg);
+    }
+    .pipe.ingest { border-left: 3px solid var(--ingest); }
+    .pipe.query { border-left: 3px solid var(--query); }
+    .pipe-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .pipe-head .ttl {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+    .pipe.ingest .ttl { color: var(--ingest); }
+    .pipe.query .ttl { color: var(--query); }
+    .pipe-head .endp {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-subtle);
+      letter-spacing: 0.04em;
+    }
+    .pipe-flow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .step {
+      flex: 1 1 0;
+      min-width: 0;
+      padding: 10px 8px;
+      background: var(--bg);
+      border: 1px solid var(--rule-mid);
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text);
+      text-align: center;
+      letter-spacing: -0.005em;
+      line-height: 1.25;
+    }
+    .pipe.ingest .step { background: var(--ingest-soft); border-color: rgba(91,117,83,0.3); }
+    .pipe.query .step { background: var(--query-soft); border-color: rgba(107,79,58,0.3); }
+    .pipe-flow .arr {
+      flex-shrink: 0;
+      color: var(--text-subtle);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+    }
+
+    /* Provider abstraction band */
+    .providers {
+      border: 1px dashed var(--highlight);
+      background: var(--highlight-soft);
+      padding: 16px 22px;
+      margin-bottom: 18px;
+    }
+    .providers-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .providers-head .ttl {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--highlight);
+      letter-spacing: -0.005em;
+    }
+    .providers-head .note {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.04em;
+    }
+    .providers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+    .pcard {
+      padding: 10px 14px;
+      background: var(--bg);
+      border: 1px solid var(--rule-mid);
+    }
+    .pcard .iface {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .pcard .impls {
+      font-size: 14px;
+      color: var(--text);
+      letter-spacing: -0.003em;
+      line-height: 1.35;
+    }
+    .pcard .impls .pri { font-weight: 700; color: var(--ink); }
+    .pcard .impls .alt { color: var(--text-subtle); }
+
+    /* Storage row */
+    .storage {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .store {
+      padding: 14px 16px;
+      background: #2a2a27;
+      color: #F5F3EE;
+      text-align: center;
+    }
+    .store .name {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      margin-bottom: 4px;
+    }
+    .store .role {
+      font-size: 12px;
+      color: rgba(245, 243, 238, 0.7);
+      letter-spacing: -0.003em;
+    }
+
+    /* Bottom note */
+    .bottom-note {
+      position: absolute; bottom: 88px; left: 152px; right: 120px;
+      padding: 22px 32px;
+      background: rgba(217, 119, 6, 0.07);
+      border-left: 3px solid var(--highlight); z-index: 2;
+    }
+    .bottom-note .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--highlight);
+      text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 6px;
+    }
+    .bottom-note .text {
+      font-size: 22px; font-weight: 500; color: var(--text); letter-spacing: -0.005em;
+    }
+    .bottom-note .text .hl { color: var(--highlight); font-weight: 700; }
+
+    .corner-mark {
+      position: absolute; bottom: 56px; right: 120px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--text-subtle);
+      letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; z-index: 2;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">06</span>
+          <span class="sep">/</span>
+          <span>13</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>Part 3 · 아키텍처</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow">Part 3 · Architecture</div>
+        <h1>단순한 레이어, <span class="hl">명확한 경계</span></h1>
+        <div class="subtitle">Provider 추상화로 LLM · 임베딩 · 저장소를 스왑 가능</div>
+      </div>
+
+      <div class="diagram">
+        <div class="row-client">
+          <div class="client">Client &nbsp;·&nbsp; Web UI / curl</div>
+        </div>
+        <div class="arrow-down"></div>
+
+        <div class="api">
+          <div class="name">FastAPI Server (uvicorn · async)</div>
+          <div class="endpoints">POST /ingest &nbsp;·&nbsp; POST /query &nbsp;·&nbsp; POST /query/stream</div>
+        </div>
+
+        <div class="pipelines">
+          <div class="pipe ingest">
+            <div class="pipe-head">
+              <span class="ttl">Ingestion Pipeline</span>
+              <span class="endp">/ingest</span>
+            </div>
+            <div class="pipe-flow">
+              <div class="step">텍스트 추출</div>
+              <span class="arr">›</span>
+              <div class="step">청킹</div>
+              <span class="arr">›</span>
+              <div class="step">임베딩</div>
+              <span class="arr">›</span>
+              <div class="step">저장</div>
+            </div>
+          </div>
+          <div class="pipe query">
+            <div class="pipe-head">
+              <span class="ttl">Query Pipeline</span>
+              <span class="endp">/query · /query/stream</span>
+            </div>
+            <div class="pipe-flow">
+              <div class="step">캐시 조회</div>
+              <span class="arr">›</span>
+              <div class="step">검색 + Rerank</div>
+              <span class="arr">›</span>
+              <div class="step">LLM 호출</div>
+              <span class="arr">›</span>
+              <div class="step">응답</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="providers">
+          <div class="providers-head">
+            <span class="ttl">Provider 추상화 — 외부 의존성 분리</span>
+            <span class="note">interface → swappable implementations</span>
+          </div>
+          <div class="providers-grid">
+            <div class="pcard">
+              <div class="iface">EmbeddingProvider</div>
+              <div class="impls"><span class="pri">bge-m3</span> <span class="alt">· (sentence-transformers)</span></div>
+            </div>
+            <div class="pcard">
+              <div class="iface">AnswerProvider</div>
+              <div class="impls"><span class="pri">Claude</span> <span class="alt">· Codex · Ollama Qwen</span></div>
+            </div>
+            <div class="pcard">
+              <div class="iface">Reranker</div>
+              <div class="impls"><span class="pri">bge-reranker-v2-m3</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="storage">
+          <div class="store">
+            <div class="name">Chroma</div>
+            <div class="role">Vector + Semantic Cache</div>
+          </div>
+          <div class="store">
+            <div class="name">Redis</div>
+            <div class="role">Exact + Stream Cache</div>
+          </div>
+          <div class="store">
+            <div class="name">bge-m3</div>
+            <div class="role">Local Embedding</div>
+          </div>
+          <div class="store">
+            <div class="name">Claude SDK</div>
+            <div class="role">Answer Generation</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-note">
+        <div class="label">Key Takeaway</div>
+        <div class="text">
+          도메인 로직과 외부 의존성을 분리 — <span class="hl">교체와 테스트가 쉬운 구조</span>
+        </div>
+      </div>
+
+      <div class="corner-mark">part 3 · architecture</div>
+    </div>
+  </div>
+</body>
+</html>

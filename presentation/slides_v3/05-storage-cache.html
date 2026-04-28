@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 05 · 벡터 DB & 캐시</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .stage {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .slide {
+      width: 1920px;
+      height: 1080px;
+      flex-shrink: 0;
+      background: var(--bg);
+      position: relative;
+      overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px;
+      pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute;
+      top: 56px;
+      left: 120px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px;
+      color: var(--text-subtle);
+      letter-spacing: 0.02em;
+      z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar { width: 24px; height: 1px; background: var(--text-subtle); opacity: 0.6; }
+
+    .header {
+      position: absolute;
+      top: 140px;
+      left: 152px;
+      right: 120px;
+      padding-left: 40px;
+      border-left: 1px solid var(--rule-fine);
+      z-index: 2;
+    }
+    .header::before {
+      content: '';
+      position: absolute;
+      left: -1px;
+      top: 8%;
+      bottom: 8%;
+      width: 2px;
+      background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 88px;
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.04em;
+      color: var(--ink);
+      margin-bottom: 18px;
+    }
+    h1 .hl {
+      color: var(--highlight);
+    }
+    .subtitle {
+      font-size: 28px;
+      color: var(--text-muted);
+      letter-spacing: -0.005em;
+    }
+
+    /* ---------- Two columns ---------- */
+    .columns {
+      position: absolute;
+      top: 400px;
+      left: 152px;
+      right: 120px;
+      bottom: 220px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      z-index: 2;
+    }
+
+    .col-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .col-label::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--text-subtle);
+    }
+    .col-label .tag {
+      font-family: 'Pretendard Variable', sans-serif;
+      font-size: 15px;
+      color: var(--accent);
+      background: rgba(15, 76, 92, 0.1);
+      padding: 3px 10px;
+      border-radius: 3px;
+      letter-spacing: 0.04em;
+      text-transform: none;
+      font-weight: 600;
+      margin-left: auto;
+    }
+
+    /* Left — Chroma chosen */
+    .pick-card {
+      padding: 24px 28px;
+      background: rgba(217, 119, 6, 0.06);
+      border-left: 3px solid var(--highlight);
+      margin-bottom: 22px;
+    }
+    .pick-card .why-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--highlight);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 8px;
+    }
+    .pick-card .why-text {
+      font-size: 21px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+      letter-spacing: -0.005em;
+    }
+
+    .tradeoff {
+      padding: 22px 26px;
+      background: var(--bg);
+      border: 1px solid var(--rule-fine);
+      border-left: 3px solid var(--accent);
+    }
+    .tradeoff .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      margin-bottom: 12px;
+    }
+    .tradeoff .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      font-size: 18px;
+      color: var(--text);
+      letter-spacing: -0.003em;
+      line-height: 1.45;
+      padding: 4px 0;
+    }
+    .tradeoff .row .arr {
+      color: var(--text-subtle);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      flex-shrink: 0;
+      font-weight: 500;
+      min-width: 18px;
+    }
+    .tradeoff .row .em {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+    .tradeoff .row code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      color: var(--accent);
+      background: rgba(15, 76, 92, 0.08);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+
+    /* Right — 3-tier cache */
+    .cache-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .cache-item {
+      display: grid;
+      grid-template-columns: 60px 1fr auto;
+      gap: 22px;
+      align-items: center;
+      padding: 20px 24px;
+      border: 1px solid var(--rule-fine);
+      background: var(--bg);
+    }
+    .cache-item .tier {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--accent);
+      letter-spacing: -0.02em;
+    }
+    .cache-item .body .name {
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      margin-bottom: 4px;
+    }
+    .cache-item .body .name .store {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--accent);
+      background: rgba(15, 76, 92, 0.08);
+      padding: 2px 8px;
+      border-radius: 3px;
+      margin-left: 10px;
+      letter-spacing: 0.02em;
+    }
+    .cache-item .body .desc {
+      font-size: 16px;
+      color: var(--text-muted);
+      letter-spacing: -0.003em;
+      line-height: 1.4;
+    }
+    .cache-item .speed {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      color: var(--highlight);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    /* ---------- Bottom message ---------- */
+    .bottom-note {
+      position: absolute;
+      bottom: 88px;
+      left: 152px;
+      right: 120px;
+      padding: 22px 32px;
+      background: rgba(217, 119, 6, 0.07);
+      border-left: 3px solid var(--highlight);
+      z-index: 2;
+    }
+    .bottom-note .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--highlight);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 6px;
+    }
+    .bottom-note .text {
+      font-size: 22px;
+      font-weight: 500;
+      color: var(--text);
+      letter-spacing: -0.005em;
+    }
+    .bottom-note .text .hl {
+      color: var(--highlight);
+      font-weight: 700;
+    }
+    .bottom-note .text .neq {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      color: var(--accent);
+      font-weight: 700;
+      margin: 0 6px;
+    }
+
+    .corner-mark {
+      position: absolute;
+      bottom: 56px;
+      right: 120px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--text-subtle);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.6;
+      z-index: 2;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">05</span>
+          <span class="sep">/</span>
+          <span>13</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>Part 2 · 기술 선택 근거 — Storage</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow">Part 2 · Vector DB &amp; Cache</div>
+        <h1>능력보다 <span class="hl">정합</span></h1>
+        <div class="subtitle">Chroma는 갭을 만들었지만, 캐시 인프라를 줄였다</div>
+      </div>
+
+      <div class="columns">
+        <div class="col">
+          <div class="col-label">저장소 <span class="tag">Chroma</span></div>
+
+          <div class="pick-card">
+            <div class="why-label">선정 이유</div>
+            <div class="why-text">컬렉션 단위로 <span style="color:var(--highlight)">semantic cache까지</span> 동시 처리 → 인프라 최소화</div>
+          </div>
+
+          <div class="tradeoff">
+            <div class="label">트레이드오프 — 정직하게</div>
+            <div class="row"><span class="arr">·</span><span><code>sparse vector</code> 미지원</span></div>
+            <div class="row"><span class="arr">→</span><span>bge-m3의 <span class="em">Hybrid 검색 능력</span>을 못 살림</span></div>
+            <div class="row"><span class="arr">→</span><span>현재 검색은 <span class="em">dense-only</span>로 제한 <span style="color:var(--text-subtle); font-size:15px">(슬라이드 08에서 이어짐)</span></span></div>
+          </div>
+        </div>
+
+        <div class="col">
+          <div class="col-label">캐시 <span class="tag">3단계</span></div>
+
+          <div class="cache-list">
+            <div class="cache-item">
+              <div class="tier">L1</div>
+              <div class="body">
+                <div class="name">Exact <span class="store">Redis</span></div>
+                <div class="desc">동일 질의 해시 매칭 — 즉시 응답</div>
+              </div>
+              <div class="speed">~0ms</div>
+            </div>
+            <div class="cache-item">
+              <div class="tier">L2</div>
+              <div class="body">
+                <div class="name">Semantic <span class="store">Chroma</span></div>
+                <div class="desc">유사 질의 코사인 매칭 — 동의어/축약 흡수</div>
+              </div>
+              <div class="speed">~30ms</div>
+            </div>
+            <div class="cache-item">
+              <div class="tier">L3</div>
+              <div class="body">
+                <div class="name">Stream <span class="store">Redis</span></div>
+                <div class="desc">SSE 응답 토큰 단위 저장 — 재생 가능</div>
+              </div>
+              <div class="speed">~5ms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-note">
+        <div class="label">Key Takeaway</div>
+        <div class="text">
+          <span class="hl">모델 능력</span> <span class="neq">≠</span> <span class="hl">시스템 능력</span> — 교집합만 발현된다
+        </div>
+      </div>
+
+      <div class="corner-mark">part 2 · storage</div>
+    </div>
+  </div>
+</body>
+</html>

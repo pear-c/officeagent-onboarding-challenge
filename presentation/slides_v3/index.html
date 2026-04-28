@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OfficeAgent Interview · Slides v3</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg-stage: #1e1e1c;
+      --control-bg: rgba(26, 26, 24, 0.92);
+      --control-border: rgba(255, 255, 255, 0.12);
+      --text: #F5F3EE;
+      --text-muted: #9A9890;
+      --text-subtle: #6A6860;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--bg-stage);
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .viewport {
+      position: fixed;
+      inset: 0;
+    }
+
+    iframe.slide-frame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+      background: var(--bg-stage);
+    }
+
+    /* Controls */
+    .controls {
+      position: fixed;
+      bottom: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 0;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      font-size: 13px;
+      letter-spacing: 0.04em;
+      user-select: none;
+      opacity: 0.9;
+      transition: opacity 0.25s ease;
+      z-index: 100;
+    }
+    .controls:hover { opacity: 1; }
+    .controls.hidden { opacity: 0; pointer-events: none; }
+
+    .ctrl-btn {
+      background: transparent;
+      border: none;
+      color: var(--text);
+      padding: 10px 16px;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.08);
+      color: var(--highlight);
+    }
+    .ctrl-btn:disabled {
+      color: var(--text-subtle);
+      cursor: not-allowed;
+    }
+    .ctrl-btn:disabled:hover {
+      background: transparent;
+      color: var(--text-subtle);
+    }
+
+    .ctrl-counter {
+      padding: 10px 16px;
+      border-left: 1px solid var(--control-border);
+      border-right: 1px solid var(--control-border);
+      min-width: 160px;
+      text-align: center;
+      font-weight: 500;
+    }
+    .ctrl-counter .current { color: var(--highlight); font-weight: 700; }
+    .ctrl-counter .sep { color: var(--text-subtle); margin: 0 6px; }
+    .ctrl-counter .total { color: var(--text-muted); }
+    .ctrl-counter .title {
+      display: block;
+      font-size: 10px;
+      color: var(--text-subtle);
+      margin-top: 2px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* Progress bar */
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 2px;
+      background: var(--highlight);
+      transition: width 0.25s ease;
+      z-index: 100;
+    }
+
+    /* Keyboard hint */
+    .hint {
+      position: fixed;
+      bottom: 18px;
+      right: 18px;
+      padding: 8px 12px;
+      background: var(--control-bg);
+      border: 1px solid var(--control-border);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      color: var(--text-muted);
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+      z-index: 100;
+    }
+    .hint.hidden { opacity: 0; pointer-events: none; }
+    .hint kbd {
+      display: inline-block;
+      padding: 1px 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      font-family: inherit;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--text);
+      margin: 0 2px;
+    }
+
+    /* Jump panel */
+    .jump-panel {
+      position: fixed;
+      inset: 0;
+      background: rgba(30, 30, 28, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+    }
+    .jump-panel.open { opacity: 1; pointer-events: auto; }
+    .jump-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      max-width: 1200px;
+      width: 92%;
+      max-height: 85vh;
+      padding: 32px;
+    }
+    .jump-card {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 18px 20px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+    }
+    .jump-card:hover {
+      background: rgba(217, 119, 6, 0.1);
+      border-color: var(--highlight);
+    }
+    .jump-card.active {
+      background: rgba(217, 119, 6, 0.15);
+      border-color: var(--highlight);
+    }
+    .jc-num {
+      font-size: 11px;
+      color: var(--highlight);
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      margin-bottom: 8px;
+    }
+    .jc-title {
+      font-family: 'Pretendard Variable', 'Pretendard', sans-serif;
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+      letter-spacing: -0.005em;
+      line-height: 1.35;
+    }
+    .jc-part {
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="viewport">
+    <iframe id="slide-frame" class="slide-frame" src=""></iframe>
+  </div>
+
+  <div id="progress" class="progress" style="width: 0%;"></div>
+
+  <div id="controls" class="controls">
+    <button class="ctrl-btn" id="btn-prev" title="이전 (←)">‹</button>
+    <div class="ctrl-counter">
+      <span class="current" id="counter-current">01</span>
+      <span class="sep">/</span>
+      <span class="total" id="counter-total">13</span>
+      <span class="title" id="counter-title">Title</span>
+    </div>
+    <button class="ctrl-btn" id="btn-next" title="다음 (→)">›</button>
+  </div>
+
+  <div id="hint" class="hint">
+    <kbd>←</kbd> <kbd>→</kbd> <kbd>Space</kbd> 이동 · <kbd>G</kbd> 전체 · <kbd>F</kbd> 풀스크린 · <kbd>H</kbd> UI 숨김
+  </div>
+
+  <div id="jump-panel" class="jump-panel">
+    <div class="jump-grid" id="jump-grid"></div>
+  </div>
+
+  <script>
+    const slides = [
+      { file: '01-title.html',              title: '타이틀',                       part: 'Cover' },
+      { file: '02-service-intro.html',      title: '서비스 소개',                   part: 'Part 1 · 서비스' },
+      { file: '03-embedding.html',          title: '임베딩 — bge-m3',              part: 'Part 2 · 기술 선택' },
+      { file: '04-llm.html',                title: 'LLM 선택',                      part: 'Part 2 · 기술 선택' },
+      { file: '05-storage-cache.html',      title: '벡터 DB & 캐시',                part: 'Part 2 · 기술 선택' },
+      { file: '06-architecture.html',       title: '아키텍처',                      part: 'Part 3 · 아키텍처' },
+      { file: '07-ingestion.html',          title: 'Ingestion · 청킹',              part: 'Part 4 · 파이프라인' },
+      { file: '08-query.html',              title: 'Query · 검색 전략',             part: 'Part 4 · 파이프라인' },
+      { file: '09-hallucination.html',      title: '환각 억제',                     part: 'Part 4 · 파이프라인' },
+      { file: '10-cache-invalidation.html', title: '캐시 무효화',                   part: 'Part 4 · 파이프라인' },
+      { file: '11-live-demo.html',          title: 'Live Demo',                     part: 'Part 5 · 데모' },
+      { file: '12-langchain.html',          title: '직접 구현 vs LangChain',        part: 'Part 6 · 회고' },
+      { file: '13-closing.html',            title: '마무리',                        part: 'Closing' },
+    ];
+
+    let idx = 0;
+    let uiHidden = false;
+
+    const frame = document.getElementById('slide-frame');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const counterCurrent = document.getElementById('counter-current');
+    const counterTotal = document.getElementById('counter-total');
+    const counterTitle = document.getElementById('counter-title');
+    const progress = document.getElementById('progress');
+    const controls = document.getElementById('controls');
+    const hint = document.getElementById('hint');
+    const jumpPanel = document.getElementById('jump-panel');
+    const jumpGrid = document.getElementById('jump-grid');
+
+    counterTotal.textContent = String(slides.length).padStart(2, '0');
+
+    slides.forEach((s, i) => {
+      const card = document.createElement('button');
+      card.className = 'jump-card';
+      card.innerHTML = `
+        <div class="jc-num">${String(i+1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}</div>
+        <div class="jc-title">${s.title}</div>
+        <div class="jc-part">${s.part}</div>
+      `;
+      card.addEventListener('click', () => {
+        idx = i;
+        render();
+        closeJump();
+      });
+      jumpGrid.appendChild(card);
+    });
+
+    function render() {
+      frame.src = slides[idx].file;
+      counterCurrent.textContent = String(idx + 1).padStart(2, '0');
+      counterTitle.textContent = slides[idx].title;
+      progress.style.width = ((idx + 1) / slides.length * 100) + '%';
+      btnPrev.disabled = (idx === 0);
+      btnNext.disabled = (idx === slides.length - 1);
+      Array.from(jumpGrid.children).forEach((c, i) => {
+        c.classList.toggle('active', i === idx);
+      });
+      history.replaceState(null, '', `#${idx + 1}`);
+    }
+
+    function go(delta) {
+      const next = Math.max(0, Math.min(slides.length - 1, idx + delta));
+      if (next !== idx) {
+        idx = next;
+        render();
+      }
+    }
+
+    function openJump() { jumpPanel.classList.add('open'); }
+    function closeJump() { jumpPanel.classList.remove('open'); }
+
+    function toggleUI() {
+      uiHidden = !uiHidden;
+      controls.classList.toggle('hidden', uiHidden);
+      hint.classList.toggle('hidden', uiHidden);
+      progress.style.opacity = uiHidden ? '0' : '1';
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    document.addEventListener('keydown', e => {
+      if (jumpPanel.classList.contains('open')) {
+        if (e.key === 'Escape') { closeJump(); e.preventDefault(); return; }
+        if (e.key === 'g' || e.key === 'G') { closeJump(); e.preventDefault(); return; }
+      }
+
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        go(1); e.preventDefault();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp' || e.key === 'Backspace') {
+        go(-1); e.preventDefault();
+      } else if (e.key === 'Home') {
+        idx = 0; render(); e.preventDefault();
+      } else if (e.key === 'End') {
+        idx = slides.length - 1; render(); e.preventDefault();
+      } else if (e.key === 'g' || e.key === 'G') {
+        openJump(); e.preventDefault();
+      } else if (e.key === 'Escape') {
+        closeJump(); e.preventDefault();
+      } else if (e.key === 'f' || e.key === 'F') {
+        toggleFullscreen(); e.preventDefault();
+      } else if (e.key === 'h' || e.key === 'H') {
+        toggleUI(); e.preventDefault();
+      } else if (/^[0-9]$/.test(e.key)) {
+        if (!window._numBuffer) window._numBuffer = '';
+        window._numBuffer += e.key;
+        clearTimeout(window._numTimer);
+        window._numTimer = setTimeout(() => {
+          const n = parseInt(window._numBuffer, 10);
+          if (n >= 1 && n <= slides.length) {
+            idx = n - 1;
+            render();
+          }
+          window._numBuffer = '';
+        }, 500);
+      }
+    });
+
+    btnPrev.addEventListener('click', () => go(-1));
+    btnNext.addEventListener('click', () => go(1));
+
+    jumpPanel.addEventListener('click', e => {
+      if (e.target === jumpPanel) closeJump();
+    });
+
+    const hashMatch = window.location.hash.match(/^#(\d+)$/);
+    if (hashMatch) {
+      const n = parseInt(hashMatch[1], 10);
+      if (n >= 1 && n <= slides.length) idx = n - 1;
+    }
+
+    render();
+
+    setTimeout(() => { hint.classList.add('hidden'); }, 5000);
+
+    document.addEventListener('mousemove', e => {
+      if (!uiHidden && e.clientY > window.innerHeight - 100 && e.clientX > window.innerWidth - 400) {
+        hint.classList.remove('hidden');
+        clearTimeout(window._hintTimer);
+        window._hintTimer = setTimeout(() => hint.classList.add('hidden'), 3000);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 13 · Closing</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --rule-mid: #D4D2C9;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text); background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+    }
+    .stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .slide {
+      width: 1920px; height: 1080px; flex-shrink: 0; background: var(--bg);
+      position: relative; overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px; pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute; top: 56px; left: 120px; right: 120px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px; color: var(--text-subtle); letter-spacing: 0.02em; z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar { width: 24px; height: 1px; background: var(--text-subtle); opacity: 0.6; }
+
+    .header {
+      position: absolute; top: 130px; left: 152px; right: 120px;
+      padding-left: 40px; border-left: 1px solid var(--rule-fine); z-index: 2;
+    }
+    .header::before {
+      content: ''; position: absolute; left: -1px; top: 8%; bottom: 8%;
+      width: 2px; background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px; font-weight: 500; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 108px; font-weight: 800; line-height: 1.0;
+      letter-spacing: -0.045em; color: var(--ink); margin-bottom: 18px;
+    }
+    h1 .hl { color: var(--highlight); }
+    .subtitle {
+      font-size: 26px; color: var(--text-muted); letter-spacing: -0.005em;
+    }
+
+    /* ---------- Recap quote ---------- */
+    .recap {
+      position: absolute;
+      top: 470px;
+      left: 152px;
+      right: 120px;
+      padding: 30px 36px;
+      background: rgba(15, 76, 92, 0.05);
+      border-left: 3px solid var(--accent);
+      z-index: 2;
+    }
+    .recap .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .recap .text {
+      font-size: 28px;
+      font-weight: 600;
+      color: var(--ink);
+      line-height: 1.4;
+      letter-spacing: -0.01em;
+    }
+    .recap .text .hl { color: var(--highlight); font-weight: 800; }
+
+    /* ---------- Milestones ---------- */
+    .milestones {
+      position: absolute;
+      top: 640px;
+      left: 152px;
+      right: 120px;
+      z-index: 2;
+    }
+    .col-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .col-label::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--text-subtle);
+    }
+    .ms-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+    .ms-card {
+      padding: 20px 24px;
+      background: var(--bg);
+      border: 1px solid var(--rule-mid);
+      border-left: 3px solid var(--highlight);
+    }
+    .ms-card .num {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 28px;
+      font-weight: 800;
+      color: var(--highlight);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .ms-card .ttl {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.005em;
+      margin-bottom: 6px;
+    }
+    .ms-card .ttl code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      color: var(--accent);
+      background: rgba(15, 76, 92, 0.08);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    .ms-card .desc {
+      font-size: 14px;
+      color: var(--text-muted);
+      line-height: 1.45;
+      letter-spacing: -0.003em;
+    }
+
+    /* ---------- Footer / links ---------- */
+    .footer {
+      position: absolute;
+      bottom: 88px;
+      left: 152px;
+      right: 120px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 60px;
+      z-index: 2;
+    }
+
+    .qna {
+      padding-left: 30px;
+      border-left: 2px solid var(--highlight);
+      position: relative;
+    }
+    .qna .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px;
+      color: var(--highlight);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .qna .text {
+      font-size: 30px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .qna .text .hl {
+      color: var(--highlight);
+    }
+
+    .links {
+      text-align: right;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .link {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      letter-spacing: 0.02em;
+    }
+    .link .lbl {
+      font-size: 11px;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-weight: 700;
+    }
+    .link .url {
+      color: var(--accent);
+      font-weight: 500;
+      padding: 4px 10px;
+      background: rgba(15, 76, 92, 0.06);
+      border-radius: 3px;
+    }
+
+    .corner-mark {
+      position: absolute; bottom: 56px; right: 120px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--text-subtle);
+      letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; z-index: 2;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">13</span>
+          <span class="sep">/</span>
+          <span>13</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>Closing · Thank You</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow">Closing</div>
+        <h1>검색이 <span class="hl">본체</span>였다</h1>
+        <div class="subtitle">발표 한 문장 회고 · 다음 마일스톤 · Q&amp;A</div>
+      </div>
+
+      <div class="recap">
+        <div class="label">한 문장 회고</div>
+        <div class="text">
+          각 단계의 모델 선택보다, <span class="hl">단계 간 정합</span>(임베딩 ↔ 저장소 ↔ 리랭커)이 검색 품질을 결정했다.
+        </div>
+      </div>
+
+      <div class="milestones">
+        <div class="col-label">다음 마일스톤</div>
+        <div class="ms-grid">
+          <div class="ms-card">
+            <div class="num">01</div>
+            <div class="ttl">Hybrid 검색 전환</div>
+            <div class="desc">bge-m3 sparse 활성화 · Hybrid 지원 저장소 평가 (Qdrant / Weaviate)</div>
+          </div>
+          <div class="ms-card">
+            <div class="num">02</div>
+            <div class="ttl">검색 평가 자동화</div>
+            <div class="desc"><code>MRR · nDCG</code> 기반 회귀 테스트 — 변경마다 정량 측정</div>
+          </div>
+          <div class="ms-card">
+            <div class="num">03</div>
+            <div class="ttl">오프라인 모드</div>
+            <div class="desc">Ollama Qwen 기반 로컬 추론 — 망분리 환경 대응</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        <div class="qna">
+          <div class="label">Q &amp; A</div>
+          <div class="text">무엇이든 <span class="hl">환영합니다</span></div>
+        </div>
+        <div class="links">
+          <div class="link">
+            <span class="lbl">Manual</span>
+            <span class="url">pear-c.github.io/officeagent-manual</span>
+          </div>
+          <div class="link">
+            <span class="lbl">Repo</span>
+            <span class="url">github.com/pear-c/officeagent-onboarding-challenge</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="corner-mark">closing · thank you</div>
+    </div>
+  </div>
+</body>
+</html>

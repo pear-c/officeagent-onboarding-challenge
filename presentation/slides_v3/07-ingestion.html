@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slide 07 · Ingestion</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap">
+  <style>
+    :root {
+      --bg: #F8F7F2;
+      --bg-stage: #1e1e1c;
+      --text: #1A1A1A;
+      --ink: #0a0a0a;
+      --text-muted: #5A5A5A;
+      --text-subtle: #8A8A88;
+      --rule-fine: #E5E3DC;
+      --accent: #0F4C5C;
+      --highlight: #D97706;
+      --warn: #B91C1C;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      height: 100%; overflow: hidden;
+      font-family: 'Pretendard Variable', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text); background: var(--bg-stage);
+      -webkit-font-smoothing: antialiased;
+    }
+    .stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+    .slide {
+      width: 1920px; height: 1080px; flex-shrink: 0; background: var(--bg);
+      position: relative; overflow: hidden;
+      transform: scale(min(calc((100vw - 48px) / 1920), calc((100vh - 48px) / 1080)));
+      transform-origin: center center;
+      box-shadow: 0 60px 120px rgba(0, 0, 0, 0.45), 0 16px 40px rgba(0, 0, 0, 0.28);
+    }
+    .slide::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 1px 1px, rgba(26, 26, 26, 0.045) 1px, transparent 0);
+      background-size: 48px 48px; pointer-events: none;
+    }
+
+    .meta-top {
+      position: absolute; top: 56px; left: 120px; right: 120px;
+      display: flex; justify-content: space-between; align-items: center;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 15px; color: var(--text-subtle); letter-spacing: 0.02em; z-index: 2;
+    }
+    .page-indicator { display: flex; align-items: center; gap: 14px; }
+    .page-indicator .dot { width: 9px; height: 9px; background: var(--accent); border-radius: 50%; }
+    .page-indicator .current { color: var(--text); font-weight: 500; }
+    .page-indicator .sep { opacity: 0.5; }
+    .context-tag { display: flex; align-items: center; gap: 12px; letter-spacing: 0.04em; }
+    .context-tag .bar { width: 24px; height: 1px; background: var(--text-subtle); opacity: 0.6; }
+
+    .header {
+      position: absolute; top: 140px; left: 152px; right: 120px;
+      padding-left: 40px; border-left: 1px solid var(--rule-fine); z-index: 2;
+    }
+    .header::before {
+      content: ''; position: absolute; left: -1px; top: 8%; bottom: 8%;
+      width: 2px; background: var(--accent);
+    }
+    .eyebrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px; font-weight: 500; color: var(--accent);
+      text-transform: uppercase; letter-spacing: 0.16em; margin-bottom: 18px;
+    }
+    h1 {
+      font-size: 88px; font-weight: 800; line-height: 1.0;
+      letter-spacing: -0.04em; color: var(--ink); margin-bottom: 18px;
+    }
+    h1 .hl { color: var(--highlight); }
+    .subtitle {
+      font-size: 28px; color: var(--text-muted); letter-spacing: -0.005em;
+    }
+
+    /* ---------- Two columns ---------- */
+    .columns {
+      position: absolute;
+      top: 400px;
+      left: 152px;
+      right: 120px;
+      bottom: 220px;
+      display: grid;
+      grid-template-columns: 1.15fr 1fr;
+      gap: 60px;
+      z-index: 2;
+    }
+
+    .col-label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .col-label::before {
+      content: '';
+      width: 28px;
+      height: 1px;
+      background: var(--text-subtle);
+    }
+
+    /* Format strategy table */
+    table.fmt {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 20px;
+    }
+    table.fmt th {
+      text-align: left;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-subtle);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 12px 16px 12px 0;
+      border-bottom: 1px solid var(--rule-fine);
+    }
+    table.fmt td {
+      padding: 22px 16px 22px 0;
+      border-bottom: 1px solid var(--rule-fine);
+      color: var(--text-muted);
+      vertical-align: top;
+      line-height: 1.4;
+    }
+    table.fmt td:first-child {
+      width: 130px;
+    }
+    table.fmt .ext {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(15, 76, 92, 0.08);
+      padding: 4px 12px;
+      border-radius: 3px;
+    }
+    table.fmt td .em {
+      color: var(--ink);
+      font-weight: 600;
+    }
+    table.fmt td code {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 14px;
+      color: var(--accent);
+      background: rgba(15, 76, 92, 0.06);
+      padding: 1px 6px;
+      border-radius: 3px;
+    }
+    table.fmt tr.reuse td {
+      background: rgba(217, 119, 6, 0.05);
+    }
+    table.fmt tr.reuse .arrow {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      color: var(--highlight);
+      font-weight: 700;
+    }
+
+    /* Right — TS box */
+    .ts-box {
+      padding: 26px 30px;
+      background: rgba(185, 28, 28, 0.04);
+      border: 1px solid rgba(185, 28, 28, 0.2);
+      border-left: 3px solid var(--warn);
+      height: 100%;
+    }
+    .ts-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--warn);
+      background: rgba(185, 28, 28, 0.08);
+      padding: 4px 10px;
+      letter-spacing: 0.16em;
+      margin-bottom: 16px;
+      text-transform: uppercase;
+    }
+    .ts-title {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+      margin-bottom: 22px;
+      line-height: 1.25;
+    }
+    .ts-row {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 16px;
+      margin-bottom: 14px;
+      align-items: start;
+    }
+    .ts-row .lbl {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 12px;
+      color: var(--warn);
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 700;
+      padding-top: 4px;
+    }
+    .ts-row .body {
+      font-size: 18px;
+      color: var(--text);
+      line-height: 1.5;
+      letter-spacing: -0.005em;
+    }
+    .ts-row .body .em {
+      color: var(--warn);
+      font-weight: 700;
+    }
+    .ts-row .body .ok {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* Bottom message */
+    .bottom-note {
+      position: absolute; bottom: 88px; left: 152px; right: 120px;
+      padding: 22px 32px;
+      background: rgba(217, 119, 6, 0.07);
+      border-left: 3px solid var(--highlight); z-index: 2;
+    }
+    .bottom-note .label {
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--highlight);
+      text-transform: uppercase; letter-spacing: 0.18em; margin-bottom: 6px;
+    }
+    .bottom-note .text {
+      font-size: 22px; font-weight: 500; color: var(--text); letter-spacing: -0.005em;
+    }
+    .bottom-note .text .hl { color: var(--highlight); font-weight: 700; }
+
+    .corner-mark {
+      position: absolute; bottom: 56px; right: 120px;
+      font-family: 'JetBrains Mono', ui-monospace, monospace;
+      font-size: 11px; color: var(--text-subtle);
+      letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.6; z-index: 2;
+    }
+
+    ::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="slide">
+      <div class="meta-top">
+        <div class="page-indicator">
+          <span class="dot"></span>
+          <span class="current">07</span>
+          <span class="sep">/</span>
+          <span>13</span>
+        </div>
+        <div class="context-tag">
+          <span class="bar"></span>
+          <span>Part 4 · RAG 파이프라인 — Ingestion</span>
+        </div>
+      </div>
+
+      <div class="header">
+        <div class="eyebrow">Part 4 · Ingestion</div>
+        <h1>청킹 = <span class="hl">검색 단위</span></h1>
+        <div class="subtitle">들어오는 단위가 그대로 검색되는 단위가 된다</div>
+      </div>
+
+      <div class="columns">
+        <div class="col">
+          <div class="col-label">포맷별 전략</div>
+          <table class="fmt">
+            <thead>
+              <tr>
+                <th>포맷</th>
+                <th>추출</th>
+                <th>청킹</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="ext">.txt</span></td>
+                <td>UTF-8 디코딩</td>
+                <td><span class="em">재귀 분할</span><br><code>400자 / overlap 80자</code></td>
+              </tr>
+              <tr>
+                <td><span class="ext">.md</span></td>
+                <td>원본 보존</td>
+                <td><span class="em">헤더 분리</span> 후<br><code>400자 / overlap 80자</code></td>
+              </tr>
+              <tr class="reuse">
+                <td><span class="ext">.pdf</span></td>
+                <td>pypdf →<br>번호 헤더 마크다운 변환</td>
+                <td><span class="arrow">↺</span> <span class="em">md 파이프라인 재사용</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="col">
+          <div class="col-label">트러블슈팅 — LlamaParse</div>
+          <div class="ts-box">
+            <span class="ts-tag">Trial &amp; Rollback</span>
+            <div class="ts-title">"파서 고도화 ≠ 검색 품질 향상"</div>
+
+            <div class="ts-row">
+              <div class="lbl">시도</div>
+              <div class="body">PDF 추출 고도화를 위해 <span class="em">LlamaParse</span> 도입</div>
+            </div>
+            <div class="ts-row">
+              <div class="lbl">결과</div>
+              <div class="body">청크 수 폭증 → 핵심 청크가 <span class="em">top-5에서 밀림</span></div>
+            </div>
+            <div class="ts-row">
+              <div class="lbl">결정</div>
+              <div class="body"><span class="ok">롤백</span> · 번호 헤더 기반 md 변환으로 복귀</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bottom-note">
+        <div class="label">Key Takeaway</div>
+        <div class="text">
+          파서를 정교화한다고 검색이 좋아지지 않는다 — <span class="hl">청킹 단위 = 검색 단위</span>
+        </div>
+      </div>
+
+      <div class="corner-mark">part 4 · ingestion</div>
+    </div>
+  </div>
+</body>
+</html>
